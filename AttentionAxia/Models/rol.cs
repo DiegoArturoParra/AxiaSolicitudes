@@ -1,10 +1,8 @@
 namespace AttentionAxia.Models
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("rol")]
     public partial class Rol
@@ -12,16 +10,17 @@ namespace AttentionAxia.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Rol()
         {
-            usuario = new HashSet<Usuario>();
+            Usuario = new HashSet<Usuario>();
         }
+        [Column("id")]
+        public int Id { get; set; }
 
-        public int id { get; set; }
-
+        [Column("descripcion")]
         [Required]
         [StringLength(100)]
-        public string descripcion { get; set; }
+        public string Descripcion { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Usuario> usuario { get; set; }
+        public virtual ICollection<Usuario> Usuario { get; set; }
     }
 }

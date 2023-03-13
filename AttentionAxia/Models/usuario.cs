@@ -1,38 +1,41 @@
 namespace AttentionAxia.Models
 {
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("usuario")]
     public partial class Usuario
     {
-        public int id { get; set; }
+        [Column("id")]
+        public int Id { get; set; }
 
+        [Column("nombre")]
         [Required]
         [StringLength(100)]
-        public string nombre { get; set; }
+        public string Nombres { get; set; }
 
+        [Column("apellido")]
         [Required]
         [StringLength(100)]
-        public string apellido { get; set; }
+        public string Apellidos { get; set; }
 
+        [Column("email")]
         [Required]
         [StringLength(100)]
-        public string email { get; set; }
+        public string Email { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column("nick_name")]
         [Required]
-        public string clave { get; set; }
+        [StringLength(100)]
+        public string NickName { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column("clave", TypeName = "text")]
         [Required]
-        public string semilla { get; set; }
+        public string Clave { get; set; }
 
-        public int rol_id { get; set; }
+        [Column("rol_id")]
+        public int RolId { get; set; }
 
-        public virtual Rol rol { get; set; }
+        public virtual Rol Rol { get; set; }
     }
 }
