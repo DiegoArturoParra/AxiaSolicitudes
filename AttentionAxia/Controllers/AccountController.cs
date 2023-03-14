@@ -1,11 +1,7 @@
-﻿using AttentionAxia.ViewModels;
-using Microsoft.Owin.Security.Cookies;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using AttentionAxia.DTOs;
+using AttentionAxia.Helpers;
+using AttentionAxia.Repositories;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
@@ -14,26 +10,44 @@ namespace AttentionAxia.Controllers
     {
         public AccountController()
         {
-            
+
         }
         // GET: Account
         [HttpGet]
         public ActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
+        // GET: Account
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        [ValidateInput(false)]
-        public async Task<ActionResult> Login(LoginViewModel login)
+        public async Task<ActionResult> Login(LoginDTO login)
         {
             if (ModelState.IsValid)
             {
+                var response = await new UserRepository().VerifyLogin(login);
+                if (!response.IsSuccess)
+                    return Json(new { response.IsSuccess, response.Message });
 
+                var data = (UserDTO)response.Data;
+                SaveCookies(data.FullName, data.Rol, data.Id.ToString());
+                return Json(new { response.IsSuccess, response.Message });
             }
-            return View();
+            return View(login);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ValidUser(string email)
+        {
+            var passwordHash = HashHelper.GenerateHashWithPassword("Password123!");
+            var resp = HashHelper.VerifyPassword("Password123!", passwordHash);
+            var response = await new UserRepository().ExistUser(email);
+            return Json(new { response.IsSuccess, response.Message });
         }
     }
 }

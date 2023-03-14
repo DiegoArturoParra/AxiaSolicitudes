@@ -1,4 +1,4 @@
-﻿@model AttentionAxia.ViewModels.LoginViewModel
+﻿@model AttentionAxia.DTOs.LoginDTO
 @{
     Layout = null;
 }
@@ -12,21 +12,27 @@
     <link href="~/adminlte/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     @Styles.Render("~/Content/css")
     @Styles.Render("~/alertifyjs/css")
+    <!--Animate Css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css" />
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
-        <div class="login-logo">
-            <a href="#"><b>AXIA</b> solicitudes</a>
-        </div>
-        @Html.AntiForgeryToken()
-        <div class="card">
+        <div class="card card-outline card-primary animate__animated animate__backInDown">
+            <div class="card-header text-center">
+                <div class="login-logo">
+                    <img src="~/adminlte/img/Splash-Movistar.png" width="150" />
+                </div>
+                <div class="login-logo">
+                    <a href="#"><b>AXIA</b> solicitudes</a>
+                </div>
+            </div>
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Login</p>
                 <div class="form-row justify-content-lg-start ml-3">
                     @Html.ValidationMessageFor(model => model.EmailOrNickName, "", new { @class = "text-danger" })
                 </div>
                 <div class="input-group mb-3">
-                    @Html.TextBoxFor(model => model.EmailOrNickName, new { @placeholder = "Usuario o Email", @class = "form-control" })
+                    @Html.TextBoxFor(model => model.EmailOrNickName, new { required = "required", @placeholder = "usuario", @class = "form-control" })
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
@@ -37,19 +43,22 @@
                     @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                 </div>
                 <div class="input-group mb-3">
-                    @Html.PasswordFor(model => model.Password, new { @placeholder = "Contraseña", @class = "form-control" })
+                    @Html.PasswordFor(model => model.Password, new { required = "required", @placeholder = "Contraseña", @class = "form-control" })
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <button id="btn-login" class="btn btn-secondary btn-block">
+                <div class="form-group">
+                    <button id="btn-login" class="btn btn-primary btn-block">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         <strong>Iniciar sesión</strong>
                     </button>
                 </div>
+            </div>
+            <div class="card-footer text-center d-none" id="status">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
             </div>
         </div>
     </div>
@@ -57,9 +66,47 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/Alertify")
-    <script>
-        $(function () {
+<script>
+        $(document).ready(function (e) {
+            let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+            $('#btn-login').click(function (e) {
+                const emailONick = $('#EmailOrNickName').val();
+                const pass = $('#Password').val();
+                if (!emailONick || !pass) {
+                    return;
+                }
+                let url ='@Url.Action("ValidUser", "Account")';
+                let data = { email: emailONick };
+                $.post(url, data).done(function (data) {
+                    if (!data.IsSuccess) {
+                        let message = data.Message;
+                        alertify.alert(error, message);
+                    }
+                    else {
+                        let url ='@Url.Action("Login", "Account")';
+                        data = { EmailOrNickName: emailONick, Password: pass }
+                        console.log(data);
+                        $.post(url, data).done(function (data) {
+                            if (!data.IsSuccess) {
+                                let message = data.Message;
+                                alertify.alert(error, message);
+                            }
+                            else {
+                                let url = "@Url.Action("Index","Home")";
+                                window.location.href = url;
+                            }
+                        });
+                    }
+                });
+            });
+
+            $(document).ajaxStart(function (e) {
+                $('#status').removeClass('d-none');
+            });
+            $(document).ajaxComplete(function (e) {
+                $('#status').addClass('d-none');
+            });
         });
-    </script>
+</script>
 </body>
 </html>
