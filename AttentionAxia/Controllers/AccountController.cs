@@ -1,5 +1,4 @@
 ﻿using AttentionAxia.DTOs;
-using AttentionAxia.Helpers;
 using AttentionAxia.Repositories;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -44,8 +43,6 @@ namespace AttentionAxia.Controllers
         [HttpPost]
         public async Task<JsonResult> ValidUser(string email)
         {
-            var passwordHash = HashHelper.GenerateHashWithPassword("Password123!");
-            var resp = HashHelper.VerifyPassword("Password123!", passwordHash);
             var response = await new UserRepository().ExistUser(email);
             return Json(new { response.IsSuccess, response.Message });
         }

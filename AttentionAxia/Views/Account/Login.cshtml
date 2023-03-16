@@ -27,23 +27,22 @@
                 </div>
             </div>
             <div class="card-body login-card-body">
-                <p class="login-box-msg">Login</p>
-                <div class="form-row justify-content-lg-start ml-3">
-                    @Html.ValidationMessageFor(model => model.EmailOrNickName, "", new { @class = "text-danger" })
+                <div class="alert alert-danger alert-dismissible fade show d-none" id="alert-required" role="alert">
+                    <span class="fa fa-times-circle text-white"> Los campos son requeridos.</span>
+                </div>
+                <div class="login-logo">
+                    <h4>Login</h4>
                 </div>
                 <div class="input-group mb-3">
-                    @Html.TextBoxFor(model => model.EmailOrNickName, new { required = "required", @placeholder = "usuario", @class = "form-control" })
+                    @Html.TextBoxFor(model => model.EmailOrNickName, new { @required = "", @placeholder = "usuario", @class = "form-control" })
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
                         </div>
                     </div>
                 </div>
-                <div class="form-row justify-content-lg-start ml-3">
-                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                </div>
                 <div class="input-group mb-3">
-                    @Html.PasswordFor(model => model.Password, new { required = "required", @placeholder = "Contraseña", @class = "form-control" })
+                    @Html.PasswordFor(model => model.Password, new { @required = "", @placeholder = "Contraseña", @class = "form-control" })
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
@@ -63,18 +62,21 @@
         </div>
     </div>
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/Alertify")
-<script>
+    <script>
         $(document).ready(function (e) {
             let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
             $('#btn-login').click(function (e) {
+                $('#alert-required').addClass('d-none');
                 const emailONick = $('#EmailOrNickName').val();
                 const pass = $('#Password').val();
                 if (!emailONick || !pass) {
+                    $('#alert-required').removeClass('d-none');
                     return;
                 }
+                $(this).prop("disabled", true);
                 let url ='@Url.Action("ValidUser", "Account")';
                 let data = { email: emailONick };
                 $.post(url, data).done(function (data) {
@@ -105,8 +107,9 @@
             });
             $(document).ajaxComplete(function (e) {
                 $('#status').addClass('d-none');
+                $('#btn-login').removeAttr('disabled');
             });
         });
-</script>
+    </script>
 </body>
 </html>
