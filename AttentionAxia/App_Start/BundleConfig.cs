@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace AttentionAxia
 {
@@ -14,11 +13,22 @@ namespace AttentionAxia
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new StyleBundle("~/adminlte/css").Include(
+                    "~/adminlte/plugins/fontawesome-free/css/all.min.css",
+                     "~/adminlte/css/adminlte.min.css"));
+
             bundles.Add(new ScriptBundle("~/adminlte/js").Include(
              "~/adminlte/js/adminlte.min.js"));
 
-            // Use the development version of Modernizr to develop with and learn from. Then, when you're
-            // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
+            bundles.Add(new ScriptBundle("~/bundles/Alertify").Include(
+                     "~/Scripts/alertify.js"
+                   ));
+
+            bundles.Add(new StyleBundle("~/alertifyjs/css").Include(
+                     "~/Content/alertifyjs/alertify.min.css",
+                      "~/Content/alertifyjs/themes/default.min.css"
+                     ));
+
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
@@ -27,8 +37,6 @@ namespace AttentionAxia
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/adminlte/plugins/fontawesome-free/css/all.min.css",
-                       "~/adminlte/css/adminlte.min.css",
                       "~/Content/site.css"));
         }
     }

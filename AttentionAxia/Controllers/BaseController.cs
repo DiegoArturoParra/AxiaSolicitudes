@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using AttentionAxia.Helpers;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,24 @@ namespace AttentionAxia.Controllers
             authManager.SignIn(new AuthenticationProperties { IsPersistent = true }, identity);
         }
         #endregion
+
+        #region Alerts para mensajes 
+        public void SetMessage(string message)
+        {
+            TempData[GetConstants.MESSAGE] = message;
+        }
+
+        public void SetAlert(string alert)
+        {
+            TempData[GetConstants.ALERT] = alert;
+        }
+        public void DeleteTempData()
+        {
+            TempData.Clear();
+        }
+
+        #endregion
+
 
         #region Cerrar Sesión
         [HttpPost]

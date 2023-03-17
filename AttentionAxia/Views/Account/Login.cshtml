@@ -1,4 +1,4 @@
-﻿
+﻿@model AttentionAxia.DTOs.LoginDTO
 @{
     Layout = null;
 }
@@ -11,73 +11,106 @@
     <!--LOGO WEB-->
     <link href="~/adminlte/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/adminlte/css")
+    @Styles.Render("~/alertifyjs/css")
+    <!--Animate Css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css" />
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
-        <div class="login-logo">
-            <a href="#"><b>AXIA</b> solicitudes</a>
-        </div>
-        <!-- /.login-logo -->
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-
-                <form action="../../index3.html" method="post">
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Email">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-envelope"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="Password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="social-auth-links text-center mb-3">
-                    <p>- OR -</p>
-                    <a href="#" class="btn btn-block btn-primary">
-                        <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-                    </a>
-                    <a href="#" class="btn btn-block btn-danger">
-                        <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-                    </a>
+        <div class="card card-outline card-primary animate__animated animate__backInDown">
+            <div class="card-header text-center">
+                <div class="login-logo">
+                    <img src="~/adminlte/img/Splash-Movistar.png" width="150" />
                 </div>
-                <p class="mb-1">
-                    <a href="forgot-password.html">I forgot my password</a>
-                </p>
-                <p class="mb-0">
-                    <a href="register.html" class="text-center">Register a new membership</a>
-                </p>
+                <div class="login-logo">
+                    <a href="#"><b>AXIA</b> solicitudes</a>
+                </div>
+            </div>
+            <div class="card-body login-card-body">
+                <div class="alert alert-danger alert-dismissible fade show d-none" id="alert-required" role="alert">
+                    <span class="fa fa-times-circle text-white"> Los campos son requeridos.</span>
+                </div>
+                <div class="login-logo">
+                    <h4>Login</h4>
+                </div>
+                <div class="input-group mb-3">
+                    @Html.TextBoxFor(model => model.EmailOrNickName, new { @required = "", @placeholder = "usuario", @class = "form-control" })
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    @Html.PasswordFor(model => model.Password, new { @required = "", @placeholder = "Contraseña", @class = "form-control" })
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="btn-login" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        <strong>Iniciar sesión</strong>
+                    </button>
+                </div>
+            </div>
+            <div class="card-footer text-center d-none" id="status">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
             </div>
         </div>
     </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/Alertify")
+    <script>
+        $(document).ready(function (e) {
+            let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+            $('#btn-login').click(function (e) {
+                $('#alert-required').addClass('d-none');
+                const emailONick = $('#EmailOrNickName').val();
+                const pass = $('#Password').val();
+                if (!emailONick || !pass) {
+                    $('#alert-required').removeClass('d-none');
+                    return;
+                }
+                $(this).prop("disabled", true);
+                let url ='@Url.Action("ValidUser", "Account")';
+                let data = { email: emailONick };
+                $.post(url, data).done(function (data) {
+                    if (!data.IsSuccess) {
+                        let message = data.Message;
+                        alertify.alert(error, message);
+                    }
+                    else {
+                        let url ='@Url.Action("Login", "Account")';
+                        data = { EmailOrNickName: emailONick, Password: pass }
+                        console.log(data);
+                        $.post(url, data).done(function (data) {
+                            if (!data.IsSuccess) {
+                                let message = data.Message;
+                                alertify.alert(error, message);
+                            }
+                            else {
+                                let url = "@Url.Action("Index","Home")";
+                                window.location.href = url;
+                            }
+                        });
+                    }
+                });
+            });
 
+            $(document).ajaxStart(function (e) {
+                $('#status').removeClass('d-none');
+            });
+            $(document).ajaxComplete(function (e) {
+                $('#status').addClass('d-none');
+                $('#btn-login').removeAttr('disabled');
+            });
+        });
+    </script>
 </body>
 </html>
-@section scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-}

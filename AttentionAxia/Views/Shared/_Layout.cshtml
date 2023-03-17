@@ -7,6 +7,8 @@
     <!--LOGO WEB-->
     <link href="~/adminlte/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/adminlte/css")
+    @Styles.Render("~/alertifyjs/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body class="hold-transition sidebar-mini">
@@ -67,7 +69,7 @@
                             <a href="#" class="nav-link active">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>
-                                   Responsables
+                                    Responsables
                                     <i class="right fas fa-angle-right"></i>
                                 </p>
                             </a>
@@ -79,7 +81,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>               
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -119,12 +121,13 @@
             <!-- To the right -->
             <div class="float-right d-none d-sm-inline">
                 <p>Desarrollo y Diseño: Grupo AXIA</p>
-            </div>    
+            </div>
             Derechos Reservados / Propiedad intelectual Gerencia Experiencia Clientes
         </footer>
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/Alertify")
     @Scripts.Render("~/adminlte/js")
     @RenderSection("scripts", required: false)
 </body>
