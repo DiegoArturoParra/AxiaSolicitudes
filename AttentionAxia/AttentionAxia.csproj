@@ -279,6 +279,7 @@
     <Content Include="adminlte\js\.eslintrc.json" />
     <Content Include="adminlte\js\adminlte.js.map" />
     <Content Include="adminlte\js\adminlte.min.js.map" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-brands-400.eot" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-brands-400.ttf" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-brands-400.woff" />
@@ -291,7 +292,7 @@
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.ttf" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff2" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
+    <None Include="Properties\PublishProfiles\AttentionAxia - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.6.3.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.3.js" />
     <Content Include="Scripts\jquery-3.6.3.min.js" />
