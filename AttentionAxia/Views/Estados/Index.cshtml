@@ -5,20 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Estados</h2>
 
 <p>
     @Html.ActionLink("Crear nuevo estado", "Create", null, new { @class = "btn btn-primary" })
 </p>
 <table class="table table-striped table-bordered table-responsive-lg">
     <tr>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Descripcion)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Nivel)
         </th>
-        <th>
+        <th class="text-center">
             Acciones
         </th>
     </tr>

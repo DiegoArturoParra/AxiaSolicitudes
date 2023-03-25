@@ -223,6 +223,8 @@
     <Compile Include="Controllers\EstadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LineasController.cs" />
+    <Compile Include="Controllers\ResponsablesController.cs" />
+    <Compile Include="Controllers\SprintsController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\UsuarioDTO.cs" />
@@ -245,11 +247,17 @@
     <Compile Include="Migrations\202303220055293_estados.designer.cs">
       <DependentUpon>202303220055293_estados.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202303251417040_1.cs" />
+    <Compile Include="Migrations\202303251417040_1.designer.cs">
+      <DependentUpon>202303251417040_1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
     <Compile Include="Models\Estados.cs" />
     <Compile Include="Models\Linea.cs" />
+    <Compile Include="Models\Responsables.cs" />
     <Compile Include="Models\Rol.cs" />
+    <Compile Include="Models\Sprint.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CelulaRepository.cs" />
@@ -501,6 +509,16 @@
     <Content Include="Views\Estados\Details.cshtml" />
     <Content Include="Views\Estados\Edit.cshtml" />
     <Content Include="Views\Estados\Index.cshtml" />
+    <Content Include="Views\Responsables\Create.cshtml" />
+    <Content Include="Views\Responsables\Delete.cshtml" />
+    <Content Include="Views\Responsables\Details.cshtml" />
+    <Content Include="Views\Responsables\Edit.cshtml" />
+    <Content Include="Views\Responsables\Index.cshtml" />
+    <Content Include="Views\Sprints\Create.cshtml" />
+    <Content Include="Views\Sprints\Delete.cshtml" />
+    <Content Include="Views\Sprints\Details.cshtml" />
+    <Content Include="Views\Sprints\Edit.cshtml" />
+    <Content Include="Views\Sprints\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -523,6 +541,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202303220055293_estados.resx">
       <DependentUpon>202303220055293_estados.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202303251417040_1.resx">
+      <DependentUpon>202303251417040_1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

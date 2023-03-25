@@ -21,6 +21,8 @@ namespace AttentionAxia.Core.Data
         public virtual DbSet<Celula> TablaCelula { get; set; }
         public virtual DbSet<Linea> TablaLinea { get; set; }
         public virtual DbSet<Estados> TablaEstado { get; set; }
+        public virtual DbSet<Responsables> TablaResponsables { get; set; }
+        public virtual DbSet<Sprint> TablaSprint { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
