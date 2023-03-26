@@ -1,0 +1,47 @@
+﻿@model IEnumerable<AttentionAxia.Models.Responsable>
+
+@{
+    ViewBag.Title = "Responsables";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Lista de responsables</h2>
+
+<p>
+    @Html.ActionLink("Crear", "Create", null, new { @class="btn btn-primary"})
+</p>
+<table class="table">
+    <tr>
+        <th class="text-center">            
+            @Html.DisplayNameFor(model => model.Nombres)
+        </th>
+        <th class="text-center">
+            Linea
+        </th>
+        <th class="text-center">
+            Celula
+        </th>
+        <th>
+            Acciones
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="text-center">            
+            @Html.DisplayFor(modelItem => item.Nombres)
+        </td>
+        <td class="text-center">
+            @Html.DisplayFor(modelItem => item.LineaPertenece.Descripcion)
+        </td>
+        <td class="text-center">
+            @Html.DisplayFor(modelItem => item.CelulaPertenece.Descripcion)
+        </td>
+        <td class="text-center">
+            @Html.ActionLink("Editar", "Edit", new { id=item.Id }, new { @class="btn btn-primary" }) |           
+            @Html.ActionLink("Eliminar", "Delete", new { id=item.Id }, new { @class="btn btn-danger"})
+        </td>
+    </tr>
+}
+
+</table>
