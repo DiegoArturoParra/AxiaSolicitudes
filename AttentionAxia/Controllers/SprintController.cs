@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using AttentionAxia.Core.Data;
+using AttentionAxia.Models;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using AttentionAxia.Core.Data;
-using AttentionAxia.Models;
 
 namespace AttentionAxia.Controllers
 {
@@ -115,15 +111,6 @@ namespace AttentionAxia.Controllers
             db.TablaSprints.Remove(sprint);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
