@@ -2,7 +2,6 @@
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using System.Collections.Generic;
-using System.Data.Entity;
 
 namespace AttentionAxia.Core
 {
@@ -48,6 +47,60 @@ namespace AttentionAxia.Core
             };
 
             context.TablaUsuarios.AddRange(defaultUsers);
+
+            IList<Celula> defaultCelulas = new List<Celula>
+            {
+              new Celula
+              {
+                Descripcion = "Móvil"
+              },
+              new Celula
+              {
+                 Descripcion = "Axia"
+              }
+            };
+
+            context.TablaCelulas.AddRange(defaultCelulas);
+
+            IList<Estado> defaultEstados = new List<Estado>
+            {
+              new Estado
+              {
+                Descripcion = "Por Hacer",
+                 Nivel = "#A28F8F",
+              },
+              new Estado
+              {
+                 Descripcion = "En Progreso",
+                 Nivel = "#74DEE9",
+
+              },
+                new Estado
+              {
+                Descripcion = "Finalizado",
+                 Nivel = "#8AF5A9",
+              }
+            };
+
+            context.TablaEstados.AddRange(defaultEstados);
+
+            IList<Linea> defaultLineas = new List<Linea>
+            {
+              new Linea
+              {
+                Descripcion = "QA"
+              },
+              new Linea
+              {
+                 Descripcion = "Soporte"
+              },
+                new Linea
+              {
+                Descripcion = "Desarrollo"
+              }
+            };
+
+            context.TablaLineas.AddRange(defaultLineas);
 
             return context;
         }

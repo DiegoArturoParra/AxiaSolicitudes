@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--LOGO WEB-->
     <link href="~/adminlte/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    @Styles.Render("~/Content/css")
-    @Styles.Render("~/adminlte/css")
     @Styles.Render("~/alertifyjs/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/adminlte/css")
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="preloader flex-column justify-content-center align-items-center">
@@ -59,170 +58,84 @@
                         <img src="~/adminlte/img/avatar4.png" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
+                        <a href="#" class="d-block">@User.Identity.Name</a>
                     </div>
                 </div>
-                <!-- Sidebar Menu -->
+                <div class="form-inline">
+                    <div class="input-group" data-widget="sidebar-search">
+                        <input class="form-control form-control-sidebar bg-white" type="search" placeholder="Buscar" aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-sidebar">
+                                <i class="fas fa-search fa-fw"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Responsables
-                                    <i class="right fas fa-angle-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Crear Responsable</p>
+                        <!-- Sidebar Menu -->
+                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                        {
 
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item menu-open">
-                            <a href="" class="nav-link active">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Celulas
-                                    <i class="right fas fa-angle-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","Celula")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Ver Celula</p>
-
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Create","Celula")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Crear Celulas</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item menu-open">
-                            <a href="" class="nav-link active">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Lineas
-                                    <i class="right fas fa-angle-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","Lineas")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Ver Linea</p>
-
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Create","Lineas")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Crear Linea</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item menu-open">
-                            <a href="" class="nav-link active">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Estados
-                                    <i class="right fas fa-angle-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","Estados")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Ver Estados</p>
-
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Create","Estados")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Crear Estado</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item menu-open">
-                            <a href="" class="nav-link active">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Responsables
-                                    <i class="right fas fa-angle-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","Responsables")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Ver Responsable</p>
-
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Create","Responsables")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Crear Responsable</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item menu-open">
-                            <a href="" class="nav-link active">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Sprints
-                                    <i class="right fas fa-angle-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index","Sprints")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Ver Sprints</p>
-
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Create","Sprints")" class="nav-link active">
-                                        <i class="fa fa-plus-circle nav-icon"></i>
-                                        <p>Crear Sprint</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                            <li class="nav-item mt-2">
+                                <a href="@Url.Action("Index","Celula")" class="nav-link active">
+                                    <i class="nav-icon fas fa-bullseye"></i>
+                                    <p>
+                                        Celulas
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item  mt-2">
+                                <a href="@Url.Action("Index","Linea")" class="nav-link active">
+                                    <i class="nav-icon fas fa-building"></i>
+                                    <p>
+                                        Lineas
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item mt-2">
+                                <a href="@Url.Action("Index","Estado")" class="nav-link active">
+                                    <i class="nav-icon fas fa-sad-tear"></i>
+                                    <p>
+                                        Estados
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item mt-2">
+                                <a href="@Url.Action("Index","Responsable")" class="nav-link active">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Responsables
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item mt-2">
+                                <a href="@Url.Action("Index","Sprint")" class="nav-link active">
+                                    <i class="nav-icon fas fa-running"></i>
+                                    <p>
+                                        Sprints
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia))
+                            || User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.GeneralAxia)))
+                        {
+                            <li class="nav-item mt-2">
+                                <a href="@Url.Action("Index", "Solicitud")" class="nav-link active">
+                                    <i class="nav-icon fas fa-tasks"></i>
+                                    <p>
+                                        Solicitudes Axia
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -267,9 +180,26 @@
         </footer>
     </div>
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/Alertify")
+    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/adminlte/js")
     @RenderSection("scripts", required: false)
+    <script>
+        $(document).ready(function (e) {
+            let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+            let message = '@TempData[AttentionAxia.Helpers.GetConstants.MESSAGE]';
+            let errorAlert = '@TempData[AttentionAxia.Helpers.GetConstants.ALERT]';
+            if (message != '' && errorAlert != '') {
+                if (errorAlert === '@AttentionAxia.Helpers.GetConstants.ALERT_SUCCESS') {
+                    toastr.success(message);
+                }
+                else if (errorAlert === '@AttentionAxia.Helpers.GetConstants.ALERT_ERROR')
+                {
+                    alertify.alert(error, message);
+                }
+
+            }
+        });
+    </script>
 </body>
 </html>

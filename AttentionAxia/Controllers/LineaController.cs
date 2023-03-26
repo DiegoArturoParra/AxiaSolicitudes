@@ -7,115 +7,115 @@ using System.Web.Mvc;
 namespace AttentionAxia.Controllers
 {
     [Authorize(Roles = "Administrador-Axia")]
-    public class CelulaController : BaseController
+    public class LineaController : BaseController
     {
-        private readonly CelulaRepository _celulaRepository;
-        public CelulaController()
+        private readonly LineaRepository _lineaRepository;
+
+        public LineaController()
         {
-            _celulaRepository = new CelulaRepository(_db);
+            _lineaRepository = new LineaRepository(_db);
         }
-        // GET: Celula
+        // GET: Lineas
         public async Task<ActionResult> Index()
         {
-            return View(await _celulaRepository.GetAll());
+            return View(await _lineaRepository.GetAll());
         }
 
-        // GET: Celula/Create
+        // GET: Lineas/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Celula/Create
+        // POST: Lineas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Descripcion")] Celula celula)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Descripcion")] Linea linea)
         {
             if (ModelState.IsValid)
             {
-                var existe = await _celulaRepository.AnyWithCondition(x => x.Descripcion.ToLower() == celula.Descripcion);
+                var existe = await _lineaRepository.AnyWithCondition(x => x.Descripcion.ToLower() == linea.Descripcion);
                 if (existe)
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage($"Ya existe un registro con la descripción {celula.Descripcion.ToLower()}");
-                    return View(celula);
+                    SetMessage($"Ya existe un registro con la descripción {linea.Descripcion.ToLower()}");
+                    return View(linea);
                 }
-                _celulaRepository.Insert(celula);
-                await _celulaRepository.Save();
+                _lineaRepository.Insert(linea);
+                await _lineaRepository.Save();
                 SetAlert(GetConstants.ALERT_SUCCESS);
                 SetMessage("Creado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
 
-            return View(celula);
+            return View(linea);
         }
 
-        // GET: Celula/Edit/5
+        // GET: Lineas/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction("Index");
             }
-            Celula celula = _celulaRepository.FindById(id);
-            if (celula == null)
+            Linea linea = _lineaRepository.FindById(id);
+            if (linea == null)
             {
                 SetAlert(GetConstants.ALERT_ERROR);
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            return View(celula);
+            return View(linea);
         }
 
-        // POST: Celula/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Lineas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Descripcion")] Celula celula)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Descripcion")] Linea linea)
         {
             if (ModelState.IsValid)
             {
-                if (await _celulaRepository.AnyWithCondition(x => x.Descripcion.ToLower() == celula.Descripcion && x.Id != celula.Id))
+                if (await _lineaRepository.AnyWithCondition(x => x.Descripcion.ToLower() == linea.Descripcion && x.Id != linea.Id))
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage($"Ya existe un registro con la descripción {celula.Descripcion.ToUpper()}");
-                    return View(celula);
+                    SetMessage($"Ya existe un registro con la descripción {linea.Descripcion.ToUpper()}");
+                    return View(linea);
                 }
-                _celulaRepository.Update(celula);
-                await _celulaRepository.Save();
+                _lineaRepository.Update(linea);
+                await _lineaRepository.Save();
                 SetAlert(GetConstants.ALERT_SUCCESS);
                 SetMessage("Actualizado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-            return View(celula);
+            return View(linea);
         }
 
-        // GET: Celula/Delete/5
+        // GET: Lineas/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction("Index");
             }
-            Celula celula = _celulaRepository.FindById(id);
-            if (celula == null)
+            Linea linea = _lineaRepository.FindById(id);
+            if (linea == null)
             {
                 SetAlert(GetConstants.ALERT_ERROR);
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            return View(celula);
+            return View(linea);
         }
 
-        // POST: Celula/Delete/5
+        // POST: Lineas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Celula celula = _celulaRepository.FindById(id);
-            _celulaRepository.Delete(celula);
-            await _celulaRepository.Save();
+
+            Linea linea = _lineaRepository.FindById(id);
+            _lineaRepository.Delete(linea);
+            await _lineaRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);
             SetMessage("Eliminado satisfactoriamente.");
             return RedirectToAction("Index");

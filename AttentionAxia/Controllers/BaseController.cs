@@ -1,4 +1,5 @@
-﻿using AttentionAxia.Helpers;
+﻿using AttentionAxia.Core.Data;
+using AttentionAxia.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
@@ -12,6 +13,12 @@ namespace AttentionAxia.Controllers
 {
     public class BaseController : Controller
     {
+        protected AxiaContext _db;
+        public BaseController()
+        {
+            _db = new AxiaContext();
+        }
+
         #region Creacion de carpeta si no existe
         public void FolderIsExist(string path)
         {
@@ -19,7 +26,6 @@ namespace AttentionAxia.Controllers
             if (!folderExists)
                 Directory.CreateDirectory(Server.MapPath(path));
         }
-
         #endregion
 
         #region Guardar cookies owin del user

@@ -3,9 +3,9 @@ using AttentionAxia.Models;
 
 namespace AttentionAxia.Repositories
 {
-    public class CelulaRepository : GenericRepository<Celula>
+    public class SprintRepository : GenericRepository<Sprint>
     {
-        public CelulaRepository(AxiaContext context) : base(context)
+        public SprintRepository(AxiaContext context) : base(context)
         {
 
         }

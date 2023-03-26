@@ -15,14 +15,14 @@ namespace AttentionAxia.Core.Data
         {
 
         }
-
         public virtual DbSet<Rol> TablaRoles { get; set; }
         public virtual DbSet<Usuario> TablaUsuarios { get; set; }
-        public virtual DbSet<Celula> TablaCelula { get; set; }
-        public virtual DbSet<Linea> TablaLinea { get; set; }
-        public virtual DbSet<Estados> TablaEstado { get; set; }
-        public virtual DbSet<Responsables> TablaResponsables { get; set; }
-        public virtual DbSet<Sprint> TablaSprint { get; set; }
+        public virtual DbSet<Celula> TablaCelulas { get; set; }
+        public virtual DbSet<Linea> TablaLineas { get; set; }
+        public virtual DbSet<Estado> TablaEstados { get; set; }
+        public virtual DbSet<Responsable> TablaResponsables { get; set; }
+        public virtual DbSet<Solicitud> TablaSolicitudes { get; set; }
+        public virtual DbSet<Sprint> TablaSprints { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -51,6 +51,43 @@ namespace AttentionAxia.Core.Data
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.Clave)
                 .IsUnicode(false);
+            modelBuilder.Entity<Celula>()
+              .HasMany(e => e.Responsables)
+              .WithRequired(e => e.CelulaPertenece)
+              .HasForeignKey(e => e.CelulaPerteneceId)
+              .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Linea>()
+               .HasMany(e => e.Responsables)
+               .WithRequired(e => e.LineaPertenece)
+               .HasForeignKey(e => e.LineaPerteneceId)
+               .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Solicitud>()
+                .Property(e => e.Iniciativa)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Estado>()
+                .HasMany(e => e.DetalleSolicitudes)
+                .WithRequired(e => e.Estado)
+                .HasForeignKey(e => e.EstadoId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Responsable>()
+                .Property(e => e.Nombres)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Responsable>()
+                .HasMany(e => e.DetalleSolicitudes)
+                .WithRequired(e => e.Responsable)
+                .HasForeignKey(e => e.ResponsableId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Sprint>()
+                .HasMany(e => e.DetalleSolicitudes)
+                .WithRequired(e => e.Sprint)
+                .HasForeignKey(e => e.SprintId)
+                .WillCascadeOnDelete(false);
         }
     }
 }

@@ -15,10 +15,12 @@ namespace AttentionAxia
 
             bundles.Add(new StyleBundle("~/adminlte/css").Include(
                     "~/adminlte/plugins/fontawesome-free/css/all.min.css",
+                     "~/adminlte/plugins/toastr/toastr.min.css",
                      "~/adminlte/css/adminlte.min.css"));
 
             bundles.Add(new ScriptBundle("~/adminlte/js").Include(
-             "~/adminlte/js/adminlte.min.js"));
+                     "~/adminlte/plugins/toastr/toastr.min.js",
+                    "~/adminlte/js/adminlte.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/Alertify").Include(
                      "~/Scripts/alertify.js"
@@ -32,8 +34,8 @@ namespace AttentionAxia
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new Bundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+            bundles.Add(new Bundle("~/bundles/bootstrap").Include(       
+                      "~/Scripts/bootstrap.bundle.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

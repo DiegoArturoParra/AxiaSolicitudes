@@ -220,50 +220,43 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CelulaController.cs" />
-    <Compile Include="Controllers\EstadosController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\EstadoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LineasController.cs" />
-    <Compile Include="Controllers\ResponsablesController.cs" />
-    <Compile Include="Controllers\SprintsController.cs" />
+    <Compile Include="Controllers\LineaController.cs" />
+    <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\UsuarioDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\EnumConfig.cs" />
     <Compile Include="Helpers\GetConstants.cs" />
     <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Core\Data\AxiaContext.cs" />
     <Compile Include="Helpers\Response.cs" />
-    <Compile Include="Migrations\202303212339337_holacell!!.cs" />
-    <Compile Include="Migrations\202303212339337_holacell!!.designer.cs">
-      <DependentUpon>202303212339337_holacell!!.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202303220044599_lineas.cs" />
-    <Compile Include="Migrations\202303220044599_lineas.designer.cs">
-      <DependentUpon>202303220044599_lineas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202303220055293_estados.cs" />
-    <Compile Include="Migrations\202303220055293_estados.designer.cs">
-      <DependentUpon>202303220055293_estados.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202303251417040_1.cs" />
-    <Compile Include="Migrations\202303251417040_1.designer.cs">
-      <DependentUpon>202303251417040_1.cs</DependentUpon>
+    <Compile Include="Helpers\RolesEnum.cs" />
+    <Compile Include="Migrations\202303251950474_initial.cs" />
+    <Compile Include="Migrations\202303251950474_initial.designer.cs">
+      <DependentUpon>202303251950474_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
-    <Compile Include="Models\Estados.cs" />
+    <Compile Include="Models\Estado.cs" />
     <Compile Include="Models\Linea.cs" />
-    <Compile Include="Models\Responsables.cs" />
+    <Compile Include="Models\Responsable.cs" />
     <Compile Include="Models\Rol.cs" />
+    <Compile Include="Models\Solicitud.cs" />
     <Compile Include="Models\Sprint.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CelulaRepository.cs" />
+    <Compile Include="Repositories\EstadoRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Repositories\LineaRepository.cs" />
+    <Compile Include="Repositories\SprintRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -305,6 +298,9 @@
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-brands-400.svg" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-regular-400.svg" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.svg" />
+    <Content Include="adminlte\plugins\toastr\toastr.css" />
+    <Content Include="adminlte\plugins\toastr\toastr.min.css" />
+    <Content Include="adminlte\plugins\toastr\toastr.min.js" />
     <Content Include="Content\alertifyjs\alertify.css" />
     <Content Include="Content\alertifyjs\alertify.min.css" />
     <Content Include="Content\alertifyjs\alertify.rtl.css" />
@@ -384,14 +380,15 @@
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.ttf" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff2" />
+    <Content Include="adminlte\plugins\toastr\toastr.js.map" />
     <None Include="Properties\PublishProfiles\AttentionAxia - Web Deploy.pubxml" />
-    <None Include="Scripts\jquery-3.6.3.intellisense.js" />
-    <Content Include="Scripts\jquery-3.6.3.js" />
-    <Content Include="Scripts\jquery-3.6.3.min.js" />
-    <Content Include="Scripts\jquery-3.6.3.slim.js" />
-    <Content Include="Scripts\jquery-3.6.3.slim.min.js" />
-    <Content Include="Scripts\jquery-3.6.3.slim.min.map" />
-    <Content Include="Scripts\jquery-3.6.3.min.map" />
+    <None Include="Scripts\jquery-3.6.0.intellisense.js" />
+    <Content Include="Scripts\jquery-3.6.0.js" />
+    <Content Include="Scripts\jquery-3.6.0.min.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.min.js" />
+    <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
+    <Content Include="Scripts\jquery-3.6.0.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -478,7 +475,6 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
@@ -496,29 +492,23 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Celula\Create.cshtml" />
     <Content Include="Views\Celula\Delete.cshtml" />
-    <Content Include="Views\Celula\Details.cshtml" />
     <Content Include="Views\Celula\Edit.cshtml" />
     <Content Include="Views\Celula\Index.cshtml" />
-    <Content Include="Views\Lineas\Create.cshtml" />
-    <Content Include="Views\Lineas\Delete.cshtml" />
-    <Content Include="Views\Lineas\Details.cshtml" />
-    <Content Include="Views\Lineas\Edit.cshtml" />
-    <Content Include="Views\Lineas\Index.cshtml" />
-    <Content Include="Views\Estados\Create.cshtml" />
-    <Content Include="Views\Estados\Delete.cshtml" />
-    <Content Include="Views\Estados\Details.cshtml" />
-    <Content Include="Views\Estados\Edit.cshtml" />
-    <Content Include="Views\Estados\Index.cshtml" />
-    <Content Include="Views\Responsables\Create.cshtml" />
-    <Content Include="Views\Responsables\Delete.cshtml" />
-    <Content Include="Views\Responsables\Details.cshtml" />
-    <Content Include="Views\Responsables\Edit.cshtml" />
-    <Content Include="Views\Responsables\Index.cshtml" />
-    <Content Include="Views\Sprints\Create.cshtml" />
-    <Content Include="Views\Sprints\Delete.cshtml" />
-    <Content Include="Views\Sprints\Details.cshtml" />
-    <Content Include="Views\Sprints\Edit.cshtml" />
-    <Content Include="Views\Sprints\Index.cshtml" />
+    <Content Include="Views\Linea\Create.cshtml" />
+    <Content Include="Views\Linea\Delete.cshtml" />
+    <Content Include="Views\Linea\Edit.cshtml" />
+    <Content Include="Views\Linea\Index.cshtml" />
+    <Content Include="Views\Estado\Create.cshtml" />
+    <Content Include="Views\Estado\Delete.cshtml" />
+    <Content Include="Views\Estado\Edit.cshtml" />
+    <Content Include="Views\Estado\Index.cshtml" />
+    <Content Include="Views\Sprint\Create.cshtml" />
+    <Content Include="Views\Sprint\Delete.cshtml" />
+    <Content Include="Views\Sprint\Details.cshtml" />
+    <Content Include="Views\Sprint\Edit.cshtml" />
+    <Content Include="Views\Sprint\Index.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Error\Status404.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -533,17 +523,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202303212339337_holacell!!.resx">
-      <DependentUpon>202303212339337_holacell!!.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202303220044599_lineas.resx">
-      <DependentUpon>202303220044599_lineas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202303220055293_estados.resx">
-      <DependentUpon>202303220055293_estados.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202303251417040_1.resx">
-      <DependentUpon>202303251417040_1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202303251950474_initial.resx">
+      <DependentUpon>202303251950474_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

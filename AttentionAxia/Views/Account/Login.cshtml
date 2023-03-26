@@ -93,6 +93,7 @@
                             if (!data.IsSuccess) {
                                 let message = data.Message;
                                 alertify.alert(error, message);
+                                $('#btn-login').removeAttr('disabled');
                             }
                             else {
                                 let url = "@Url.Action("Index","Home")";
@@ -108,7 +109,6 @@
             });
             $(document).ajaxComplete(function (e) {
                 $('#status').addClass('d-none');
-                $('#btn-login').removeAttr('disabled');
             });
         });
     </script>
