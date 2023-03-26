@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace AttentionAxia.Repositories
 {
@@ -42,18 +42,36 @@ namespace AttentionAxia.Repositories
                 return _entities;
             }
         }
-
+        #region get list all
         public async Task<IEnumerable<T>> GetAll()
         {
             return await Entities.ToListAsync();
 
         }
+        #endregion
 
-        public virtual T GetById(object id)
+        #region Find object by Id
+        public virtual T FindById(object id)
         {
             return Entities.Find(id);
         }
+        #endregion
 
+        #region get de un objeto con condiciones 
+        public async Task<T> GetWithCondition(Expression<Func<T, bool>> whereCondition)
+        {
+            return await Entities.Where(whereCondition).FirstOrDefaultAsync();
+        }
+        #endregion
+
+        #region existe por condiciones 
+        public async Task<bool> AnyWithCondition(Expression<Func<T, bool>> whereCondition)
+        {
+            return await Entities.AnyAsync(whereCondition);
+        }
+        #endregion
+
+        #region Insert in BD 
         public void Insert(T entity)
         {
             if (entity == null)
@@ -62,6 +80,9 @@ namespace AttentionAxia.Repositories
                 Context = new AxiaContext();
             Entities.Add(entity);
         }
+        #endregion
+
+        #region Update in BD 
         public void Update(T entity)
         {
 
@@ -71,7 +92,9 @@ namespace AttentionAxia.Repositories
                 Context = new AxiaContext();
             SetEntryModified(entity);
         }
+        #endregion
 
+        #region Delete in BD 
         public void Delete(T entity)
         {
 
@@ -85,7 +108,9 @@ namespace AttentionAxia.Repositories
         {
             Context.Entry(entity).State = EntityState.Modified;
         }
+        #endregion
 
+        #region Save transaction in BD 
         public async Task<bool> Save()
         {
             try
@@ -101,6 +126,7 @@ namespace AttentionAxia.Repositories
                 throw new Exception(_errorMessage, dbEx);
             }
         }
+        #endregion
         public void Dispose()
         {
             if (Context != null)

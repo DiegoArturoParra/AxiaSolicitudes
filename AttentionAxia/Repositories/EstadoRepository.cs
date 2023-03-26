@@ -3,9 +3,9 @@ using AttentionAxia.Models;
 
 namespace AttentionAxia.Repositories
 {
-    public class CelulaRepository : GenericRepository<Celula>
+    public class EstadoRepository : GenericRepository<Estado>
     {
-        public CelulaRepository(AxiaContext context) : base(context)
+        public EstadoRepository(AxiaContext context) : base(context)
         {
 
         }

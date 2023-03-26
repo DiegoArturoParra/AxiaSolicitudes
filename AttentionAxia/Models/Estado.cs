@@ -4,20 +4,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AttentionAxia.Models
 {
-    [Table("linea")]
-    public class Linea
+    [Table("estado")]
+    public class Estado
     {
-        public Linea()
+        public Estado()
         {
-            Responsables = new HashSet<Responsable>();
+            DetalleSolicitudes = new HashSet<Solicitud>();
         }
         [Column("id")]
         public int Id { get; set; }
         [Column("descripcion")]
         [Required]
-        [Display(Name = "Descripción")]
         [StringLength(500)]
         public string Descripcion { get; set; }
-        public virtual ICollection<Responsable> Responsables { get; set; }
+        [Column("nivel")]
+        [Required]
+        [StringLength(7)]
+        public string Nivel { get; set; }
+        public virtual ICollection<Solicitud> DetalleSolicitudes { get; set; }
     }
 }
