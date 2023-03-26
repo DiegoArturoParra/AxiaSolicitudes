@@ -1,41 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using AttentionAxia.Core.Data;
+using AttentionAxia.Helpers;
+using AttentionAxia.Models;
+using AttentionAxia.Repositories;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using AttentionAxia.Core.Data;
-using AttentionAxia.Models;
 
 namespace AttentionAxia.Controllers
 {
     [Authorize(Roles = "Administrador-Axia")]
     public class SprintController : BaseController
     {
-        private AxiaContext db = new AxiaContext();
+        private SprintRepository _sprintRepository;
+        public SprintController() 
+        {
+            _sprintRepository = new SprintRepository(_db);
+        }
 
         // GET: Sprints
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(db.TablaSprints.ToList());
+            return View(await _sprintRepository.GetAll());
         }
 
-        // GET: Sprints/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Sprint sprint = db.TablaSprints.Find(id);
-            if (sprint == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sprint);
-        }
+        // GET: Sprints/Details/5       
 
         // GET: Sprints/Create
         public ActionResult Create()
@@ -48,12 +38,21 @@ namespace AttentionAxia.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint)
         {
             if (ModelState.IsValid)
             {
-                db.TablaSprints.Add(sprint);
-                db.SaveChanges();
+                var existe = await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla);
+                if (existe)
+                {
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToLower()}");
+                    return View(sprint);
+                }
+                _sprintRepository.Insert(sprint);
+                await _sprintRepository.Save();
+                SetAlert(GetConstants.ALERT_SUCCESS);
+                SetMessage("Creado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
 
@@ -62,15 +61,17 @@ namespace AttentionAxia.Controllers
 
         // GET: Sprints/Edit/5
         public ActionResult Edit(int? id)
-        {
+        {           
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Index");
             }
-            Sprint sprint = db.TablaSprints.Find(id);
+            Sprint sprint = _sprintRepository.FindById(id);
             if (sprint == null)
             {
-                return HttpNotFound();
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage("No existe el registro.");
+                return RedirectToAction("Index");
             }
             return View(sprint);
         }
@@ -80,12 +81,20 @@ namespace AttentionAxia.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(sprint).State = EntityState.Modified;
-                db.SaveChanges();
+                if (await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla && x.Id != sprint.Id))
+                {
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToUpper()}");
+                    return View(sprint);
+                }
+                _sprintRepository.Update(sprint);
+                await _sprintRepository.Save();
+                SetAlert(GetConstants.ALERT_SUCCESS);
+                SetMessage("Actualizado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
             return View(sprint);
@@ -96,12 +105,14 @@ namespace AttentionAxia.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Index");
             }
-            Sprint sprint = db.TablaSprints.Find(id);
+            Sprint sprint = _sprintRepository.FindById(id);
             if (sprint == null)
             {
-                return HttpNotFound();
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage("No existe el registro.");
+                return RedirectToAction("Index");
             }
             return View(sprint);
         }
@@ -109,21 +120,14 @@ namespace AttentionAxia.Controllers
         // POST: Sprints/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Sprint sprint = db.TablaSprints.Find(id);
-            db.TablaSprints.Remove(sprint);
-            db.SaveChanges();
+            Sprint sprint = _sprintRepository.FindById(id);
+            _sprintRepository.Delete(sprint);
+            await _sprintRepository.Save();
+            SetAlert(GetConstants.ALERT_SUCCESS);
+            SetMessage("Eliminado satisfactoriamente.");
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

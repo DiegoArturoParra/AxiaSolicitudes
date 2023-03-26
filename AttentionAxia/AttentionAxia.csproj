@@ -224,6 +224,7 @@
     <Compile Include="Controllers\EstadoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LineaController.cs" />
+    <Compile Include="Controllers\ResponsablesController.cs" />
     <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
@@ -256,6 +257,7 @@
     <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Repositories\LineaRepository.cs" />
+    <Compile Include="Repositories\ResponsableRepository.cs" />
     <Compile Include="Repositories\SprintRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Startup.cs" />
@@ -281,6 +283,10 @@
     <Content Include="adminlte\img\Splash-Movistar.png" />
     <Content Include="adminlte\js\adminlte.js" />
     <Content Include="adminlte\js\adminlte.min.js" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.css" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.min.css" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.js" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.min.js" />
     <Content Include="adminlte\plugins\fontawesome-free\css\all.css" />
     <Content Include="adminlte\plugins\fontawesome-free\css\all.min.css" />
     <Content Include="adminlte\plugins\fontawesome-free\css\brands.css" />
@@ -381,6 +387,10 @@
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff" />
     <Content Include="adminlte\plugins\fontawesome-free\webfonts\fa-solid-900.woff2" />
     <Content Include="adminlte\plugins\toastr\toastr.js.map" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.css.map" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.min.css.map" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.js.map" />
+    <Content Include="adminlte\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.min.js.map" />
     <None Include="Properties\PublishProfiles\AttentionAxia - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
@@ -509,6 +519,10 @@
     <Content Include="Views\Sprint\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Error\Status404.cshtml" />
+    <Content Include="Views\Responsables\Create.cshtml" />
+    <Content Include="Views\Responsables\Delete.cshtml" />
+    <Content Include="Views\Responsables\Edit.cshtml" />
+    <Content Include="Views\Responsables\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

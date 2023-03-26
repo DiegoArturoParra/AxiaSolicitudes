@@ -89,7 +89,7 @@ namespace AttentionAxia.Controllers
                 if (await _estadoRepository.AnyWithCondition(x => x.Descripcion.ToLower() == estado.Descripcion && x.Id != estado.Id))
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage($"Ya existe un registro con la descripción {estado.Descripcion.ToLower()}");
+                    SetMessage($"Ya existe un registro con la descripción {estado.Descripcion.ToUpper()}");
                     return View(estado);
                 }
                 _estadoRepository.Update(estado);

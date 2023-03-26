@@ -1,0 +1,49 @@
+﻿@model AttentionAxia.Models.Responsable
+
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Eliminar</h2>
+
+<h3>¿Esta seguro que desea eliminar este responsable?</h3>
+<div>
+    <h4>Responsable</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CelulaPertenece.Descripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CelulaPertenece.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LineaPertenece.Descripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LineaPertenece.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Nombres)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nombres)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+<div class="form-actions no-color">
+    <input type="submit" value="Eliminar" class="btn btn-default" /> |
+    @Html.ActionLink("Regresar a la lista", "Index", null, new { @class = "btn btn-secondary" })
+</div>
+    }
+</div>
