@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using AttentionAxia.Core.Data;
-using AttentionAxia.Helpers;
+﻿using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
 {
@@ -29,7 +23,7 @@ namespace AttentionAxia.Controllers
         // GET: Responsables
         public ActionResult Index()
         {
-            var tablaResponsables = _responsableRepository.Context.TablaResponsables.Include(r => r.CelulaPertenece).Include(r => r.LineaPertenece);
+            var tablaResponsables = _responsableRepository.Table.Include(r => r.CelulaPertenece).Include(r => r.LineaPertenece);
             return View(tablaResponsables.ToList());
         }
 
@@ -112,7 +106,7 @@ namespace AttentionAxia.Controllers
             }
             ViewBag.CelulaPerteneceId = new SelectList(_celulaRepository.Table, "Id", "Descripcion", responsable.CelulaPerteneceId);
             ViewBag.LineaPerteneceId = new SelectList(_lineaRepository.Table, "Id", "Descripcion", responsable.LineaPerteneceId);
-            return View(responsable);            
+            return View(responsable);
         }
 
         // GET: Responsables/Delete/5
@@ -129,7 +123,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            return View(responsable);          
+            return View(responsable);
         }
 
         // POST: Responsables/Delete/5
@@ -142,7 +136,7 @@ namespace AttentionAxia.Controllers
             await _responsableRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);
             SetMessage("Eliminado satisfactoriamente.");
-            return RedirectToAction("Index");           
-        }  
+            return RedirectToAction("Index");
+        }
     }
 }
