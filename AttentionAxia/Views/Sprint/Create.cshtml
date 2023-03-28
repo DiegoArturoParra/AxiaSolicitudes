@@ -3,50 +3,36 @@
 @{
     ViewBag.Title = "Crear";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var valorSigla = ViewBag.sigla;
+    var test = 1;
 }
 
 <h2>Crear sprint</h2>
 
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Sprint</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Sigla, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Sigla, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Sigla, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Periodo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Periodo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Periodo, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.FechaGeneracion, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FechaGeneracion, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FechaGeneracion, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
+<div class="form-horizontal">
+    <h4>Sprint</h4>
+    <hr />
+    <div class="form-group">
+        <label class="control-label col-md-8">Cree la cantidad de sprints requeridos</label>
+        <div class="col-md-12">
+            <input type="hidden" id="total" value="@valorSigla" />
+            <button class="btn btn-primary" id="addRow">Añadir Sprint</button>
         </div>
     </div>
-}
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()        
+        <div id="newRow"></div>
+        <br/>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Guardar" class="btn btn-default" />
+            </div>
+        </div>
+    }
+</div>
+
+
 
 <div>
     @Html.ActionLink("Regresar a la lista", "Index", null, new { @class = "btn btn-secondary" })
@@ -54,4 +40,33 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $("#addRow").click(function () {
+            var rowCount = parseInt($("#total").val());
+            rowCount++;
+            $("#total").val(rowCount);
+            var html = '';
+            html += '<div id="inputRow">';
+            html += '<label class="control-label col-md-2">Sigla</label>'
+            html += '<input type="text" class="form-control" maxlength="6" value="SP' + rowCount +'" name="[' + (rowCount - 1) + '].Sigla" readonly />';
+            html += '<br>'
+            html += '<label class="control-label col-md-2">Periodo</label>'
+            html += '<select class="select form-control" name="[' + (rowCount - 1) + '].Periodo"><option value = "Q1" > Q1</option><option value="Q2">Q2</option><option value="Q3">Q3</option><option value="Q4">Q4</option></select > ';
+            html += '<br>'
+            html += '<label class="control-label col-md-2">Fecha de Inicio</label>'
+            html += '<input name="[' + (rowCount - 1) + '].FechaGeneracion" type="date" class="form-control" />';
+
+            html += '<br>'
+            html += '<button id="removeRow" type="button" class="btn btn-danger">Eliminar</button>';
+            html += '</div>';
+
+            $('#newRow').append(html);
+        });
+        $(document).on('click', '#removeRow', function () {
+            var rowCount = parseInt($("#total").val());
+            rowCount--;
+            $("#total").val(rowCount);
+            $(this).closest('#inputRow').remove();
+        });
+    </script>
 }
