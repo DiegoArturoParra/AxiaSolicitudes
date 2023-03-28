@@ -5,20 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Sprints</h2>
 
 <p>
     @Html.ActionLink("Crear", "Create", null, new {@class="btn btn-primary"})
 </p>
 <table class="table">
     <tr>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Sigla)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Periodo)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.FechaGeneracion)
         </th>
         <th></th>
@@ -37,7 +37,6 @@
         </td>
         <td class="text-center">
             @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" }) |
-            @Html.ActionLink("Detalles", "Details", new { id = item.Id }, new { @class = "btn btn-sencondary" }) |
             @Html.ActionLink("Eliminar", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
         </td>
     </tr>

@@ -2,6 +2,8 @@
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -14,7 +16,7 @@ namespace AttentionAxia.Controllers
     public class SprintController : BaseController
     {
         private SprintRepository _sprintRepository;
-        public SprintController() 
+        public SprintController()
         {
             _sprintRepository = new SprintRepository(_db);
         }
@@ -30,6 +32,8 @@ namespace AttentionAxia.Controllers
         // GET: Sprints/Create
         public ActionResult Create()
         {
+            string ultimaSigla = _sprintRepository.Table.OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
+            ViewBag.sigla = ultimaSigla.Substring(ultimaSigla.Length - 1);
             return View();
         }
 
@@ -38,30 +42,32 @@ namespace AttentionAxia.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] List<Sprint> sprint)
         {
             if (ModelState.IsValid)
             {
-                var existe = await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla);
-                if (existe)
+                foreach (var item in sprint)
                 {
-                    SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToLower()}");
-                    return View(sprint);
+                    var existe = await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == item.Sigla);
+                    if (existe)
+                    {
+                        SetAlert(GetConstants.ALERT_ERROR);
+                        SetMessage($"Ya existe un registro con la descripción {item.Sigla.ToLower()}");
+                        return View(sprint);
+                    }
+                    _sprintRepository.Insert(item);
+                    await _sprintRepository.Save();
                 }
-                _sprintRepository.Insert(sprint);
-                await _sprintRepository.Save();
                 SetAlert(GetConstants.ALERT_SUCCESS);
                 SetMessage("Creado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-
-            return View(sprint);
+            return View();
         }
 
         // GET: Sprints/Edit/5
         public ActionResult Edit(int? id)
-        {           
+        {
             if (id == null)
             {
                 return RedirectToAction("Index");
