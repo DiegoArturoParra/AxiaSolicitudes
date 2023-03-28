@@ -22,7 +22,7 @@ namespace AttentionAxia.Repositories
             Context = context;
         }
 
-        public AxiaContext Context { get; set; }
+        protected AxiaContext Context { get; set; }
         public virtual IQueryable<T> Table
         {
             get
