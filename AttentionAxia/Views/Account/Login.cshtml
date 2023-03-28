@@ -34,28 +34,30 @@
                 <div class="login-logo">
                     <h4>Login</h4>
                 </div>
-                <div class="input-group mb-3">
-                    @Html.TextBoxFor(model => model.EmailOrNickName, new { @required = "", @placeholder = "usuario", @class = "form-control" })
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-envelope"></span>
+                <form>
+                    <div class="input-group mb-3">
+                        @Html.TextBoxFor(model => model.EmailOrNickName, new { tabindex = 1, @required = "", @placeholder = "usuario", @class = "form-control focusNext" })
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="input-group mb-3">
-                    @Html.PasswordFor(model => model.Password, new { @required = "", @placeholder = "Contraseña", @class = "form-control" })
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
+                    <div class="input-group mb-3">
+                        @Html.PasswordFor(model => model.Password, new { tabindex = 2, @required = "", @placeholder = "Contraseña", @class = "form-control focusNext" })
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <button id="btn-login" class="btn btn-primary btn-block">
-                        <i class="fas fa-sign-in-alt mr-2"></i>
-                        <strong>Iniciar sesión</strong>
-                    </button>
-                </div>
+                    <div class="form-group">
+                        <button id="btn-login" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            <strong>Iniciar sesión</strong>
+                        </button>
+                    </div>
+                </form>
             </div>
             <div class="card-footer text-center d-none" id="status">
                 <i class="fas fa-spinner fa-spin fa-2x"></i>
@@ -69,6 +71,18 @@
     <script>
         $(document).ready(function (e) {
             let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+            $('#EmailOrNickName').change(function () {
+                if ($(this).val()!='') {
+                    $('#alert-required').addClass('d-none');
+                }
+            });
+
+            $('#Password').change(function () {
+                if ($(this).val()!='') {
+                    $('#alert-required').addClass('d-none');
+                }
+            });
+
             $('#btn-login').click(function (e) {
                 $('#alert-required').addClass('d-none');
                 const emailONick = $('#EmailOrNickName').val();
@@ -84,11 +98,11 @@
                     if (!data.IsSuccess) {
                         let message = data.Message;
                         alertify.alert(error, message);
+                        $('#btn-login').removeAttr('disabled');
                     }
                     else {
                         let url ='@Url.Action("Login", "Account")';
                         data = { EmailOrNickName: emailONick, Password: pass }
-                        console.log(data);
                         $.post(url, data).done(function (data) {
                             if (!data.IsSuccess) {
                                 let message = data.Message;
@@ -103,7 +117,26 @@
                     }
                 });
             });
+            $("input").keypress(function (evt) {
 
+                // Si el evento NO es una tecla Enter
+                if (evt.key !== 'Enter') {
+                    return;
+                }
+                let element = evt.target;
+                // Si el evento NO fue lanzado por un elemento con class "focusNext"
+                if (!element.classList.contains('focusNext')) {
+                    return;
+                }
+                // AQUI logica para encontrar el siguiente
+                let tabIndex = element.tabIndex + 1;
+                var next = document.querySelector('[tabindex="' + tabIndex + '"]');
+                // Si encontramos un elemento
+                if (next) {
+                    next.focus();
+                    evt.preventDefault();
+                }
+            });
             $(document).ajaxStart(function (e) {
                 $('#status').removeClass('d-none');
             });
