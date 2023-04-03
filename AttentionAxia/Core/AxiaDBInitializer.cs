@@ -19,7 +19,7 @@ namespace AttentionAxia.Core
                new Rol
               {
                   Id = 2,
-                  Descripcion = "Genérico-Axia"
+                  Descripcion = "General-Axia"
               }
             };
             context.TablaRoles.AddRange(defaultRoles);
