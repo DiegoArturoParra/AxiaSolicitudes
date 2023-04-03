@@ -2,6 +2,7 @@
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -32,8 +33,6 @@ namespace AttentionAxia.Controllers
         // GET: Sprints/Create
         public ActionResult Create()
         {
-            string ultimaSigla = _sprintRepository.Table.OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
-            ViewBag.sigla = ultimaSigla.Substring(ultimaSigla.Length - 1);
             return View();
         }
 
@@ -42,20 +41,54 @@ namespace AttentionAxia.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] List<Sprint> sprint)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint, int CantidadSprints)
         {
             if (ModelState.IsValid)
             {
-                foreach (var item in sprint)
+                var res1 = _sprintRepository.Table.Where(x => x.Periodo == "Q1").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
+                string[] ultimaSiglaPeriodo1 = { "0", "0" };
+                if (res1 != null) { ultimaSiglaPeriodo1 = res1.Split('-'); }
+                var res2 = _sprintRepository.Table.Where(x => x.Periodo == "Q2").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
+                string[] ultimaSiglaPeriodo2 = { "0", "0" };
+                if (res2 != null) { ultimaSiglaPeriodo2 = res2.Split('-'); }
+                var res3 = _sprintRepository.Table.Where(x => x.Periodo == "Q3").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
+                string[] ultimaSiglaPeriodo3 = { "0", "0" };
+                if (res3 != null) { ultimaSiglaPeriodo3 = res3.Split('-'); }
+                var res4 = _sprintRepository.Table.Where(x => x.Periodo == "Q4").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
+                string[] ultimaSiglaPeriodo4 = {"0", "0"};
+                if (res4 != null) { ultimaSiglaPeriodo4 = res4.Split('-'); }
+
+                int valorSiglaFinal = 0;
+
+                if (sprint.Periodo == "Q1")
                 {
-                    var existe = await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == item.Sigla);
+                    valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo1[1]);
+                }
+                else if (sprint.Periodo == "Q2")
+                {
+                    valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo2[1]);
+                }
+                else if (sprint.Periodo == "Q3")
+                {
+                    valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo3[1]);
+                }
+                else
+                {
+                    valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo4[1]);
+                }
+                var sig = sprint.Sigla;
+                for (int i = 0; i <= CantidadSprints-1; i++)
+                {
+                    valorSiglaFinal++;
+                    var existe = await _sprintRepository.AnyWithCondition(x => x.Sigla == sprint.Sigla + "-" + valorSiglaFinal.ToString() && x.Periodo == sprint.Periodo);
                     if (existe)
                     {
                         SetAlert(GetConstants.ALERT_ERROR);
-                        SetMessage($"Ya existe un registro con la descripción {item.Sigla.ToLower()}");
+                        SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToLower()}");
                         return View(sprint);
                     }
-                    _sprintRepository.Insert(item);
+                    sprint.Sigla = sig + "-" + valorSiglaFinal.ToString();
+                    _sprintRepository.Insert(sprint);
                     await _sprintRepository.Save();
                 }
                 SetAlert(GetConstants.ALERT_SUCCESS);
