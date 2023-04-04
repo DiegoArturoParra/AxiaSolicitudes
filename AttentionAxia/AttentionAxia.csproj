@@ -512,7 +512,6 @@
     <Content Include="Views\Estado\Index.cshtml" />
     <Content Include="Views\Sprint\Create.cshtml" />
     <Content Include="Views\Sprint\Delete.cshtml" />
-    <Content Include="Views\Sprint\Details.cshtml" />
     <Content Include="Views\Sprint\Edit.cshtml" />
     <Content Include="Views\Sprint\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />

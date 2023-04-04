@@ -78,8 +78,8 @@
                         <!-- Sidebar Menu -->
                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
                         {
-
-                            <li class="nav-item mt-2">
+                            <li class="nav-header text-white text-bold">ADMINISTRACIÓN</li>
+                            <li class="nav-item">
                                 <a href="@Url.Action("Index","Celula")" class="nav-link active">
                                     <i class="nav-icon fas fa-bullseye"></i>
                                     <p>
@@ -128,6 +128,7 @@
                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia))
                             || User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.GeneralAxia)))
                         {
+                            <li class="nav-header text-white text-bold mt-4">SOLICITUDES</li>
                             <li class="nav-item mt-2">
                                 <a href="@Url.Action("Index", "Solicitud")" class="nav-link active">
                                     <i class="nav-icon fas fa-tasks"></i>

@@ -16,6 +16,7 @@ namespace AttentionAxia.Models
 
         [Column("descripcion")]
         [Required]
+        [Display(Name = "Descripción del rol")]
         [StringLength(100)]
         public string Descripcion { get; set; }
     

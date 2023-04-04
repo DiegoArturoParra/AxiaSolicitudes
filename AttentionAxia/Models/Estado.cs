@@ -15,6 +15,7 @@ namespace AttentionAxia.Models
         public int Id { get; set; }
         [Column("descripcion")]
         [Required]
+        [Display(Name = "Descripción")]
         [StringLength(500)]
         public string Descripcion { get; set; }
         [Column("nivel")]

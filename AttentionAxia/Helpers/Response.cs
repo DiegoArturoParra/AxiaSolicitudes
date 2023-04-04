@@ -10,9 +10,9 @@ namespace AttentionAxia.Helpers
     }
     public static class Responses
     {
-        public static ResponseDTO SetCreateResponse()
+        public static ResponseDTO SetCreateResponse(string Message = "Se ha creado satisfactoriamente.")
         {
-            return new ResponseDTO { Message = "Se ha creado satisfactoriamente.", IsSuccess = true };
+            return new ResponseDTO { Message = Message, IsSuccess = true };
         }
         public static ResponseDTO SetOkResponse(string message, object data = null)
         {

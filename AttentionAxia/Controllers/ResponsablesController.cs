@@ -61,7 +61,7 @@ namespace AttentionAxia.Controllers
 
             ViewBag.CelulaPerteneceId = new SelectList(_celulaRepository.Table, "Id", "Descripcion", responsable.CelulaPerteneceId);
             ViewBag.LineaPerteneceId = new SelectList(_lineaRepository.Table, "Id", "Descripcion", responsable.LineaPerteneceId);
-            return View(responsable);
+            return View();
         }
 
         // GET: Responsables/Edit/5
