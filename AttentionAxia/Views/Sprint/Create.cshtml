@@ -13,13 +13,13 @@
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-2">Cantidad de los sprints</label>
-                <input type="number" class="form-control" maxlength="15" min="6" name="CantidadSprints" />
+                <input type="number" class="form-control" required max="15" min="6" name="CantidadSprints" />
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-2">Sigla de los sprints</label>
-                <input type="text" class="form-control" maxlength="4" name="Sigla" />
+                <input type="text" class="form-control" maxlength="4" name="Sigla" required />
                 <input type="text" class="d-none" name="FechaGeneracion" value="@DateTime.Now" />
             </div>
         </div>

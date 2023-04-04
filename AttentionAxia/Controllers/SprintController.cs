@@ -56,7 +56,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("Creado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-            return View();
+            return View(sprint);
         }
 
         // GET: Sprints/Edit/5
