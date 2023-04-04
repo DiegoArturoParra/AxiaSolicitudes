@@ -21,11 +21,13 @@
                 @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        @{
+            var color = Model.Nivel;
+        }
         <div class="form-group">
             @Html.LabelFor(model => model.Nivel, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-12">
-                <input class="form-control" type="color" name="Nivel" />
+                <input class="form-control" type="color" value="@color" name="Nivel" />
                 @Html.ValidationMessageFor(model => model.Nivel, "", new { @class = "text-danger" })
             </div>
         </div>

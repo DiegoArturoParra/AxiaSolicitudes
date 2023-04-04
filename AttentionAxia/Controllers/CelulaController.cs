@@ -92,7 +92,7 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Celula/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -105,6 +105,13 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
+            bool hayResponsables = await new ResponsableRepository(_db).AnyWithCondition(x => x.CelulaPerteneceId == celula.Id);
+            if (hayResponsables)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage($"Hay responsables vinculados a la célula {celula.Descripcion}, elimine toda vinculación.");
+                return RedirectToAction("Index");
+            }
             return View(celula);
         }
 
@@ -114,6 +121,19 @@ namespace AttentionAxia.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Celula celula = _celulaRepository.FindById(id);
+            if (celula == null)
+            {
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage("No existe el registro.");
+                return RedirectToAction("Index");
+            }
+            bool hayResponsables = await new ResponsableRepository(_db).AnyWithCondition(x => x.CelulaPerteneceId == celula.Id);
+            if (hayResponsables)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage($"Hay responsables vinculados a la célula {celula.Descripcion}, elimine toda vinculación.");
+                return RedirectToAction("Index");
+            }
             _celulaRepository.Delete(celula);
             await _celulaRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);

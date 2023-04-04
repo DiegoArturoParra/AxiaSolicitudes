@@ -190,6 +190,7 @@
     <script>
         $(document).ready(function (e) {
             let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+            let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
             let message = '@TempData[AttentionAxia.Helpers.GetConstants.MESSAGE]';
             let errorAlert = '@TempData[AttentionAxia.Helpers.GetConstants.ALERT]';
             if (message != '' && errorAlert != '') {
@@ -200,7 +201,10 @@
                 {
                     alertify.alert(error, message);
                 }
-
+                else if (errorAlert === '@AttentionAxia.Helpers.GetConstants.ALERT_WARNING')
+                {
+                    alertify.alert(warning, message);
+                }
             }
         });
     </script>

@@ -91,7 +91,7 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Lineas/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -104,6 +104,13 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
+            bool hayResponsables = await new ResponsableRepository(_db).AnyWithCondition(x => x.LineaPerteneceId == linea.Id);
+            if (hayResponsables)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage($"Hay responsables vinculados a la linea {linea.Descripcion}, elimine toda vinculación.");
+                return RedirectToAction("Index");
+            }
             return View(linea);
         }
 
@@ -112,8 +119,20 @@ namespace AttentionAxia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-
             Linea linea = _lineaRepository.FindById(id);
+            if (linea == null)
+            {
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage("No existe el registro.");
+                return RedirectToAction("Index");
+            }
+            bool hayResponsables = await new ResponsableRepository(_db).AnyWithCondition(x => x.LineaPerteneceId == linea.Id);
+            if (hayResponsables)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage($"Hay responsables vinculados a la linea {linea.Descripcion}, elimine toda vinculación.");
+                return RedirectToAction("Index");
+            }
             _lineaRepository.Delete(linea);
             await _lineaRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);

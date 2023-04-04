@@ -60,6 +60,9 @@
     <Reference Include="Humanizer, Version=2.14.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.14.1\lib\netstandard2.0\Humanizer.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -225,6 +228,7 @@
     <Compile Include="Controllers\ResponsablesController.cs" />
     <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
+    <Compile Include="Core\Middleware\CustomExceptionFilter.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\UsuarioDTO.cs" />
     <Compile Include="Global.asax.cs">
@@ -236,10 +240,6 @@
     <Compile Include="Core\Data\AxiaContext.cs" />
     <Compile Include="Helpers\Response.cs" />
     <Compile Include="Helpers\RolesEnum.cs" />
-    <Compile Include="Migrations\202303251950474_initial.cs" />
-    <Compile Include="Migrations\202303251950474_initial.designer.cs">
-      <DependentUpon>202303251950474_initial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
     <Compile Include="Models\Estado.cs" />
@@ -532,11 +532,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202303251950474_initial.resx">
-      <DependentUpon>202303251950474_initial.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

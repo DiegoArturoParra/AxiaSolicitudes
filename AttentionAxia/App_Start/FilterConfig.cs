@@ -1,4 +1,4 @@
-﻿using System.Web;
+﻿using AttentionAxia.Core.Middleware;
 using System.Web.Mvc;
 
 namespace AttentionAxia
@@ -8,6 +8,7 @@ namespace AttentionAxia
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new CustomExceptionFilter());
         }
     }
 }

@@ -57,6 +57,7 @@ namespace AttentionAxia.Repositories
         }
         #endregion
 
+
         #region get de un objeto con condiciones 
         public async Task<T> GetWithCondition(Expression<Func<T, bool>> whereCondition)
         {
