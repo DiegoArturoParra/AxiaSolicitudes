@@ -19,7 +19,7 @@ namespace AttentionAxia.Core.Data
         public virtual DbSet<Usuario> TablaUsuarios { get; set; }
         public virtual DbSet<Celula> TablaCelulas { get; set; }
         public virtual DbSet<Linea> TablaLineas { get; set; }
-        public virtual DbSet<Estado> TablaEstados { get; set; }
+        public virtual DbSet<EstadoSolicitud> TablaEstados { get; set; }
         public virtual DbSet<Responsable> TablaResponsables { get; set; }
         public virtual DbSet<Solicitud> TablaSolicitudes { get; set; }
         public virtual DbSet<Sprint> TablaSprints { get; set; }
@@ -67,7 +67,7 @@ namespace AttentionAxia.Core.Data
                 .Property(e => e.Iniciativa)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Estado>()
+            modelBuilder.Entity<EstadoSolicitud>()
                 .HasMany(e => e.DetalleSolicitudes)
                 .WithRequired(e => e.Estado)
                 .HasForeignKey(e => e.EstadoId)

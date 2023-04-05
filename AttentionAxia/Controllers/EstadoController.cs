@@ -41,7 +41,7 @@ namespace AttentionAxia.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Descripcion,Nivel")] Estado estado)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Descripcion,Nivel")] EstadoSolicitud estado)
         {
             if (ModelState.IsValid)
             {
@@ -69,7 +69,7 @@ namespace AttentionAxia.Controllers
             {
                 return RedirectToAction("Index");
             }
-            Estado estado = _estadoRepository.FindById(id);
+            EstadoSolicitud estado = _estadoRepository.FindById(id);
             if (estado == null)
             {
                 SetAlert(GetConstants.ALERT_ERROR);
@@ -82,7 +82,7 @@ namespace AttentionAxia.Controllers
         // POST: Estados/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Descripcion,Nivel")] Estado estado)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Descripcion,Nivel")] EstadoSolicitud estado)
         {
             if (ModelState.IsValid)
             {
@@ -108,7 +108,7 @@ namespace AttentionAxia.Controllers
             {
                 return RedirectToAction("Index");
             }
-            Estado estado = _estadoRepository.FindById(id);
+            EstadoSolicitud estado = _estadoRepository.FindById(id);
             if (estado == null)
             {
                 SetAlert(GetConstants.ALERT_ERROR);
@@ -123,7 +123,7 @@ namespace AttentionAxia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Estado estado = _estadoRepository.FindById(id);
+            EstadoSolicitud estado = _estadoRepository.FindById(id);
             _estadoRepository.Delete(estado);
             await _estadoRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);

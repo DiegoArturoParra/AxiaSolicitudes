@@ -4,18 +4,18 @@ namespace AttentionAxia.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("rol")]
+    [Table("ROL", Schema = "AXIA")]
     public partial class Rol
     {
         public Rol()
         {
             Usuario = new HashSet<Usuario>();
         }
-        [Column("id")]
+        [Column("id_rol")]
         public int Id { get; set; }
 
         [Column("descripcion")]
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         [Display(Name = "Descripción del rol")]
         [StringLength(100)]
         public string Descripcion { get; set; }
