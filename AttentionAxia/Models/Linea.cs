@@ -4,17 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AttentionAxia.Models
 {
-    [Table("linea")]
+    [Table("LINEA_DE_TRABAJO", Schema = "AXIA")]
     public class Linea
     {
         public Linea()
         {
             Responsables = new HashSet<Responsable>();
         }
-        [Column("id")]
+        [Column("id_linea_trabajo")]
         public int Id { get; set; }
         [Column("descripcion")]
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         [Display(Name = "Descripción")]
         [StringLength(500)]
         public string Descripcion { get; set; }

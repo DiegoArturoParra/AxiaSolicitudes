@@ -3,7 +3,7 @@ using AttentionAxia.Models;
 
 namespace AttentionAxia.Repositories
 {
-    public class EstadoRepository : GenericRepository<Estado>
+    public class EstadoRepository : GenericRepository<EstadoSolicitud>
     {
         public EstadoRepository(AxiaContext context) : base(context)
         {

@@ -5,28 +5,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AttentionAxia.Models
 {
-    [Table("sprint")]
+    [Table("SPRINT", Schema = "AXIA")]
     public class Sprint
     {
         public Sprint()
         {
             DetalleSolicitudes = new HashSet<Solicitud>();
         }
-        [Column("id")]
+        [Column("id_sprint")]
         public int Id { get; set; }
-        [Column("descripcion")]
-        [Required]
+        [Column("sigla")]
+        [Required(ErrorMessage = "Campo requerido.")]
         [Display(Name = "Sigla")]
         [StringLength(10)]
         public string Sigla { get; set; }
         [Column("periodo")]
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         [Display(Name = "Periodo")]
         [StringLength(15)]
         public string Periodo { get; set; }
         [Column("fecha_generacion")]
         [Display(Name = "Fecha Generación")]
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         public DateTime FechaGeneracion { get; set; }
         public virtual ICollection<Solicitud> DetalleSolicitudes { get; set; }
     }

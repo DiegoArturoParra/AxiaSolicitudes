@@ -5,30 +5,30 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttentionAxia.Models
 {
 
-    [Table("detalle_solicitud")]
+    [Table("DETALLE_SOLICITUD", Schema = "AXIA")]
     public class Solicitud
     {
-        [Column("id")]
+        [Column("id_solicitud")]
         public int Id { get; set; }
         [Column("responsable_id")]
         public int ResponsableId { get; set; }
-        [Column("estado_id")]
+        [Column("estado_solicitud_id")]
         public int EstadoId { get; set; }
         [Column("sprint_id")]
         public int SprintId { get; set; }
         [Column("iniciativa")]
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         [StringLength(5000)]
         public string Iniciativa { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         [Column("fecha_inicio_sprint")]
         public DateTime FechaInicioSprint { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido.")]
         [Column("fecha_fin_sprint")]
         public DateTime FechaFinSprint { get; set; }
-        [Column("avance")]
+        [Column("avance_porcentual")]
         public byte Avance { get; set; }
-        public virtual Estado Estado { get; set; }
+        public virtual EstadoSolicitud Estado { get; set; }
         public virtual Responsable Responsable { get; set; }
         public virtual Sprint Sprint { get; set; }
     }

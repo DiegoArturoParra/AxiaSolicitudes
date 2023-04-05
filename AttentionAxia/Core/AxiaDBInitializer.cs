@@ -62,23 +62,29 @@ namespace AttentionAxia.Core
 
             context.TablaCelulas.AddRange(defaultCelulas);
 
-            IList<Estado> defaultEstados = new List<Estado>
+            IList<EstadoSolicitud> defaultEstados = new List<EstadoSolicitud>
             {
-              new Estado
+              new EstadoSolicitud
               {
                 Descripcion = "Por Hacer",
-                 Nivel = "#A28F8F",
+                 Nivel = "#b8c0c7",
               },
-              new Estado
+              new EstadoSolicitud
               {
                  Descripcion = "En Progreso",
-                 Nivel = "#74DEE9",
+                 Nivel = "#bb8f30",
 
               },
-                new Estado
+               new EstadoSolicitud
+              {
+                 Descripcion = "Stand By",
+                 Nivel = "#e89259",
+
+              },
+                new EstadoSolicitud
               {
                 Descripcion = "Finalizado",
-                 Nivel = "#8AF5A9",
+                 Nivel = "#92e897",
               }
             };
 
