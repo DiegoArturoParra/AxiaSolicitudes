@@ -222,7 +222,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CelulaController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\EstadoController.cs" />
+    <Compile Include="Controllers\EstadoSolicitudController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LineaController.cs" />
     <Compile Include="Controllers\ResponsablesController.cs" />
@@ -246,7 +246,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
-    <Compile Include="Models\Estado.cs" />
+    <Compile Include="Models\EstadoSolicitud.cs" />
     <Compile Include="Models\Linea.cs" />
     <Compile Include="Models\Responsable.cs" />
     <Compile Include="Models\Rol.cs" />
@@ -510,10 +510,10 @@
     <Content Include="Views\Linea\Delete.cshtml" />
     <Content Include="Views\Linea\Edit.cshtml" />
     <Content Include="Views\Linea\Index.cshtml" />
-    <Content Include="Views\Estado\Create.cshtml" />
-    <Content Include="Views\Estado\Delete.cshtml" />
-    <Content Include="Views\Estado\Edit.cshtml" />
-    <Content Include="Views\Estado\Index.cshtml" />
+    <Content Include="Views\EstadoSolicitud\Create.cshtml" />
+    <Content Include="Views\EstadoSolicitud\Delete.cshtml" />
+    <Content Include="Views\EstadoSolicitud\Edit.cshtml" />
+    <Content Include="Views\EstadoSolicitud\Index.cshtml" />
     <Content Include="Views\Sprint\Create.cshtml" />
     <Content Include="Views\Sprint\Delete.cshtml" />
     <Content Include="Views\Sprint\Edit.cshtml" />

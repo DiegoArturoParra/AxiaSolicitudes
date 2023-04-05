@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using AttentionAxia.Core.Data;
-using AttentionAxia.Helpers;
+﻿using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
 {
     [Authorize(Roles = "Administrador-Axia")]
-    public class EstadoController : BaseController
+    public class EstadoSolicitudController : BaseController
     {
         private readonly EstadoRepository _estadoRepository;
-        public EstadoController()
+        public EstadoSolicitudController()
         {
             _estadoRepository = new EstadoRepository(_db);
         }
 
-        // GET: Estados
+        // GET: Estados-Solicitud
         public async Task<ActionResult> Index()
         {
             return View(await _estadoRepository.GetAll());

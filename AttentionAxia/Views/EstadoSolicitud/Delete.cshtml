@@ -1,4 +1,4 @@
-﻿@model AttentionAxia.Models.Linea
+﻿@model AttentionAxia.Models.EstadoSolicitud
 
 @{
     ViewBag.Title = "Eliminar";
@@ -8,9 +8,9 @@
 <div class="row">
     <!-- left column -->
     <div class="col-md-6">
-        <div class="card card-primary bgAzulOscuroMovistar">
+        <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title text-bold text-white">¿Está seguro que desea eliminar esta línea?</h3>
+                <h3 class="card-title text-bold text-white">¿Está seguro que desea eliminar este estado?</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -22,13 +22,22 @@
                             <input type="text" class="form-control" disabled value="@Model.Descripcion">
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Nivel</label>
+                        <div class="col-sm-10">
+                            @{
+                                var color = Model.Nivel;
+                            }
+                            <input class="form-control" type="color" disabled value="@color" name="Nivel" />
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer d-flex justify-content-end">
                     @using (Html.BeginForm())
                     {
                         @Html.AntiForgeryToken()
-                        <a class="btn btn-link btn-sm text-dark mr-4" href="@Url.Action("Index","Linea")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
+                        <a class="btn btn-link btn-sm text-dark mr-4" href="@Url.Action("Index","EstadoSolicitud")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
                         <button type="submit" class="btn btn-danger btn-sm mr-2"><i class="fa fa-trash mr-3"></i>Eliminar</button>
                     }
                 </div>

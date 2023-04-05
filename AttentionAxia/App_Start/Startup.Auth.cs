@@ -8,20 +8,19 @@ using System.Web.Configuration;
 
 namespace AttentionAxia
 {
-	public partial class Startup
-	{
-		public void ConfigureAuth(IAppBuilder app)
-		{
-			app.UseCookieAuthentication(new CookieAuthenticationOptions
-			{
-				CookieName = "AXIASOLICITUDES",
-				LogoutPath = new PathString("/Account/Logout"),
-				SlidingExpiration = true,
-				ExpireTimeSpan = TimeSpan.FromMinutes(15),
-				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-				AuthenticationMode = (Microsoft.Owin.Security.AuthenticationMode)AuthenticationMode.None
-
-			});
-		}
-	}
+    public partial class Startup
+    {
+        public void ConfigureAuth(IAppBuilder app)
+        {
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                CookieName = "AXIASOLICITUDES",
+                LogoutPath = new PathString("/Account/Logout"),
+                SlidingExpiration = true,
+                ExpireTimeSpan = TimeSpan.FromHours(8),
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                AuthenticationMode = (Microsoft.Owin.Security.AuthenticationMode)AuthenticationMode.None
+            });
+        }
+    }
 }
