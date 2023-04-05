@@ -2,10 +2,9 @@
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Linq;
-using System.Drawing;
 
 namespace AttentionAxia.Controllers
 {
@@ -33,15 +32,15 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Sprints/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Sprints/Create
+        // POST: Sprints/CreateMultipleSprints
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint, int CantidadSprints)
+        public async Task<ActionResult> CrearMultipleSprints([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint, int CantidadSprints)
         {
             if (ModelState.IsValid)
             {
@@ -50,13 +49,13 @@ namespace AttentionAxia.Controllers
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
                     SetMessage(response.Message);
-                    return View(sprint);
+                    return Json(new { response.IsSuccess, response.Message });
                 }
                 SetAlert(GetConstants.ALERT_SUCCESS);
                 SetMessage("Creado satisfactoriamente.");
-                return RedirectToAction("Index");
+                return Json(new { response.IsSuccess, response.Message });
             }
-            return View(sprint);
+            return Json(false);
         }
 
         // GET: Sprints/Edit/5
@@ -85,7 +84,7 @@ namespace AttentionAxia.Controllers
             {
                 if (await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla && x.Id != sprint.Id))
                 {
-                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetAlert(GetConstants.ALERT_WARNING);
                     SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToUpper()}");
                     return View(sprint);
                 }
@@ -101,13 +100,13 @@ namespace AttentionAxia.Controllers
 
 
         [HttpPost]
-        public async Task<JsonResult>  DeleteMultiple(string Year, string Period)
+        public async Task<JsonResult> DeleteMultiple(string Year, string Period)
         {
 
             var response = await _sprintRepository.DeleteMultipeSprints(Year, Period);
             if (!response.IsSuccess)
             {
-                SetAlert(GetConstants.ALERT_ERROR);
+                SetAlert(GetConstants.ALERT_WARNING);
                 SetMessage(response.Message);
                 return Json(new { response.IsSuccess, response.Message });
             }

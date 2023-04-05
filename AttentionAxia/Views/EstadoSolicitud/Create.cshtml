@@ -1,9 +1,10 @@
-﻿@model AttentionAxia.Models.Estado
+﻿@model AttentionAxia.Models.EstadoSolicitud
 
 @{
-    ViewBag.Title = "Crear";
+    ViewBag.Title = "Crear estado de la solicitud";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<title>@ViewBag.Title</title>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -35,7 +36,7 @@
         <hr />
         <div class="form-group mt-4">
             <div class="d-flex justify-content-end">
-                <a class="btn btn-outline-light text-dark mr-4" href="@Url.Action("Index","Estado")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
+                <a class="btn btn-outline-light text-dark mr-4" href="@Url.Action("Index","EstadoSolicitud")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
                 <button type="submit" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>

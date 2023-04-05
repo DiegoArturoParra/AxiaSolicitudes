@@ -99,7 +99,7 @@
                     if (!data.IsSuccess) {
                         let message = data.Message;
                         alertify.alert(error, message);
-                        $('#btn-login').removeAttr('disabled');
+                        $(this).removeAttr('disabled');
                     }
                     else {
                         let url ='@Url.Action("Login", "Account")';
@@ -108,7 +108,7 @@
                             if (!data.IsSuccess) {
                                 let message = data.Message;
                                 alertify.alert(error, message);
-                                $('#btn-login').removeAttr('disabled');
+                                $(this).removeAttr('disabled');
                             }
                             else {
                                 let url = "@Url.Action("Index","Home")";

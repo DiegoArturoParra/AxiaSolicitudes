@@ -8,7 +8,7 @@
 <h2>Sprints</h2>
 <div class="row mb-4">
     <a href="@Url.Action("Create","Sprint")" class="btn btn-primary ml-5  mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar Sprints</strong></a>
-    <a onclick="DeleteMultiple()" class="btn btn-outline-danger ml-5 mb-2 mt-2"><i class="fa fa fa-trash mr-2"></i><strong>Eliminar multiples sprints por Periodo</strong></a>
+    <a onclick="DeleteMultiple()" class="btn btn-outline-danger ml-5 mb-2 mt-2"><i class="fa fa fa-trash mr-2"></i><strong>Eliminar multiples sprints por periodo</strong></a>
 </div>
 <table class="table">
     <tr>
@@ -31,7 +31,7 @@
         <tr>
             <td class="text-center">
                 @Html.DisplayFor(modelItem => item.Sigla)
-            </td>
+            </td>''
             <td class="text-center">
                 @Html.DisplayFor(modelItem => item.Periodo)
             </td>
@@ -65,10 +65,10 @@
                         <div class="col-md-12">
                             <label class="control-label col-md-12">Periodo del sprint</label>
                             <select class="select form-control" name="Period" id="Period">
-                                <option value="Q1">1Q</option>
-                                <option value="Q2">2Q</option>
-                                <option value="Q3">3Q</option>
-                                <option value="Q4">4Q</option>
+                                <option value="1Q">1Q</option>
+                                <option value="2Q">2Q</option>
+                                <option value="3Q">3Q</option>
+                                <option value="4Q">4Q</option>
                             </select>
                         </div>
                     </div>
@@ -91,13 +91,16 @@
 </div>
 @section scripts{
     <script type="text/javascript">
+        var originalBtnContent = $('#btnDeleteMultiple').html();
         function DeleteMultiple() {
             $(".needs-validation").removeClass("was-validated")
             $("#modalDeleteMultiple").modal("show");
         }
 
         $("#btnDeleteMultiple").on("click", function () {
-              let url = "@Url.Action("Index", "Sprint")";
+            $('#btnDeleteMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Eliminando...');
+            $('#btnDeleteMultiple').prop("disabled", true);
+            let url = "@Url.Action("Index", "Sprint")";
             // Fetch all the forms we want to apply custom Bootstrap validation styles to
             var forms = document.querySelectorAll('.needs-validation')
 
@@ -124,6 +127,8 @@
                                 window.location.href = url;
                                 $("#modalDeleteMultiple").modal("hide");
                             }
+                            $('#btnDeleteMultiple').html(originalBtnContent);
+                            $('#btnDeleteMultiple').removeAttr('disabled');
                         },
                         error: function (error) {
                         },

@@ -1,9 +1,10 @@
 ﻿@model AttentionAxia.Models.Celula
 
 @{
-    ViewBag.Title = "Editar";
+    ViewBag.Title = "Editar célula";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<title>@ViewBag.Title</title>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()

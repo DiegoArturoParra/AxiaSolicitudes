@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<AttentionAxia.Models.Celula>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Células de trabajo";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Listado de celulas</h2>
+<title>@ViewBag.Title</title>
+<h2>Listado de células</h2>
 <a href="@Url.Action("Create","Celula")" class="btn btn-primary mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar Célula</strong></a>
 <table class="table table-striped table-bordered table-responsive-lg">
     <tr>

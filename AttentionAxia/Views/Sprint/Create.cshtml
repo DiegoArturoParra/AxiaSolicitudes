@@ -4,33 +4,38 @@
     ViewBag.Title = "Crear";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    <div class="container-lg">
-        <h2 class="text-center">Crear Sprints</h2>
-        <hr />
+
+<div class="container-lg">
+    <h2 class="text-center">Crear Sprints</h2>
+    <hr />
+    <form class="needs-validation" novalidate>
         <div class="form-group">
             <div class="col-md-12">
-                <label class="control-label col-md-2">Cantidad de los sprints</label>
-                <input type="number" class="form-control" required max="15" min="6" name="CantidadSprints" />
+                <label class="control-label col-md-3">Cantidad de los sprints</label>
+                <input type="number" id="CantidadSprints" class="form-control" required max="15" min="6" name="CantidadSprints" />
+                <div class="invalid-feedback">
+                    La cantidad debe ser entre 6 y 15.
+                </div>
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-12">
-                <label class="control-label col-md-2">Sigla de los sprints</label>
-                <input type="text" class="form-control" maxlength="4" name="Sigla" required />
+                <label class="control-label col-md-3">Sigla de los sprints</label>
+                <input type="text" id="Sigla" class="form-control" maxlength="6" minLength="2" name="Sigla" required />
+                <div class="invalid-feedback">
+                    La sigla debe tener entre 2 y 6 caracteres.
+                </div>
                 <input type="text" class="d-none" name="FechaGeneracion" value="@DateTime.Now" />
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-12">
-                <label class="control-label col-md-2">Periodo del sprint</label>
-                <select class="select form-control" name="Periodo">
-                    <option value="Q1">1Q</option>
-                    <option value="Q2">2Q</option>
-                    <option value="Q3">3Q</option>
-                    <option value="Q4">4Q</option>
+                <label class="control-label col-md-3">Periodo del sprint</label>
+                <select class="select form-control" id="Periodo" name="Periodo">
+                    <option value="1Q">1Q</option>
+                    <option value="2Q">2Q</option>
+                    <option value="3Q">3Q</option>
+                    <option value="4Q">4Q</option>
                 </select>
             </div>
         </div>
@@ -38,11 +43,41 @@
         <div class="form-group mt-4">
             <div class="d-flex justify-content-end">
                 <a class="btn btn-outline-light text-dark mr-4" href="@Url.Action("Index","Sprint")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
-                <button type="submit" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
+                <button type="button" id="btn-save" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>
-    </div>
-}
+    </form>
+</div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script type="text/javascript">
+    let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+    let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
+    var originalBtnContent = $('#btn-save').html();
+    $('#btn-save').click(function (e) {
+         var forms = document.querySelectorAll('.needs-validation')
+         // Loop over them and prevent submission
+         Array.prototype.slice.call(forms).forEach(function (form) {
+             if (form.checkValidity()) {
+                 $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Agregando...');
+                 $('#btn-save').prop("disabled", true);
+                 let sigla = $("#Sigla").val();
+                 let cantidad = $("#CantidadSprints").val();
+                 let periodo = $("#Periodo").val();
+                 let url = "@Url.Action("CrearMultipleSprints", "Sprint")";
+                 let data = { sprint: { Periodo: periodo, Sigla: sigla}, CantidadSprints: cantidad };
+                 $.post(url, data).done(function (data) {
+                     if (data.IsSuccess) {
+                         window.location.href = "@Url.Action("Index", "Sprint")";;
+                     } else {
+                         alertify.alert(error, data.Message);
+                         $('#btn-save').html(originalBtnContent);
+                         $('#btn-save').removeAttr('disabled');
+                     }
+                 });
+             }
+             form.classList.add('was-validated')
+         })
+    });
+</script>
 }

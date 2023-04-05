@@ -1,33 +1,39 @@
 ﻿@model AttentionAxia.Models.Celula
 
 @{
-    ViewBag.Title = "Eliminar";
+    ViewBag.Title = "Eliminar célula";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Eliminar</h2>
-
-<h3>¿Esta seguro que desea eliminar este valor?</h3>
-<div>
-    <h4>Celula</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Eliminar" class="btn btn-default" /> |
-            @Html.ActionLink("Vovler al listado", "Index", null, new {@class="btn btn-primary"})
+<title>@ViewBag.Title</title>
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title text-bold text-white">¿Está seguro que desea eliminar esta línea?</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form class="form-horizontal">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Descripción</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" disabled value="@Model.Descripcion">
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer d-flex justify-content-end">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <a class="btn btn-link btn-sm text-dark mr-4" href="@Url.Action("Index","Celula")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
+                        <button type="submit" class="btn btn-danger btn-sm mr-2"><i class="fa fa-trash mr-3"></i>Eliminar</button>
+                    }
+                </div>
+                <!-- /.card-footer -->
+            </form>
         </div>
-    }
+    </div>
 </div>

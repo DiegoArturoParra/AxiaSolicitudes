@@ -35,9 +35,7 @@ namespace AttentionAxia.Controllers
             return View();
         }
 
-        // POST: Responsables/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Responsables/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Id,Nombres,CelulaPerteneceId,LineaPerteneceId")] Responsable responsable)
@@ -84,8 +82,6 @@ namespace AttentionAxia.Controllers
         }
 
         // POST: Responsables/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Nombres,CelulaPerteneceId,LineaPerteneceId")] Responsable responsable)
