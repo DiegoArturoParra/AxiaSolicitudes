@@ -1,0 +1,70 @@
+﻿@model IEnumerable<AttentionAxia.Models.Solicitud>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Estado.Descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Responsable.Nombres)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Sprint.Sigla)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Iniciativa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaInicioSprint)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaFinSprint)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Avance)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Estado.Descripcion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Responsable.Nombres)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Sprint.Sigla)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Iniciativa)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FechaInicioSprint)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FechaFinSprint)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Avance)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

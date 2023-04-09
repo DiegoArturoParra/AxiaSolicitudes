@@ -226,6 +226,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LineaController.cs" />
     <Compile Include="Controllers\ResponsablesController.cs" />
+    <Compile Include="Controllers\SolicitudController.cs" />
     <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
     <Compile Include="Core\Middleware\CustomExceptionFilter.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Repositories\LineaRepository.cs" />
     <Compile Include="Repositories\ResponsableRepository.cs" />
+    <Compile Include="Repositories\SolicitudRepository.cs" />
     <Compile Include="Repositories\SprintRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Startup.cs" />
@@ -524,6 +526,10 @@
     <Content Include="Views\Responsables\Delete.cshtml" />
     <Content Include="Views\Responsables\Edit.cshtml" />
     <Content Include="Views\Responsables\Index.cshtml" />
+    <Content Include="Views\Solicitud\Create.cshtml" />
+    <Content Include="Views\Solicitud\Delete.cshtml" />
+    <Content Include="Views\Solicitud\Edit.cshtml" />
+    <Content Include="Views\Solicitud\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

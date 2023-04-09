@@ -124,6 +124,16 @@
                                     </p>
                                 </a>
                             </li>
+                            <li class="nav-item mt-2">
+                                <a href="@Url.Action("Index","Solicitud")" class="nav-link active">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Solicitudes
+                                        <i class="right fas fa-angle-right"></i>
+                                    </p>
+                                </a>
+                            </li>
+
                         }
                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia))
                             || User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.GeneralAxia)))
