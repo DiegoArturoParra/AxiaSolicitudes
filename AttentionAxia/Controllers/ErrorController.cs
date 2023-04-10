@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System;
+using System.Net.NetworkInformation;
 using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
@@ -6,15 +7,15 @@ namespace AttentionAxia.Controllers
     public class ErrorController : Controller
     {
         // GET: Error
-        public ActionResult Index(string error)
+        public ActionResult Index(string ErrorMessage, Exception Exception)
         {
             if (!IsInternetConnected())
             {
-                ViewBag.Error = "No se pudo establecer una conexión a Internet";
+                ViewBag.ErrorCode = "No se pudo establecer una conexión a Internet";
             }
             else
             {
-                ViewBag.Error = "Error Page ha ocurrido un error en el sistema!";
+                ViewData["ErrorMessage"] = ErrorMessage;
             }
             return View();
         }

@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using AttentionAxia.Core.Data;
+﻿using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
-using AttentionAxia.Helpers;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
 {
@@ -40,7 +32,7 @@ namespace AttentionAxia.Controllers
         {
             ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
             ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres");
-            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "Sigla");
+            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "SiglaPeriodo");
             return View();
         }
 
@@ -59,13 +51,18 @@ namespace AttentionAxia.Controllers
                     _solicitudRepository.Insert(solicitud);
                     await _solicitudRepository.Save();
                     return RedirectToAction("Index");
-                }               
+                }
             }
 
+            LoadLists(solicitud);
+            return View(solicitud);
+        }
+
+        private void LoadLists(Solicitud solicitud)
+        {
             ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion", solicitud.EstadoId);
             ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres", solicitud.ResponsableId);
-            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "Sigla", solicitud.SprintId);
-            return View(solicitud);
+            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "SiglaPeriodo", solicitud.SprintId);
         }
 
         // GET: Solicitud/Edit/5
@@ -84,9 +81,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion", solicitud.EstadoId);
-            ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres", solicitud.ResponsableId);
-            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "Sigla", solicitud.SprintId);
+            LoadLists(solicitud);
             return View(solicitud);
         }
 
@@ -111,9 +106,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("Actualizado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-            ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion", solicitud.EstadoId);
-            ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres", solicitud.ResponsableId);
-            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "Sigla", solicitud.SprintId);
+            LoadLists(solicitud);
             return View(solicitud);
         }
 

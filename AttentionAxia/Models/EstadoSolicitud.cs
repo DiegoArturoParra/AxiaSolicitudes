@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttentionAxia.Models
 {
     [Table("ESTADO_SOLICITUD", Schema = "AXIA")]
-    public class EstadoSolicitud
+    public partial class EstadoSolicitud
     {
         public EstadoSolicitud()
         {

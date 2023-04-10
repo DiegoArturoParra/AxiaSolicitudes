@@ -249,6 +249,7 @@
     <Compile Include="Models\Celula.cs" />
     <Compile Include="Models\EstadoSolicitud.cs" />
     <Compile Include="Models\Linea.cs" />
+    <Compile Include="Models\Partials\Sprint.cs" />
     <Compile Include="Models\Responsable.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Solicitud.cs" />
@@ -395,6 +396,7 @@
     <Content Include="adminlte\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.min.css.map" />
     <Content Include="adminlte\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.js.map" />
     <Content Include="adminlte\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.min.js.map" />
+    <Content Include="Logs\2023_04_05_AxiaSolicitudes.log" />
     <None Include="Properties\PublishProfiles\AttentionAxia - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
@@ -490,8 +492,6 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />

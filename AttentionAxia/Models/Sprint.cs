@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttentionAxia.Models
 {
     [Table("SPRINT", Schema = "AXIA")]
-    public class Sprint
+    public partial class Sprint
     {
         public Sprint()
         {

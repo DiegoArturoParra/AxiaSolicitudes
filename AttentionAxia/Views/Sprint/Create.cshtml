@@ -8,7 +8,8 @@
 <div class="container-lg">
     <h2 class="text-center">Crear Sprints</h2>
     <hr />
-    <form class="needs-validation" novalidate>
+    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Cantidad de los sprints</label>
@@ -50,7 +51,7 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script type="text/javascript">
+    <script type="text/javascript">
     let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
     let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
     var originalBtnContent = $('#btn-save').html();
@@ -65,7 +66,9 @@
                  let cantidad = $("#CantidadSprints").val();
                  let periodo = $("#Periodo").val();
                  let url = "@Url.Action("CrearMultipleSprints", "Sprint")";
-                 let data = { sprint: { Periodo: periodo, Sigla: sigla}, CantidadSprints: cantidad };
+                 var form = $('#__AjaxAntiForgeryForm');
+                 var token = $('input[name="__RequestVerificationToken"]', form).val();
+                 let data = { sprint: { Periodo: periodo, Sigla: sigla }, CantidadSprints: cantidad, __RequestVerificationToken: token};
                  $.post(url, data).done(function (data) {
                      if (data.IsSuccess) {
                          window.location.href = "@Url.Action("Index", "Sprint")";;
@@ -74,10 +77,10 @@
                          $('#btn-save').html(originalBtnContent);
                          $('#btn-save').removeAttr('disabled');
                      }
-                 });
+                 }).fail(function (errorCode) { alertify.alert(error, errorCode) });
              }
              form.classList.add('was-validated')
          })
     });
-</script>
+    </script>
 }
