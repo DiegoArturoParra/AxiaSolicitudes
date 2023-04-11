@@ -1,6 +1,8 @@
 ﻿using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -24,15 +26,20 @@ namespace AttentionAxia.Controllers
         // GET: Solicitud
         public async Task<ActionResult> Index()
         {
+            LoadLists();
             return View(await _solicitudRepository.GetAll());
         }
 
-        // GET: Solicitud/Create
-        public ActionResult Create()
+        private void LoadLists()
         {
-            ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
-            ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres");
-            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "SiglaPeriodo");
+            var estados = _estadoRepository.Table;
+            ViewBag.DDL_Estados = new SelectList(estados, "Id", "Descripcion");
+        }
+
+        // GET: Solicitud/Create
+        public async Task<ActionResult> Create()
+        {
+            await LoadListsCreateAsync(null);
             return View();
         }
 
@@ -45,28 +52,50 @@ namespace AttentionAxia.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existe = await _solicitudRepository.AnyWithCondition(x => x.Id == solicitud.Id);
-                if (existe)
+                var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
+                if (!response.IsSuccess)
                 {
-                    _solicitudRepository.Insert(solicitud);
-                    await _solicitudRepository.Save();
-                    return RedirectToAction("Index");
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage(response.Message);
+                    return Json(new { response.IsSuccess, response.Message });
                 }
+                _solicitudRepository.Insert(solicitud);
+                await _solicitudRepository.Save();
+                SetAlert(GetConstants.ALERT_SUCCESS);
+                SetMessage("Creado satisfactoriamente.");
+                return Json(new { response.IsSuccess, response.Message });
             }
-
-            LoadLists(solicitud);
-            return View(solicitud);
+            return Json(false);
         }
 
-        private void LoadLists(Solicitud solicitud)
+        private async Task LoadListsCreateAsync(Solicitud solicitud)
         {
-            ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion", solicitud.EstadoId);
-            ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres", solicitud.ResponsableId);
-            ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "SiglaPeriodo", solicitud.SprintId);
+            if (solicitud == null)
+            {
+                var estados = _estadoRepository.Table;
+                var primerEstado = await estados.Where(x => x.Descripcion.ToUpper().Contains("HACER")).FirstOrDefaultAsync();
+                if (primerEstado == null)
+                {
+                    ViewBag.EstadoId = new SelectList(estados, "Id", "Descripcion");
+                }
+                else
+                {
+                    ViewBag.EstadoId = new SelectList(estados, "Id", "Descripcion", primerEstado.Id);
+                }
+                ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres");
+                ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
+            }
+            else
+            {
+                ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion", solicitud.EstadoId);
+                ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres", solicitud.ResponsableId);
+                ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint", solicitud.SprintId);
+            }
+
         }
 
         // GET: Solicitud/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -81,7 +110,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            LoadLists(solicitud);
+            await LoadListsCreateAsync(solicitud);
             return View(solicitud);
         }
 
@@ -106,7 +135,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("Actualizado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-            LoadLists(solicitud);
+            await LoadListsCreateAsync(solicitud);
             return View(solicitud);
         }
 

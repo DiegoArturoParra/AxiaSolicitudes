@@ -1,0 +1,130 @@
+﻿@model AttentionAxia.DTOs.PaginadorDTO
+
+@{ var cantidadPaginas = (int)Math.Ceiling((double)Model.TotalDeRegistros / Model.RegistrosPorPagina); }
+
+@{
+    int paginaUno = 1;
+    int Inicial = 1;
+    var activoInicial = Model.PaginaActual > 1 ? string.Empty : "active";
+    var activoFinal = Model.PaginaActual == cantidadPaginas ? "active" : string.Empty;
+
+
+    var radio = 9;
+    var cantidadMaximaDePaginas = radio * 2;
+    int Final = (cantidadPaginas > cantidadMaximaDePaginas) ? cantidadMaximaDePaginas : cantidadPaginas;
+    if (Model.PaginaActual > radio + 1)
+    {
+        Inicial = Model.PaginaActual - radio;
+        if (cantidadPaginas > Model.PaginaActual + radio)
+        {
+            Final = Model.PaginaActual + radio;
+        }
+        else
+        {
+            Final = cantidadPaginas;
+        }
+    }
+}
+<div class="col-lg-10">
+    <ul class="pagination">
+
+        @{
+            Model.ValoresQueryString["page"] = 1;
+            Model.ValoresQueryString["pageSize"] = Model.RegistrosPorPagina;
+        }
+        @if (Model.PaginaActual == 1)
+        {
+            Model.ValoresQueryString["page"] = 1;
+            <li class="invisible" title="anterior">
+                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        }
+        else
+        {
+            Model.ValoresQueryString["page"] = Model.PaginaActual - 1;
+            <li title="anterior">
+                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        }
+        @{
+            Model.ValoresQueryString["page"] = 1;
+            Model.ValoresQueryString["pageSize"] = Model.RegistrosPorPagina;
+        }
+        <li class="@activoInicial">@Html.ActionLink(paginaUno.ToString(), null, Model.ValoresQueryString)</li>
+        @if (paginaUno + 3 != Model.PaginaActual)
+        {
+            if (Model.PaginaActual >= paginaUno && Model.PaginaActual <= paginaUno + 3)
+            {
+
+            }
+            else
+            {
+                <li class="disabled">
+                    <a>
+                        ...
+                    </a>
+                </li>
+            }
+        }
+
+        @for (int i = Inicial + 1; i <= Final - 1; i++)
+        {
+            Model.ValoresQueryString["page"] = i; if (i == Model.PaginaActual)
+            {
+                <li class="active">@Html.ActionLink(i.ToString(), null, Model.ValoresQueryString)</li>
+            }
+            else
+            {
+                <li>@Html.ActionLink(i.ToString(), null, Model.ValoresQueryString)</li>
+            }
+        }
+        @if (cantidadPaginas - 3 != Model.PaginaActual)
+        {
+            if (Model.PaginaActual >= cantidadPaginas - 2 || Model.PaginaActual <= cantidadMaximaDePaginas
+                - 4 && Model.PaginaActual > cantidadPaginas - cantidadMaximaDePaginas)
+            {
+
+            }
+            else
+            {
+                <li class="disabled">
+                    <a>
+                        ...
+                    </a>
+                </li>
+            }
+        }
+
+
+        @{Model.ValoresQueryString["page"] = cantidadPaginas; }
+        @if (cantidadPaginas != paginaUno)
+        {
+            <li class="@activoFinal">@Html.ActionLink(cantidadPaginas.ToString(), null, Model.ValoresQueryString)</li>
+        }
+        @if (Model.PaginaActual == cantidadPaginas)
+        {
+            Model.ValoresQueryString["page"] = cantidadPaginas;
+
+            <li class="invisible" title="siguiente">
+                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        }
+        else
+        {
+            Model.ValoresQueryString["page"] = Model.PaginaActual + 1;
+            <li title="siguiente">
+                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        }
+
+
+    </ul>
+</div>

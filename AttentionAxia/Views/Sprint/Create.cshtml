@@ -76,6 +76,7 @@
                          alertify.alert(error, data.Message);
                          $('#btn-save').html(originalBtnContent);
                          $('#btn-save').removeAttr('disabled');
+
                      }
                  }).fail(function (errorCode) { alertify.alert(error, errorCode) });
              }

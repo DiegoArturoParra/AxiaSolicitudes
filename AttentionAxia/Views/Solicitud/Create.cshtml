@@ -1,89 +1,145 @@
 ﻿@model AttentionAxia.Models.Solicitud
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Crear solicitud";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
+<div class="container-lg">
+    <h2 class="text-center">Crear Solicitud</h2>
+    <hr />
+    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Responsable</label>
+                @Html.DropDownList("ResponsableId", null, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El responsable es requerido
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Estado</label>
+                @Html.DropDownList("EstadoId", null, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El estado es requerido
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Sprint</label>
+                @Html.DropDownList("SprintId", null, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El sprint es requerido
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Fecha inicial del sprint</label>
+                <input class="form-control" name="FechaInicioSprint" type="date" required />
+                <div class="invalid-feedback">
+                    la fecha de inicio es requerida.
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Fecha fin del sprint</label>
+                <input type="date" class="form-control" name="FechaFinSprint" required />
+                <div class="invalid-feedback">
+                    la fecha fin es requerida.
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Iniciativa</label>
+                <textarea id="text_iniciativa" class="form-control" maxlength="5000" minlength="10" placeholder="Escriba la iniciativa" required></textarea>
+                <div class="invalid-feedback">
+                    La Iniciativa debe tener entre 10 y 5000 caracteres.
+                </div>
+            </div>
+            <label class="form-check-label ml-2 text-muted text-sm">
+                Maximo 5000 caracteres.
+            </label>
+        </div>
 
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Solicitud</h4>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Avance</label>
+                <input id="avance_solicitud" type="text" name="Avance" value="0">
+            </div>
+            <div class="invalid-feedback">
+                El avance es requerido.
+            </div>
+        </div>
         <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.ResponsableId, "ResponsableId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ResponsableId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ResponsableId, "", new { @class = "text-danger" })
+        <div class="form-group mt-4">
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-outline-light text-dark mr-4" href="@Url.Action("Index","Solicitudes")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
+                <button type="button" id="btn-save" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.EstadoId, "EstadoId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("EstadoId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.EstadoId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SprintId, "SprintId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SprintId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SprintId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Iniciativa, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Iniciativa, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Iniciativa, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.FechaInicioSprint, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">               
-                <input class="form-control" name="FechaInicioSprint" type="date"/>
-                @Html.ValidationMessageFor(model => model.FechaInicioSprint, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.FechaFinSprint, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">               
-                <input type="date" class="form-control" name="FechaFinSprint"/>
-                @Html.ValidationMessageFor(model => model.FechaFinSprint, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Avance, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">                
-                <input class="form-control slider" type="range" min="1" max="100" value="50" name="Avance"/>
-                @Html.ValidationMessageFor(model => model.Avance, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+    </form>
 </div>
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+        let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
+        var originalBtnContent = $('#btn-save').html();
+
+        $('#avance_solicitud').ionRangeSlider({
+            min: 0,
+            max: 100,
+            from: 0,
+            type: 'single',
+            step: 1,
+            postfix: '%',
+            prettify: false,
+            hasGrid: true,
+            disable: true
+        });
+
+         $('#btn-save').click(function () {
+             var forms = document.querySelectorAll('.needs-validation')
+             // Loop over them and prevent submission
+             Array.prototype.slice.call(forms).forEach(function (form) {
+                 if (form.checkValidity()) {
+                     $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Guardando...');
+                     $('#btn-save').prop("disabled", true);
+                     let url = "@Url.Action("Create", "Solicitud")";
+                     const responsable = $('#ResponsableId').val();
+                     const estado = $('#EstadoId').val();
+                     const sprint = $('#SprintId').val();
+                     const iniciativa = $('#text_iniciativa').val();
+                     const dateInitialSprint = $('#FechaInicioSprint').val();
+                     const dateFinalSprint = $('#FechaFinSprint').val();
+                     const avance = $('#Avance').val();
+                     const token = $('input[name="__RequestVerificationToken"]', form).val();
+                     let data = {
+                         ResponsableId: responsable,
+                         EstadoId: estado, SprintId: sprint,
+                         Iniciativa: iniciativa, FechaInicioSprint: dateInitialSprint,
+                         FechaFinSprint: dateFinalSprint, Avance: avance,
+                         __RequestVerificationToken: token
+                     };
+                     $.post(url, data).done(function (data) {
+                         if (data.IsSuccess) {
+                             window.location.href = "@Url.Action("Index", "Solicitudes")";;
+                         } else {
+                             alertify.alert(error, data.Message);
+                             $('#btn-save').html(originalBtnContent);
+                             $('#btn-save').removeAttr('disabled');
+                         }
+                     }).fail(function (errorCode) { alertify.alert(error, errorCode) });
+                 }
+                 form.classList.add('was-validated')
+             })
+        });
+    </script>
 }

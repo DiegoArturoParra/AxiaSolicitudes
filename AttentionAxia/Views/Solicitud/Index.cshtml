@@ -1,70 +1,143 @@
 ﻿@model IEnumerable<AttentionAxia.Models.Solicitud>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Solicitudes Axia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Solicitudes</h2>
+<div class="row mb-4">
+    <a href="@Url.Action("Create","Solicitud")" class="btn btn-primary ml-5  mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar solicitud</strong></a>
+</div>
+<div class="table-responsive-lg">
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Responsable
+                </th>
+                <th>
+                    Célula
+                </th>
+                <th>
+                    Línea
+                </th>
+                <th>
+                    Iniciativa
+                </th>
+                <th>
+                    Sprint
+                </th>
+                <th>
+                    Fecha inicio sprint
+                </th>
+                <th>
+                    Fecha fin sprint
+                </th>
+                <th>
+                    Estado
+                </th>
+                <th>
+                    Avance %
+                </th>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Estado.Descripcion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Responsable.Nombres)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Sprint.Sigla)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Iniciativa)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FechaInicioSprint)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FechaFinSprint)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Avance)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Estado.Descripcion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Responsable.Nombres)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Sprint.Sigla)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Iniciativa)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FechaInicioSprint)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FechaFinSprint)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Avance)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+                <th class="text-center">
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Responsable.Nombres)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Responsable.CelulaPertenece.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Responsable.LineaPertenece.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Iniciativa)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sprint.DescripcionSprint)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaInicioSprint)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaFinSprint)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+                <td>
+                    <input id="avance_solicitud" type="text" name="Avance" value="@item.Avance">
+                </td>
+                <td class="text-center">
+                    <a href="@Url.Action("Edit","Solicitud", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
+                    <a onclick="EditarEstado(@item.EstadoId)" class="text-center btn btn-danger mb-2">
+                        <i class="fa fa-pencil-alt"></i>
+                        <i class="fas fa-sad-tear fa-sm"></i>
+                    </a>
+                    <a href="@Url.Action("Delete","Sprint", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div id="modalEditEstado" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Large Modal</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" novalidate>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <label class="control-label col-md-12">Estado</label>
+                            @Html.DropDownList("modal_estados", ViewBag.DDL_Estados as SelectList, new { @class = "form-control", @required = "" })
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light text-dark" data-dismiss="modal"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</button>
+                <button id="btnSaveEstado" type="button" class="btn btn-primary"><i class="fa fa-save mr-3"></i>Guardar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+        let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
+        var originalBtnContent = $('#btn-save').html();
+        $(document).ready(function () {
+            $('#avance_solicitud').ionRangeSlider({
+                min: 0,
+                max: 100,
+                from: 0,
+                type: 'single',
+                step: 1,
+                postfix: '%',
+                prettify: false,
+                hasGrid: true,
+                disable: true
+            });
+        });
+        function EditarEstado(estadoId) {
+            $('#modal_estados').val(estadoId);
+            $('#modalEditEstado').modal('show');
+        }
+    </script>
 }
-
-</table>
