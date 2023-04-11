@@ -1,4 +1,4 @@
-﻿@model AttentionAxia.Models.Solicitud
+﻿@model AttentionAxia.DTOs.CreateSolicitudDTO
 
 @{
     ViewBag.Title = "Crear solicitud";
@@ -38,18 +38,28 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="col-md-12">
-                <label class="control-label col-md-3">Fecha inicial del sprint</label>
-                <input class="form-control" name="FechaInicioSprint" type="date" required />
+            <label class="control-label col-md-3">Fecha inicial del sprint:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control float-right" name="DateInitial" id="DateInitialSprint" required>
                 <div class="invalid-feedback">
                     la fecha de inicio es requerida.
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-md-12">
-                <label class="control-label col-md-3">Fecha fin del sprint</label>
-                <input type="date" class="form-control" name="FechaFinSprint" required />
+            <label class="control-label col-md-3">Fecha fin del sprint:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control float-right" name="DateEnd" id="DateEndSprint" required>
                 <div class="invalid-feedback">
                     la fecha fin es requerida.
                 </div>
@@ -93,6 +103,24 @@
         let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
         var originalBtnContent = $('#btn-save').html();
 
+        $(function () {
+            $('input[name="DateInitial"]').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                minDate: moment().add(-2, 'years').toDate(),
+                maxDate: moment().toDate()
+            });
+        });
+
+        $(function () {
+            $('input[name="DateEnd"]').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                maxDate: moment().add(1, 'years').toDate(),
+                minDate: moment().toDate(),
+            });
+        });
+
         $('#avance_solicitud').ionRangeSlider({
             min: 0,
             max: 100,
@@ -117,16 +145,17 @@
                      const estado = $('#EstadoId').val();
                      const sprint = $('#SprintId').val();
                      const iniciativa = $('#text_iniciativa').val();
-                     const dateInitialSprint = $('#FechaInicioSprint').val();
-                     const dateFinalSprint = $('#FechaFinSprint').val();
-                     const avance = $('#Avance').val();
+                     let dateInitialSprint = $('#DateInitialSprint').val();
+                     let dateFinalSprint = $('#DateEndSprint').val();
+                     console.log(dateInitialSprint);
+                     console.log(dateFinalSprint);
                      const token = $('input[name="__RequestVerificationToken"]', form).val();
                      let data = {
                          ResponsableId: responsable,
                          EstadoId: estado, SprintId: sprint,
-                         Iniciativa: iniciativa, FechaInicioSprint: dateInitialSprint,
-                         FechaFinSprint: dateFinalSprint, Avance: avance,
-                         __RequestVerificationToken: token
+                         FechaFinal: dateFinalSprint,
+                         Iniciativa: iniciativa, FechaInicial: dateInitialSprint,
+                        __RequestVerificationToken: token
                      };
                      $.post(url, data).done(function (data) {
                          if (data.IsSuccess) {

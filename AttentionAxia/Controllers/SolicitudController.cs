@@ -1,6 +1,8 @@
-﻿using AttentionAxia.Helpers;
+﻿using AttentionAxia.DTOs;
+using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,10 +12,12 @@ namespace AttentionAxia.Controllers
 {
     public class SolicitudController : BaseController
     {
-        private SolicitudRepository _solicitudRepository;
-        private EstadoRepository _estadoRepository;
-        private ResponsableRepository _responsableRepository;
-        private SprintRepository _sprintRepository;
+        private readonly SolicitudRepository _solicitudRepository;
+        private readonly EstadoRepository _estadoRepository;
+        private readonly ResponsableRepository _responsableRepository;
+        private readonly SprintRepository _sprintRepository;
+        private readonly LineaRepository _lineaRepository;
+        private readonly CelulaRepository _celulaRepository;
 
         public SolicitudController()
         {
@@ -21,19 +25,32 @@ namespace AttentionAxia.Controllers
             _estadoRepository = new EstadoRepository(_db);
             _responsableRepository = new ResponsableRepository(_db);
             _sprintRepository = new SprintRepository(_db);
+            _lineaRepository = new LineaRepository(_db);
+            _celulaRepository = new CelulaRepository(_db);
         }
 
         // GET: Solicitud
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(SolicitudFilterDTO filtro)
         {
             LoadLists();
-            return View(await _solicitudRepository.GetAll());
+            var solicitudes = await _solicitudRepository.GetSolicitudes(filtro);
+            return View(solicitudes);
         }
+
+
 
         private void LoadLists()
         {
-            var estados = _estadoRepository.Table;
-            ViewBag.DDL_Estados = new SelectList(estados, "Id", "Descripcion");
+            ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Lineas = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Celulas = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
+            List<int> items = new List<int>()
+            {
+                100,250,500
+            };
+
+            ViewBag.DDL_Items = new SelectList(items);
         }
 
         // GET: Solicitud/Create
@@ -44,28 +61,32 @@ namespace AttentionAxia.Controllers
         }
 
         // POST: Solicitud/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,ResponsableId,EstadoId,SprintId,Iniciativa,FechaInicioSprint,FechaFinSprint,Avance")] Solicitud solicitud)
+        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud)
         {
-            if (ModelState.IsValid)
+            var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
+            if (!response.IsSuccess)
             {
-                var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
-                if (!response.IsSuccess)
-                {
-                    SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage(response.Message);
-                    return Json(new { response.IsSuccess, response.Message });
-                }
-                _solicitudRepository.Insert(solicitud);
-                await _solicitudRepository.Save();
-                SetAlert(GetConstants.ALERT_SUCCESS);
-                SetMessage("Creado satisfactoriamente.");
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage(response.Message);
                 return Json(new { response.IsSuccess, response.Message });
             }
-            return Json(false);
+            var entidadInsert = new Solicitud()
+            {
+                ResponsableId = solicitud.ResponsableId,
+                EstadoId = solicitud.EstadoId,
+                SprintId = solicitud.SprintId,
+                FechaInicioSprint = solicitud.FechaInicial,
+                FechaFinSprint = solicitud.FechaFinal,
+                Iniciativa = solicitud.Iniciativa,
+                Avance = 0
+            };
+            _solicitudRepository.Insert(entidadInsert);
+            await _solicitudRepository.Save();
+            SetAlert(GetConstants.ALERT_SUCCESS);
+            SetMessage("Creado satisfactoriamente.");
+            return Json(new { response.IsSuccess, response.Message });
         }
 
         private async Task LoadListsCreateAsync(Solicitud solicitud)

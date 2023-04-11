@@ -1,93 +1,176 @@
-﻿@model IEnumerable<AttentionAxia.Models.Solicitud>
+﻿@model AttentionAxia.DTOs.ListarSolicitudDTO
 
 @{
     ViewBag.Title = "Solicitudes Axia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Solicitudes</h2>
-<div class="row mb-4">
-    <a href="@Url.Action("Create","Solicitud")" class="btn btn-primary ml-5  mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar solicitud</strong></a>
-</div>
-<div class="table-responsive-lg">
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th>
-                    Responsable
-                </th>
-                <th>
-                    Célula
-                </th>
-                <th>
-                    Línea
-                </th>
-                <th>
-                    Iniciativa
-                </th>
-                <th>
-                    Sprint
-                </th>
-                <th>
-                    Fecha inicio sprint
-                </th>
-                <th>
-                    Fecha fin sprint
-                </th>
-                <th>
-                    Estado
-                </th>
-                <th>
-                    Avance %
-                </th>
-
-                <th class="text-center">
-                    Acciones
-                </th>
-            </tr>
-        </thead>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Responsable.Nombres)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Responsable.CelulaPertenece.Descripcion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Responsable.LineaPertenece.Descripcion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Iniciativa)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Sprint.DescripcionSprint)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaInicioSprint)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaFinSprint)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Estado)
-                </td>
-                <td>
-                    <input id="avance_solicitud" type="text" name="Avance" value="@item.Avance">
-                </td>
-                <td class="text-center">
-                    <a href="@Url.Action("Edit","Solicitud", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
-                    <a onclick="EditarEstado(@item.EstadoId)" class="text-center btn btn-danger mb-2">
-                        <i class="fa fa-pencil-alt"></i>
-                        <i class="fas fa-sad-tear fa-sm"></i>
-                    </a>
-                    <a href="@Url.Action("Delete","Sprint", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
-                </td>
-            </tr>
-        }
-    </table>
-</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="callout callout-info">
+                    <h5><i class="fas fa-filter mr-3"></i>Filtros</h5>
+                    <div class="row mb-3 mt-3">
+                        <div class="col-lg-6 mb-3">
+                            <label class="control-label col-lg-4">Célula</label>
+                            @Html.DropDownList("ddl_celulas", ViewBag.DDL_Celulas as SelectList, "--Seleccione--", new { @class = "form-control" })
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="control-label col-lg-4">Línea</label>
+                            @Html.DropDownList("ddl_lineas", ViewBag.DDL_Lineas as SelectList, "--Seleccione--", new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-3">
+                        <div class="col-lg-6 mb-3">
+                            <label class="control-label col-lg-4"># Sprint</label>
+                            @Html.DropDownList("ddl_sprints", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", new { @class = "form-control" })
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="control-label col-lg-4">Responsable</label>
+                            @Html.DropDownList("ddl_responsables", new SelectList(""), "--Seleccione--", new { @class = "form-control", disabled = "disabled" })
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-3">
+                        <div class="col-lg-2 mb-3">
+                            <label class="control-label col-lg-4">Estado</label>
+                            @Html.DropDownList("ddl_estados", ViewBag.DDL_Estados as SelectList, new { @class = "form-control" })
+                        </div>
+                        <div class="col-lg-5 mb-3">
+                            <label class="control-label col-lg-6">Rango fechas sprint</label>
+                            <input type="text" class="form-control" name="FiltroFecha" id="DateFilter" />
+                        </div>
+                        <div class="col-lg-5">
+                            <label class="control-label col-lg-4">Avance</label>
+                            <input id="avance" type="text" name="Avance" value="0">
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-lg-6 d-flex justify-content-lg-start">
+                            <button type="button" class="btn btn-warning" id="btn_limpiar"><i class="fa fa-eraser mr-2"></i><strong>Limpiar</strong></button>
+                        </div>
+                        <div class="col-lg-6 d-flex justify-content-lg-end">
+                            <button type="button" class="btn btn-success" id="btn_buscar"><i class="fa fa-search mr-2"></i><strong>Buscar</strong></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="invoice p-3 mb-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                <i class="fas fa-globe"></i> Solicitudes.
+                                <small class="float-right">@DateTime.Now.ToString("dd/MM/yyyy")</small>
+                            </h4>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                    {
+                        <div class="row mb-4">
+                            <a href="@Url.Action("Create", "Solicitud")" class="btn btn-primary ml-2 mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar solicitud</strong></a>
+                        </div>
+                    }
+                    <div class="row mb-4 d-flex justify-content-between">
+                        <div class="col-lg-2">
+                            @Html.DropDownListFor(x => x.RegistrosPorPagina, ViewBag.DDL_Items as SelectList, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                        <div id="paginador-container">
+                            @{ Html.RenderPartial("_PartialPaginador", Model); }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Responsable
+                                        </th>
+                                        <th>
+                                            Célula
+                                        </th>
+                                        <th>
+                                            Línea
+                                        </th>
+                                        <th>
+                                            Iniciativa
+                                        </th>
+                                        <th>
+                                            Sprint
+                                        </th>
+                                        <th>
+                                            Fecha inicio sprint
+                                        </th>
+                                        <th>
+                                            Fecha fin sprint
+                                        </th>
+                                        <th>
+                                            Estado
+                                        </th>
+                                        <th>
+                                            Avance %
+                                        </th>
+                                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                        {
+                                            <th class="text-center">
+                                                Acciones
+                                            </th>
+                                        }
+                                    </tr>
+                                </thead>
+                                @foreach (var item in Model.Solciitudes)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Responsable)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Celula)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Linea)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Iniciativa)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Sprint)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.FechaInicialSprint)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.FechaFinSprint)
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-pill" style="background-color:@item.ColorEstado">
+                                                @Html.DisplayFor(modelItem => item.Estado)
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <input id="avance_solicitud" type="text" name="Avance" value="@item.Avance">
+                                        </td>
+                                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                        {
+                                            <td class="text-center">
+                                                <a href="@Url.Action("Edit","Solicitud", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
+                                                <a onclick="EditarEstado(@item.EstadoId)" class="text-center btn btn-light mb-2">
+                                                    <i class="fa fa-pencil-alt"></i>
+                                                    <i class="fas fa-sad-tear fa-sm"></i>
+                                                </a>
+                                                <a href="@Url.Action("Delete","Sprint", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.invoice -->
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
 <div id="modalEditEstado" class="modal fade" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -122,17 +205,29 @@
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
         let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
         var originalBtnContent = $('#btn-save').html();
-        $(document).ready(function () {
-            $('#avance_solicitud').ionRangeSlider({
-                min: 0,
-                max: 100,
-                from: 0,
-                type: 'single',
-                step: 1,
-                postfix: '%',
-                prettify: false,
-                hasGrid: true,
-                disable: true
+        $('#avance_solicitud').ionRangeSlider({
+            min: 0,
+            max: 100,
+            from: 0,
+            type: 'single',
+            step: 1,
+            postfix: '%',
+            prettify: false,
+            hasGrid: true
+        });
+        $('#avance').ionRangeSlider({
+            min: 0,
+            max: 100,
+            from: 0,
+            type: 'single',
+            step: 1,
+            postfix: '%',
+            prettify: false,
+            hasGrid: true
+        });
+        $(function () {
+            $('input[name="FiltroFecha"]').daterangepicker({
+                opens: 'left'
             });
         });
         function EditarEstado(estadoId) {
