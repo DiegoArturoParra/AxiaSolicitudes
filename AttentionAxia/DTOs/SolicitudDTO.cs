@@ -48,6 +48,6 @@ namespace AttentionAxia.DTOs
     }
     public class ListarSolicitudDTO: PaginadorDTO
     {
-        public IEnumerable<SolicitudDTO> Solciitudes { get; set; }
+        public IEnumerable<SolicitudDTO> Solicitudes { get; set; }
     }
 }

@@ -117,7 +117,7 @@
                 singleDatePicker: true,
                 showDropdowns: true,
                 maxDate: moment().add(1, 'years').toDate(),
-                minDate: moment().toDate(),
+                minDate: moment().add(1,'day').toDate(),
             });
         });
 
@@ -145,8 +145,8 @@
                      const estado = $('#EstadoId').val();
                      const sprint = $('#SprintId').val();
                      const iniciativa = $('#text_iniciativa').val();
-                     let dateInitialSprint = $('#DateInitialSprint').val();
-                     let dateFinalSprint = $('#DateEndSprint').val();
+                     let dateInitialSprint = moment($('#DateInitialSprint').val()).format();
+                     let dateFinalSprint = moment($('#DateEndSprint').val()).format();
                      console.log(dateInitialSprint);
                      console.log(dateFinalSprint);
                      const token = $('input[name="__RequestVerificationToken"]', form).val();

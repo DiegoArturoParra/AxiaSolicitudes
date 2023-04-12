@@ -65,6 +65,7 @@ namespace AttentionAxia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateSolicitudDTO solicitud)
         {
+            solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
             var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
             if (!response.IsSuccess)
             {

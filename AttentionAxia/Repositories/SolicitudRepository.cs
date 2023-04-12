@@ -103,7 +103,7 @@ namespace AttentionAxia.Repositories
 
                 var totalDeRegistros = query.Count();
                 var modelo = new ListarSolicitudDTO();
-                modelo.Solciitudes = listado;
+                modelo.Solicitudes = listado;
                 modelo.PaginaActual = filtro.Paginacion.Page;
                 modelo.TotalDeRegistros = totalDeRegistros;
                 modelo.RegistrosPorPagina = filtro.Paginacion.PageSize;

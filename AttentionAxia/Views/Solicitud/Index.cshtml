@@ -117,8 +117,8 @@
                                         }
                                     </tr>
                                 </thead>
-                                @foreach (var item in Model.Solciitudes)
-                                {
+                                @foreach (var item in Model.Solicitudes)
+                                {                                
                                     <tr>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Responsable)
@@ -147,7 +147,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <input id="avance_solicitud" type="text" name="Avance" value="@item.Avance">
+                                            <input class="slider" type="text" name="Avance" value="@item.Avance">
                                         </td>
                                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
                                         {
@@ -175,14 +175,14 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Large Modal</h4>
+                <h4 class="modal-title">Cambiar Estado</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form class="needs-validation" novalidate>
-                    <div class="row mt-4">
+                    <div class="row">
                         <div class="col-md-12">
                             <label class="control-label col-md-12">Estado</label>
                             @Html.DropDownList("modal_estados", ViewBag.DDL_Estados as SelectList, new { @class = "form-control", @required = "" })
@@ -205,7 +205,7 @@
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
         let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
         var originalBtnContent = $('#btn-save').html();
-        $('#avance_solicitud').ionRangeSlider({
+        $('.slider').ionRangeSlider({
             min: 0,
             max: 100,
             from: 0,
@@ -213,7 +213,8 @@
             step: 1,
             postfix: '%',
             prettify: false,
-            hasGrid: true
+            hasGrid: true,
+            disable: true
         });
         $('#avance').ionRangeSlider({
             min: 0,
@@ -223,7 +224,7 @@
             step: 1,
             postfix: '%',
             prettify: false,
-            hasGrid: true
+            hasGrid: true 
         });
         $(function () {
             $('input[name="FiltroFecha"]').daterangepicker({
