@@ -1,0 +1,81 @@
+﻿@model AttentionAxia.Models.Solicitud
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Solicitud</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Estado.Descripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Estado.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Responsable.Nombres)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Responsable.Nombres)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sprint.Sigla)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sprint.Sigla)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Iniciativa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Iniciativa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaInicioSprint)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaInicioSprint)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaFinSprint)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaFinSprint)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Avance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Avance)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

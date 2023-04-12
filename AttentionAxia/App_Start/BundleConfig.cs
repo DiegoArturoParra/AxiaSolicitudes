@@ -15,14 +15,17 @@ namespace AttentionAxia
 
             bundles.Add(new StyleBundle("~/adminlte/css").Include(
                     "~/adminlte/plugins/fontawesome-free/css/all.min.css",
-                     "~/adminlte/plugins/toastr/toastr.min.css",
-                     "~/adminlte/plugins/bootstrap-colopicker/bootstrap-colorpicker.min.css",
-                     "~/adminlte/css/adminlte.min.css"));
+                    "~/adminlte/plugins/toastr/toastr.min.css",
+                    "~/adminlte/plugins/ion-rangeslider/css/ion.rangeSlider.min.css",
+                    "~/adminlte/plugins/daterangepicker/daterangepicker.css",
+                    "~/adminlte/css/adminlte.min.css"));
 
             bundles.Add(new ScriptBundle("~/adminlte/js").Include(
+                     "~/adminlte/plugins/moment/moment.min.js",
                      "~/adminlte/plugins/toastr/toastr.min.js",
-                    "~/adminlte/js/adminlte.js",
-                    "~/adminlte/plugins/bootstrap-colopicker/bootstrap-colorpicker.min.js"
+                     "~/adminlte/plugins/ion-rangeslider/js/ion.rangeSlider.min.js",
+                     "~/adminlte/plugins/daterangepicker/daterangepicker.js",
+                     "~/adminlte/js/adminlte.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/Alertify").Include(

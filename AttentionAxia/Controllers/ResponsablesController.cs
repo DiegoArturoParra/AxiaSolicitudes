@@ -42,11 +42,11 @@ namespace AttentionAxia.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existe = await _responsableRepository.AnyWithCondition(r => r.Nombres.ToLower() == responsable.Nombres);
+                var existe = await _responsableRepository.AnyWithCondition(r => r.Nombres.ToUpper() == responsable.Nombres.ToUpper());
                 if (existe)
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage($"Ya existe un registro con la descripción {responsable.Nombres.ToLower()}");
+                    SetMessage(message: $"Ya existe un registro con la descripción {responsable.Nombres.ToLower()}");
                     return View(responsable);
                 }
 

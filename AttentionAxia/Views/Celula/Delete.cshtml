@@ -14,7 +14,7 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form class="form-horizontal">
+            <section class="form-horizontal">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Descripción</label>
@@ -29,11 +29,11 @@
                     {
                         @Html.AntiForgeryToken()
                         <a class="btn btn-link btn-sm text-dark mr-4" href="@Url.Action("Index","Celula")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
-                        <button type="submit" class="btn btn-danger btn-sm mr-2"><i class="fa fa-trash mr-3"></i>Eliminar</button>
+                        <button type="submit" class="btn btn-danger btn-sm mr-2 text-bold"><i class="fa fa-trash mr-3"></i>Eliminar</button>
                     }
                 </div>
                 <!-- /.card-footer -->
-            </form>
+            </section>
         </div>
     </div>
 </div>

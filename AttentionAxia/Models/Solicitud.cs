@@ -6,7 +6,7 @@ namespace AttentionAxia.Models
 {
 
     [Table("DETALLE_SOLICITUD", Schema = "AXIA")]
-    public class Solicitud
+    public partial class Solicitud
     {
         [Column("id_solicitud")]
         public int Id { get; set; }

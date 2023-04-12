@@ -40,6 +40,7 @@ namespace AttentionAxia.Controllers
 
         // POST: Sprints/CreateMultipleSprints
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> CrearMultipleSprints([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint, int CantidadSprints)
         {
             if (ModelState.IsValid)

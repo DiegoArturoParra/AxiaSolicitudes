@@ -12,6 +12,8 @@ namespace AttentionAxia.Core.Middleware
         private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public void OnException(ExceptionContext filterContext)
         {
+            _logger.Info($"Controlador: {filterContext.Controller}");
+
             if (filterContext.ExceptionHandled)
             {
                 return;
@@ -21,9 +23,16 @@ namespace AttentionAxia.Core.Middleware
 
             filterContext.Result = new ViewResult
             {
-                ViewName = "Error",
-                ViewData = new ViewDataDictionary(new { exception = exception })
-            };
+
+                ViewName = "~/Views/Error/Index.cshtml",
+                ViewData = new ViewDataDictionary(new
+                {
+                    ErrorMessage = "¡Error Page ha ocurrido un error en el sistema!",
+                    Exception = exception
+                }),              
+        };
+
+       
             _logger.Error(exception.Message, exception);
             filterContext.ExceptionHandled = true;
         }

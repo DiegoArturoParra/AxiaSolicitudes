@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttentionAxia.Models
 {
     [Table("LINEA_DE_TRABAJO", Schema = "AXIA")]
-    public class Linea
+    public partial class Linea
     {
         public Linea()
         {
