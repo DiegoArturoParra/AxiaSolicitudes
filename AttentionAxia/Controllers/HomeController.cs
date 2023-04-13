@@ -6,11 +6,7 @@ namespace AttentionAxia.Controllers
     {
         public ActionResult Index()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return View();
-            }
-            return RedirectToAction("Login", "Account");
+            return View();
         }
     }
 }

@@ -125,20 +125,16 @@
                                 </a>
                             </li>
                         }
-                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia))
-                            || User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.GeneralAxia)))
-                        {
-                            <li class="nav-header text-white text-bold mt-4">SOLICITUDES</li>
-                            <li class="nav-item mt-2">
-                                <a href="@Url.Action("Index", "Solicitudes")" class="nav-link active">
-                                    <i class="nav-icon fas fa-tasks"></i>
-                                    <p>
-                                        Solicitudes Axia
-                                        <i class="right fas fa-angle-right"></i>
-                                    </p>
-                                </a>
-                            </li>
-                        }
+                        <li class="nav-header text-white text-bold mt-4">SOLICITUDES</li>
+                        <li class="nav-item mt-2">
+                            <a href="@Url.Action("Index", "Solicitudes")" class="nav-link active">
+                                <i class="nav-icon fas fa-tasks"></i>
+                                <p>
+                                    Solicitudes Axia
+                                    <i class="right fas fa-angle-right"></i>
+                                </p>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -159,16 +155,28 @@
             <div class="p-3">
                 <h5 class="text-center">AXIA</h5>
                 <ul class="nav flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <li class="nav-item">
-                        @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm" }))
-                        {
-                            <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-block btn-outline-dark">
-                                <i class="fas fa-sign-out-alt"></i>&nbsp;
-                                Cerrar sesión
-                            </a>
-                        }
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                            {
+                                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-block btn-outline-dark">
+                                    <i class="fas fa-sign-out-alt"></i>&nbsp;
+                                    Cerrar sesión
+                                </a>
+                            }
 
-                    </li>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a href="@Url.Action("Login", "Account")" class="btn btn-block btn-outline-dark">
+                                <i class="fas fa-sign-in"></i>&nbsp;
+                                Iniciar sesión
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </aside>

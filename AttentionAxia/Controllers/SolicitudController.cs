@@ -54,6 +54,7 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Solicitud/Create
+        [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> Create()
         {
             await LoadListsCreateAsync(null);
@@ -63,6 +64,7 @@ namespace AttentionAxia.Controllers
         // POST: Solicitud/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> Create(CreateSolicitudDTO solicitud)
         {
             solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
@@ -117,6 +119,7 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Solicitud/Edit/5
+        [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -141,6 +144,7 @@ namespace AttentionAxia.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> Edit([Bind(Include = "Id,ResponsableId,EstadoId,SprintId,Iniciativa,FechaInicioSprint,FechaFinSprint,Avance")] Solicitud solicitud)
         {
             if (ModelState.IsValid)
@@ -162,6 +166,7 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Solicitud/Delete/5
+        [Authorize(Roles = "Administrador-Axia")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -181,6 +186,7 @@ namespace AttentionAxia.Controllers
         }
 
         // POST: Solicitud/Delete/5
+        [Authorize(Roles = "Administrador-Axia")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
