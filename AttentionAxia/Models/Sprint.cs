@@ -10,7 +10,8 @@ namespace AttentionAxia.Models
     {
         public Sprint()
         {
-            DetalleSolicitudes = new HashSet<Solicitud>();
+            DetalleSolicitudesSprintInicio = new HashSet<Solicitud>();
+            DetalleSolicitudesSprintFin = new HashSet<Solicitud>();
         }
         [Column("id_sprint")]
         public int Id { get; set; }
@@ -28,6 +29,7 @@ namespace AttentionAxia.Models
         [Display(Name = "Fecha Generación")]
         [Required(ErrorMessage = "Campo requerido.")]
         public DateTime FechaGeneracion { get; set; }
-        public virtual ICollection<Solicitud> DetalleSolicitudes { get; set; }
+        public virtual ICollection<Solicitud> DetalleSolicitudesSprintInicio { get; set; }
+        public virtual ICollection<Solicitud> DetalleSolicitudesSprintFin { get; set; }
     }
 }

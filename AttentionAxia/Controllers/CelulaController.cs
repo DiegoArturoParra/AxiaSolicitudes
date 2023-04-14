@@ -68,8 +68,6 @@ namespace AttentionAxia.Controllers
         }
 
         // POST: Celula/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Descripcion")] Celula celula)
@@ -105,11 +103,11 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            bool hayResponsables = await new ResponsableRepository(_db).AnyWithCondition(x => x.CelulaPerteneceId == celula.Id);
-            if (hayResponsables)
+            bool haySolicitudes = await new SolicitudRepository(_db).AnyWithCondition(x => x.CelulaId == celula.Id);
+            if (haySolicitudes)
             {
                 SetAlert(GetConstants.ALERT_WARNING);
-                SetMessage($"Hay responsables vinculados a la célula {celula.Descripcion}, elimine toda vinculación.");
+                SetMessage($"Hay solicitudes vinculadas a la célula {celula.Descripcion}, elimine toda vinculación.");
                 return RedirectToAction("Index");
             }
             return View(celula);
@@ -127,11 +125,11 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            bool hayResponsables = await new ResponsableRepository(_db).AnyWithCondition(x => x.CelulaPerteneceId == celula.Id);
-            if (hayResponsables)
+            bool haySolicitudes = await new SolicitudRepository(_db).AnyWithCondition(x => x.CelulaId == celula.Id);
+            if (haySolicitudes)
             {
                 SetAlert(GetConstants.ALERT_WARNING);
-                SetMessage($"Hay responsables vinculados a la célula {celula.Descripcion}, elimine toda vinculación.");
+                SetMessage($"Hay solicitudes vinculadas a la célula {celula.Descripcion}, elimine toda vinculación.");
                 return RedirectToAction("Index");
             }
             _celulaRepository.Delete(celula);

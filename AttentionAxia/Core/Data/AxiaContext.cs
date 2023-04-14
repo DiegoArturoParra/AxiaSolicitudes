@@ -9,7 +9,6 @@ namespace AttentionAxia.Core.Data
         {
 
         }
-
         public AxiaContext(string nameOrConnectionString)
             : base(nameOrConnectionString)
         {
@@ -52,9 +51,9 @@ namespace AttentionAxia.Core.Data
                 .Property(e => e.Clave)
                 .IsUnicode(false);
             modelBuilder.Entity<Celula>()
-              .HasMany(e => e.Responsables)
-              .WithRequired(e => e.CelulaPertenece)
-              .HasForeignKey(e => e.CelulaPerteneceId)
+              .HasMany(e => e.Solicitudes)
+              .WithRequired(e => e.Celula)
+              .HasForeignKey(e => e.CelulaId)
               .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Linea>()
@@ -84,10 +83,16 @@ namespace AttentionAxia.Core.Data
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Sprint>()
-                .HasMany(e => e.DetalleSolicitudes)
-                .WithRequired(e => e.Sprint)
-                .HasForeignKey(e => e.SprintId)
+                .HasMany(e => e.DetalleSolicitudesSprintInicio)
+                .WithRequired(e => e.SprintInicio)
+                .HasForeignKey(e => e.SprintInicioId)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Sprint>()
+              .HasMany(e => e.DetalleSolicitudesSprintFin)
+              .WithRequired(e => e.SprintFin)
+              .HasForeignKey(e => e.SprintFinId)
+              .WillCascadeOnDelete(false);
         }
     }
 }

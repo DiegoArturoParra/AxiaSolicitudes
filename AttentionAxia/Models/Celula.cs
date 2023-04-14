@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttentionAxia.Models
 {
 
-    [Table("CELULA_DE_TRABAJO", Schema = "AXIA")]
+    [Table("CELULA_INICIATIVA", Schema = "AXIA")]
     public partial class Celula
     {
         public Celula()
         {
-            Responsables = new HashSet<Responsable>();
+            Solicitudes = new HashSet<Solicitud>();
         }
         [Column("id_celula")]
         public int Id { get; set; }
@@ -18,6 +18,6 @@ namespace AttentionAxia.Models
         [StringLength(500)]
         [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
-        public virtual ICollection<Responsable> Responsables { get; set; }
+        public virtual ICollection<Solicitud> Solicitudes { get; set; }
     }
 }

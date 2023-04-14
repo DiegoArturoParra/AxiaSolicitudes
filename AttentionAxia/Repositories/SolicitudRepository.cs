@@ -8,7 +8,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Routing;
-using System.Web.UI;
 
 namespace AttentionAxia.Repositories
 {
@@ -25,15 +24,23 @@ namespace AttentionAxia.Repositories
             {
                 var existeResponsable = await Context.TablaResponsables.AnyAsync(x => x.Id == solicitud.ResponsableId);
                 if (!existeResponsable)
-                    return Responses.SetErrorResponse("No se encuentra el responsable");
+                    return Responses.SetErrorResponse("No existe el responsable");
 
                 var existeEstado = await Context.TablaEstados.AnyAsync(x => x.Id == solicitud.EstadoId);
                 if (!existeEstado)
-                    return Responses.SetErrorResponse("No se encuentra el estado");
+                    return Responses.SetErrorResponse("No existe el estado");
 
-                var existeSprint = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintId);
+                var existeSprint = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintInicioId);
                 if (!existeSprint)
-                    return Responses.SetErrorResponse("No se encuentra el sprint");
+                    return Responses.SetErrorResponse("No existe el sprint inicio");
+
+                var existeSprintfin = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintFinId);
+                if (!existeSprintfin)
+                    return Responses.SetErrorResponse("No existe el sprint fin");
+
+                var existeCelula = await Context.TablaCelulas.AnyAsync(x => x.Id == solicitud.CelulaId);
+                if (!existeCelula)
+                    return Responses.SetErrorResponse("No existe la célula");
 
                 return Responses.SetOkResponse("validado");
             }
@@ -51,15 +58,19 @@ namespace AttentionAxia.Repositories
             try
             {
                 var query = (from solicitud in Context.TablaSolicitudes
+                             join celula in Context.TablaCelulas on solicitud.CelulaId equals celula.Id
                              join estado in Context.TablaEstados on solicitud.EstadoId equals estado.Id
-                             join sprint in Context.TablaSprints on solicitud.SprintId equals sprint.Id
+                             join sprintInicio in Context.TablaSprints on solicitud.SprintInicioId equals sprintInicio.Id
+                             join sprintFin in Context.TablaSprints on solicitud.SprintFinId equals sprintFin.Id
                              join responsable in Context.TablaResponsables on solicitud.ResponsableId equals responsable.Id
                              select new
                              {
                                  solicitud,
                                  estado,
-                                 sprint,
-                                 responsable
+                                 sprintInicio,
+                                 sprintFin,
+                                 responsable,
+                                 celula
                              });
                 if (filtro.EstadoSolicitudId.HasValue)
                 {
@@ -71,11 +82,11 @@ namespace AttentionAxia.Repositories
                 }
                 if (filtro.SprintId.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.SprintId == filtro.SprintId.Value);
+                    query = query.Where(x => x.solicitud.SprintInicioId == filtro.SprintId.Value);
                 }
                 if (filtro.CelulaId.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.Responsable.CelulaPerteneceId == filtro.CelulaId.Value);
+                    query = query.Where(x => x.solicitud.CelulaId == filtro.CelulaId.Value);
                 }
                 if (filtro.LineaId.HasValue)
                 {
@@ -89,15 +100,19 @@ namespace AttentionAxia.Repositories
                             Id = m.solicitud.Id,
                             ColorEstado = m.estado.Nivel,
                             Avance = m.solicitud.Avance,
-                            Celula = Context.TablaCelulas.Where(y => y.Id == m.responsable.CelulaPerteneceId).Select(s => s.Descripcion).FirstOrDefault(),
+                            Celula = m.celula.Descripcion,
                             Estado = m.estado.Descripcion,
                             EstadoId = m.estado.Id,
                             Linea = Context.TablaLineas.Where(y => y.Id == m.responsable.LineaPerteneceId).Select(s => s.Descripcion).FirstOrDefault(),
                             Iniciativa = m.solicitud.Iniciativa,
                             FechaInicial = m.solicitud.FechaInicioSprint,
                             Responsable = m.responsable.Nombres,
-                            Sprint = m.sprint.Sigla + " " + m.sprint.Periodo,
-                            FechaFinal = m.solicitud.FechaFinSprint
+                            SprintInicio = m.sprintInicio.Sigla + " " + m.sprintInicio.Periodo,
+                            SprintFin = m.sprintFin.Sigla + " " + m.sprintFin.Periodo,
+                            FechaFinal = m.solicitud.FechaFinSprint,
+                            SprintInicioFechaGeneracion = m.sprintInicio.FechaGeneracion,
+                            SprintFinFechaGeneracion = m.sprintFin.FechaGeneracion
+                            
                         }).ToListAsync();
 
 

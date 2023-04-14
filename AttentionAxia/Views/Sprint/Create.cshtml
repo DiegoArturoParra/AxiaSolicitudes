@@ -60,6 +60,7 @@
          // Loop over them and prevent submission
          Array.prototype.slice.call(forms).forEach(function (form) {
              if (form.checkValidity()) {
+                 form.classList.add('was-validated')
                  $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Agregando...');
                  $('#btn-save').prop("disabled", true);
                  let sigla = $("#Sigla").val();

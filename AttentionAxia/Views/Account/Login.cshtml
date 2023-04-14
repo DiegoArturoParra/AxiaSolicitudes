@@ -99,6 +99,7 @@
                     if (!data.IsSuccess) {
                         let message = data.Message;
                         alertify.alert(error, message);
+                        $('#btn-login').removeAttr('disabled');
                     }
                     else {
                         let url ='@Url.Action("Login", "Account")';
@@ -107,9 +108,9 @@
                             if (!data.IsSuccess) {
                                 let message = data.Message;
                                 alertify.alert(error, message);
+                                $('#btn-login').removeAttr('disabled');
                             }
                             else {
-                                $(this).prop("disabled", true);
                                 let url = "@Url.Action("Index","Home")";
                                 window.location.href = url;
                             }
@@ -141,7 +142,6 @@
                 $('#status').removeClass('d-none');
             });
             $(document).ajaxComplete(function (e) {
-                $('#btn-login').removeAttr('disabled');
                 $('#status').addClass('d-none');
             });
         });

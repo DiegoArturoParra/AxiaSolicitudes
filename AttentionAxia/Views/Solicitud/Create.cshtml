@@ -30,10 +30,19 @@
         </div>
         <div class="form-group">
             <div class="col-md-12">
-                <label class="control-label col-md-3">Sprint</label>
-                @Html.DropDownList("SprintId", null, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <label class="control-label col-md-3">Sprint Inicio</label>
+                @Html.DropDownList("SprintInicioId", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
                 <div class="invalid-feedback">
-                    El sprint es requerido
+                    El sprint inicio es requerido
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Sprint Fin</label>
+                @Html.DropDownList("SprintFinId", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El sprint fin es requerido
                 </div>
             </div>
         </div>
@@ -62,6 +71,15 @@
                 <input type="text" class="form-control float-right" name="DateEnd" id="DateEndSprint" required>
                 <div class="invalid-feedback">
                     la fecha fin es requerida.
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Célula iniciativa</label>
+                @Html.DropDownList("CelulaId", ViewBag.DDL_Celulas as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El campo célula es requerido.
                 </div>
             </div>
         </div>
@@ -138,19 +156,23 @@
              // Loop over them and prevent submission
              Array.prototype.slice.call(forms).forEach(function (form) {
                  if (form.checkValidity()) {
+                     form.classList.add('was-validated')
                      $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Guardando...');
                      $('#btn-save').prop("disabled", true);
                      let url = "@Url.Action("Create", "Solicitud")";
                      const responsable = $('#ResponsableId').val();
                      const estado = $('#EstadoId').val();
-                     const sprint = $('#SprintId').val();
+                     const sprintinicio = $('#SprintInicioId').val();
+                     const sprintfin = $('#SprintFinId').val();
+                     const celula = $('#CelulaId').val();
                      const iniciativa = $('#text_iniciativa').val();
                      let dateInitialSprint = moment($('#DateInitialSprint').val()).format();
                      let dateFinalSprint = moment($('#DateEndSprint').val()).format();
                      const token = $('input[name="__RequestVerificationToken"]', form).val();
                      let data = {
                          ResponsableId: responsable,
-                         EstadoId: estado, SprintId: sprint,
+                         EstadoId: estado, SprintInicioId: sprintinicio,
+                         CelulaId: celula, SprintFinId: sprintfin,
                          FechaFinal: dateFinalSprint,
                          Iniciativa: iniciativa, FechaInicial: dateInitialSprint,
                         __RequestVerificationToken: token

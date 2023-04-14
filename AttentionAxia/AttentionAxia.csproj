@@ -244,9 +244,9 @@
     <Compile Include="Core\Data\AxiaContext.cs" />
     <Compile Include="Helpers\Response.cs" />
     <Compile Include="Helpers\RolesEnum.cs" />
-    <Compile Include="Migrations\202304050025367_Initial.cs" />
-    <Compile Include="Migrations\202304050025367_Initial.designer.cs">
-      <DependentUpon>202304050025367_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202304141511370_Initial.cs" />
+    <Compile Include="Migrations\202304141511370_Initial.designer.cs">
+      <DependentUpon>202304141511370_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
@@ -691,8 +691,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202304050025367_Initial.resx">
-      <DependentUpon>202304050025367_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202304141511370_Initial.resx">
+      <DependentUpon>202304141511370_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

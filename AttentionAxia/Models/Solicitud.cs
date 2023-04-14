@@ -14,8 +14,12 @@ namespace AttentionAxia.Models
         public int ResponsableId { get; set; }
         [Column("estado_solicitud_id")]
         public int EstadoId { get; set; }
-        [Column("sprint_id")]
-        public int SprintId { get; set; }
+        [Column("sprint_inicial_id")]
+        public int SprintInicioId { get; set; }
+        [Column("sprint_final_id")]
+        public int SprintFinId { get; set; }
+        [Column("celula_id")]
+        public int CelulaId { get; set; }
         [Column("iniciativa")]
         [Required(ErrorMessage = "Campo requerido.")]
         [StringLength(5000)]
@@ -30,6 +34,10 @@ namespace AttentionAxia.Models
         public byte Avance { get; set; }
         public virtual EstadoSolicitud Estado { get; set; }
         public virtual Responsable Responsable { get; set; }
-        public virtual Sprint Sprint { get; set; }
+        [ForeignKey("SprintInicioId")]
+        public virtual Sprint SprintInicio { get; set; }
+        [ForeignKey("SprintFinId")]
+        public virtual Sprint SprintFin { get; set; }
+        public virtual Celula Celula { get; set; }
     }
 }

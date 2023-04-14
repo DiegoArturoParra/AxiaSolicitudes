@@ -19,15 +19,10 @@ namespace AttentionAxia.Models
         [Required(ErrorMessage = "Campo requerido.")]
         [StringLength(500)]
         public string Nombres { get; set; }
-        [Column("celula_trabajo_id")]
-        [Required(ErrorMessage = "Campo requerido.")]
-        [Display(Name = "Pertenece a la Célula")]
-        public int CelulaPerteneceId { get; set; }
         [Column("linea_trabajo_id")]
         [Required(ErrorMessage = "Campo requerido.")]
         [Display(Name = "Pertenece a la Línea de trabajo")]
         public int LineaPerteneceId { get; set; }
-        public virtual Celula CelulaPertenece { get; set; }
         public virtual Linea LineaPertenece { get; set; }
         public virtual ICollection<Solicitud> DetalleSolicitudes { get; set; }
     }
