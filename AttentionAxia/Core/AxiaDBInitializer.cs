@@ -57,6 +57,10 @@ namespace AttentionAxia.Core
               new Celula
               {
                  Descripcion = "Axia"
+              },
+              new Celula
+              {
+                 Descripcion = "Dark"
               }
             };
 

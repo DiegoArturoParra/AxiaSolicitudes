@@ -23,22 +23,21 @@ namespace AttentionAxia.Controllers
         // GET: Responsables
         public ActionResult Index()
         {
-            var tablaResponsables = _responsableRepository.Table.Include(r => r.CelulaPertenece).Include(r => r.LineaPertenece);
+            var tablaResponsables = _responsableRepository.Table.Include(r => r.LineaPertenece);
             return View(tablaResponsables.ToList());
         }
 
         // GET: Responsables/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            ViewBag.CelulaPerteneceId = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
-            ViewBag.LineaPerteneceId = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Lineas = new SelectList(await _lineaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
             return View();
         }
 
         // POST: Responsables/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Nombres,CelulaPerteneceId,LineaPerteneceId")] Responsable responsable)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Nombres,LineaPerteneceId")] Responsable responsable)
         {
             if (ModelState.IsValid)
             {
@@ -46,7 +45,7 @@ namespace AttentionAxia.Controllers
                 if (existe)
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage(message: $"Ya existe un registro con la descripción {responsable.Nombres.ToLower()}");
+                    SetMessage(message: $"Ya existe un registro con el nombre {responsable.Nombres.ToLower()}");
                     return View(responsable);
                 }
 
@@ -56,14 +55,19 @@ namespace AttentionAxia.Controllers
                 SetMessage("Creado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-
-            ViewBag.CelulaPerteneceId = new SelectList(_celulaRepository.Table, "Id", "Descripcion", responsable.CelulaPerteneceId);
-            ViewBag.LineaPerteneceId = new SelectList(_lineaRepository.Table, "Id", "Descripcion", responsable.LineaPerteneceId);
+            if (responsable.LineaPerteneceId > 0)
+            {
+                ViewBag.DDL_Lineas = new SelectList(await _lineaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", responsable.LineaPerteneceId);
+            }
+            else
+            {
+                ViewBag.DDL_Lineas = new SelectList(await _lineaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
+            }
             return View();
         }
 
         // GET: Responsables/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -76,8 +80,7 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            ViewBag.CelulaPerteneceId = new SelectList(_celulaRepository.Table, "Id", "Descripcion", responsable.CelulaPerteneceId);
-            ViewBag.LineaPerteneceId = new SelectList(_lineaRepository.Table, "Id", "Descripcion", responsable.LineaPerteneceId);
+            ViewBag.DDL_Lineas = new SelectList(await _lineaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", responsable.LineaPerteneceId);
             return View(responsable);
         }
 
@@ -100,13 +103,12 @@ namespace AttentionAxia.Controllers
                 SetMessage("Actualizado satisfactoriamente.");
                 return RedirectToAction("Index");
             }
-            ViewBag.CelulaPerteneceId = new SelectList(_celulaRepository.Table, "Id", "Descripcion", responsable.CelulaPerteneceId);
-            ViewBag.LineaPerteneceId = new SelectList(_lineaRepository.Table, "Id", "Descripcion", responsable.LineaPerteneceId);
+            ViewBag.DDL_Lineas = new SelectList(await _lineaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", responsable.LineaPerteneceId);
             return View(responsable);
         }
 
         // GET: Responsables/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -119,6 +121,13 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
+            bool haySolicitudes = await new SolicitudRepository(_db).AnyWithCondition(x => x.ResponsableId == responsable.Id);
+            if (haySolicitudes)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage($"Hay solicitudes vinculadas de la persona {responsable.Nombres}, elimine toda vinculación.");
+                return RedirectToAction("Index");
+            }
             return View(responsable);
         }
 
@@ -127,7 +136,21 @@ namespace AttentionAxia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+
             Responsable responsable = _responsableRepository.FindById(id);
+            if (responsable == null)
+            {
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage("No existe el registro.");
+                return RedirectToAction("Index");
+            }
+            bool haySolicitudes = await new SolicitudRepository(_db).AnyWithCondition(x => x.ResponsableId == responsable.Id);
+            if (haySolicitudes)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage($"Hay solicitudes vinculadas de la persona {responsable.Nombres}, elimine toda vinculación.");
+                return RedirectToAction("Index");
+            }
             _responsableRepository.Delete(responsable);
             await _responsableRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);

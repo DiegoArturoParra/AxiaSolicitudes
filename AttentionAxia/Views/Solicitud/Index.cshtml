@@ -95,7 +95,10 @@
                                             Iniciativa
                                         </th>
                                         <th>
-                                            Sprint
+                                            Sprint inicio
+                                        </th>
+                                        <th>
+                                            Sprint fin
                                         </th>
                                         <th>
                                             Fecha inicio sprint
@@ -133,7 +136,10 @@
                                             @Html.DisplayFor(modelItem => item.Iniciativa)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.Sprint)
+                                            @Html.DisplayFor(modelItem => item.SprintInicioFullText)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.SprintFinFullText)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.FechaInicialSprint)

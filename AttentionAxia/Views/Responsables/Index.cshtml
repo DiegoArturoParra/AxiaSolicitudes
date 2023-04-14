@@ -17,9 +17,6 @@
             Linea
         </th>
         <th class="text-center">
-            Celula
-        </th>
-        <th class="text-center">
             Acciones
         </th>
     </tr>
@@ -33,13 +30,9 @@
             @Html.DisplayFor(modelItem => item.LineaPertenece.Descripcion)
         </td>
         <td class="text-center">
-            @Html.DisplayFor(modelItem => item.CelulaPertenece.Descripcion)
-        </td>
-        <td class="text-center">
             <a href="@Url.Action("Edit","Responsables", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
             <a href="@Url.Action("Delete","Responsables", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
         </td>
     </tr>
 }
-
 </table>

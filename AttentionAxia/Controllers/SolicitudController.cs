@@ -37,8 +37,6 @@ namespace AttentionAxia.Controllers
             return View(solicitudes);
         }
 
-
-
         private void LoadLists()
         {
             ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
@@ -79,10 +77,12 @@ namespace AttentionAxia.Controllers
             {
                 ResponsableId = solicitud.ResponsableId,
                 EstadoId = solicitud.EstadoId,
-                SprintId = solicitud.SprintId,
+                SprintInicioId = solicitud.SprintInicioId,
+                SprintFinId = solicitud.SprintFinId,
                 FechaInicioSprint = solicitud.FechaInicial,
                 FechaFinSprint = solicitud.FechaFinal,
                 Iniciativa = solicitud.Iniciativa,
+                CelulaId = solicitud.CelulaId,
                 Avance = 0
             };
             _solicitudRepository.Insert(entidadInsert);
@@ -100,20 +100,23 @@ namespace AttentionAxia.Controllers
                 var primerEstado = await estados.Where(x => x.Descripcion.ToUpper().Contains("HACER")).FirstOrDefaultAsync();
                 if (primerEstado == null)
                 {
-                    ViewBag.EstadoId = new SelectList(estados, "Id", "Descripcion");
+                    ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
                 }
                 else
                 {
-                    ViewBag.EstadoId = new SelectList(estados, "Id", "Descripcion", primerEstado.Id);
+                    ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", primerEstado.Id);
                 }
-                ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres");
-                ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
+                ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres");
+                ViewBag.DDL_Sprints = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint");
+                ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
             }
             else
             {
-                ViewBag.EstadoId = new SelectList(_estadoRepository.Table, "Id", "Descripcion", solicitud.EstadoId);
-                ViewBag.ResponsableId = new SelectList(_responsableRepository.Table, "Id", "Nombres", solicitud.ResponsableId);
-                ViewBag.SprintId = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint", solicitud.SprintId);
+                ViewBag.EstadoId = new SelectList(await _estadoRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.EstadoId);
+                ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres", solicitud.ResponsableId);
+                ViewBag.DDL_SprintsInicio = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint",solicitud.SprintInicioId);
+                ViewBag.SprintsFin = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint", solicitud.SprintFinId);
+                ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.CelulaId);
             }
 
         }

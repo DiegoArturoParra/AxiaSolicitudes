@@ -1,7 +1,6 @@
 ﻿using AttentionAxia.Core.Data;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
-using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -92,9 +91,21 @@ namespace AttentionAxia.Repositories
             DateTime fechaFinal = new DateTime(number, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
             var listado = await Table.Where(x => x.Periodo.Equals(period) && x.FechaGeneracion >= fechaInicial && x.FechaGeneracion <= fechaFinal)
                 .ToListAsync();
+
+
             if (listado.Count == 0)
             {
                 return Responses.SetErrorResponse($"No hay sprints para el periodo {period}-{year}");
+            }
+
+            if (await Context.TablaSolicitudes.AnyAsync())
+            {
+                var haySprintsConTareas = await Context.TablaSolicitudes.Where(x => listado.Select(y => y.Id).Contains(x.SprintInicioId) ||
+                                                                          listado.Select(y => y.Id).Contains(x.SprintFinId)).AnyAsync();
+                if (haySprintsConTareas)
+                {
+                    return Responses.SetErrorResponse($"hay sprints para el periodo {period}-{year} vinculados en una iniciativa.");
+                }
             }
             Context.TablaSprints.RemoveRange(listado);
             await Save();
