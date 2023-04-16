@@ -98,6 +98,16 @@
 
         <div class="form-group">
             <div class="col-md-12">
+                <label class="control-label col-md-3">Archivo</label>
+                <input id="archivo" type="file" name="archivoEse">
+            </div>
+            <div class="invalid-feedback">
+                El archivo es requerido
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-12">
                 <label class="control-label col-md-3">Avance</label>
                 <input id="avance_solicitud" type="text" name="Avance" value="0">
             </div>
@@ -166,6 +176,7 @@
                      const sprintfin = $('#SprintFinId').val();
                      const celula = $('#CelulaId').val();
                      const iniciativa = $('#text_iniciativa').val();
+                     const archivo = $('#archivo').val();
                      let dateInitialSprint = moment($('#DateInitialSprint').val()).format();
                      let dateFinalSprint = moment($('#DateEndSprint').val()).format();
                      const token = $('input[name="__RequestVerificationToken"]', form).val();
@@ -175,6 +186,7 @@
                          CelulaId: celula, SprintFinId: sprintfin,
                          FechaFinal: dateFinalSprint,
                          Iniciativa: iniciativa, FechaInicial: dateInitialSprint,
+                         archivoEse: archivo,
                         __RequestVerificationToken: token
                      };
                      $.post(url, data).done(function (data) {

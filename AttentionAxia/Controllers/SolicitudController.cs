@@ -2,8 +2,11 @@
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -63,8 +66,19 @@ namespace AttentionAxia.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]
-        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud)
+        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud, Microsoft.AspNetCore.Http.IFormFile archivoEse)
         {
+            if (archivoEse.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    archivoEse.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    string s = Convert.ToBase64String(fileBytes);
+                    // act on the Base64 data
+                }
+            }
+
             solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
             var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
             if (!response.IsSuccess)
