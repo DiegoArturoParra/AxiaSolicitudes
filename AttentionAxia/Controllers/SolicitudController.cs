@@ -60,7 +60,7 @@ namespace AttentionAxia.Controllers
             ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
             List<int> items = new List<int>()
             {
-                100,250,500
+                25, 50, 100, 250, 500
             };
 
             ViewBag.DDL_Items = new SelectList(items);

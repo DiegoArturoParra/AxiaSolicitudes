@@ -33,13 +33,17 @@
                             </div>
                         </div>
                         <div class="row mb-3 mt-3">
-                            <div class="col-lg-2 mb-3">
+                            <div class="col-lg-4 mb-3">
                                 <label class="control-label col-lg-4">Estado</label>
                                 @Html.DropDownList("Estado", ViewBag.DDL_Estados as SelectList, "--Seleccione--", new { @class = "form-control" })
                             </div>
-                            <div class="col-lg-5 mb-3">
-                                <label class="control-label col-lg-6">Rango fechas sprint</label>
+                            <div class="col-lg-4 mb-3">
+                                <label class="control-label col-lg-6">Rango fechas</label>
                                 <input type="text" class="form-control" name="FiltroFecha" id="DateFilter" />
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <label class="control-label col-lg-6">Items por Página</label>
+                                @Html.DropDownList("PageSize", ViewBag.DDL_Items as SelectList, htmlAttributes: new { @class = "form-control" })
                             </div>
                         </div>
                         <div class="row mb-4 text-center">
@@ -239,14 +243,12 @@
         });
 
         function Limpiar() {
-            var formulario = document.getElementById("formularioFiltros");
-
-            // Resetear los valores de los campos del formulario
-            formulario.reset();
-            // Deshabilitar el campo de Responsable
-            var responsable = formulario.querySelector("#Responsable");
-            responsable.disabled = true;
-            responsable.value = "";
+            $("#Celula").val("");
+            $("#Linea").val("");
+            $("#Responsable").val("");
+            $("#Sprint").val("");
+            $("#Estado").val("");
+            $("#DateFilter").val("");
         }
         function EditarEstado(estadoId, avance) {
             $('#modal_estados').val(estadoId);

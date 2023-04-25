@@ -13,6 +13,6 @@ namespace AttentionAxia.DTOs
         public DateTime? FechaFinal { get; set; }
         public int? Avance { get; set; }
         public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 3;
+        public int PageSize { get; set; } = 25;
     }
 }

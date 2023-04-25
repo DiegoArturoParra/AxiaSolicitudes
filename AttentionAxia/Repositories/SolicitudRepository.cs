@@ -72,23 +72,23 @@ namespace AttentionAxia.Repositories
                                  responsable,
                                  celula
                              });
-                if (filtro.Estado.HasValue)
+                if (filtro.Estado.HasValue && filtro.Estado.Value > 0)
                 {
                     query = query.Where(x => x.solicitud.EstadoId == filtro.Estado.Value);
                 }
-                if (filtro.Responsable.HasValue)
+                if (filtro.Responsable.HasValue && filtro.Responsable.Value > 0)
                 {
                     query = query.Where(x => x.solicitud.ResponsableId == filtro.Responsable.Value);
                 }
-                if (filtro.Sprint.HasValue)
+                if (filtro.Sprint.HasValue && filtro.Sprint.Value > 0)
                 {
                     query = query.Where(x => x.solicitud.SprintInicioId == filtro.Sprint.Value);
                 }
-                if (filtro.Celula.HasValue)
+                if (filtro.Celula.HasValue && filtro.Celula.Value > 0)
                 {
                     query = query.Where(x => x.solicitud.CelulaId == filtro.Celula.Value);
                 }
-                if (filtro.Linea.HasValue)
+                if (filtro.Linea.HasValue && filtro.Linea.Value > 0)
                 {
                     query = query.Where(x => x.solicitud.Responsable.LineaPerteneceId == filtro.Linea.Value);
                 }
@@ -112,7 +112,7 @@ namespace AttentionAxia.Repositories
                             FechaFinal = m.solicitud.FechaFinSprint,
                             SprintInicioFechaGeneracion = m.sprintInicio.FechaGeneracion,
                             SprintFinFechaGeneracion = m.sprintFin.FechaGeneracion
-                            
+
                         }).ToListAsync();
 
 
