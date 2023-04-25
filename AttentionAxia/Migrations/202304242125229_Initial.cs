@@ -29,6 +29,9 @@
                         iniciativa = c.String(nullable: false, maxLength: 5000, unicode: false),
                         fecha_inicio_sprint = c.DateTime(nullable: false),
                         fecha_fin_sprint = c.DateTime(nullable: false),
+                        fecha_creacion_solicitud = c.DateTime(nullable: false),
+                        fecha_comienzo_solicitud = c.DateTime(),
+                        fecha_finalizacion_solicitud = c.DateTime(),
                         avance_porcentual = c.Byte(nullable: false),
                     })
                 .PrimaryKey(t => t.id_solicitud)

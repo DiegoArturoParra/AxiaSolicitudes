@@ -72,30 +72,30 @@ namespace AttentionAxia.Repositories
                                  responsable,
                                  celula
                              });
-                if (filtro.EstadoSolicitudId.HasValue)
+                if (filtro.Estado.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.EstadoId == filtro.EstadoSolicitudId.Value);
+                    query = query.Where(x => x.solicitud.EstadoId == filtro.Estado.Value);
                 }
-                if (filtro.ResponsableId.HasValue)
+                if (filtro.Responsable.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.ResponsableId == filtro.ResponsableId.Value);
+                    query = query.Where(x => x.solicitud.ResponsableId == filtro.Responsable.Value);
                 }
-                if (filtro.SprintId.HasValue)
+                if (filtro.Sprint.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.SprintInicioId == filtro.SprintId.Value);
+                    query = query.Where(x => x.solicitud.SprintInicioId == filtro.Sprint.Value);
                 }
-                if (filtro.CelulaId.HasValue)
+                if (filtro.Celula.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.CelulaId == filtro.CelulaId.Value);
+                    query = query.Where(x => x.solicitud.CelulaId == filtro.Celula.Value);
                 }
-                if (filtro.LineaId.HasValue)
+                if (filtro.Linea.HasValue)
                 {
-                    query = query.Where(x => x.solicitud.Responsable.LineaPerteneceId == filtro.LineaId.Value);
+                    query = query.Where(x => x.solicitud.Responsable.LineaPerteneceId == filtro.Linea.Value);
                 }
 
                 var listado = await query.OrderBy(x => x.solicitud.Id)
-                        .Skip((filtro.Paginacion.Page - 1) * filtro.Paginacion.Page)
-                        .Take(filtro.Paginacion.PageSize).Select(m => new SolicitudDTO
+                        .Skip((filtro.Page - 1) * filtro.Page)
+                        .Take(filtro.PageSize).Select(m => new SolicitudDTO
                         {
                             Id = m.solicitud.Id,
                             ColorEstado = m.estado.Nivel,
@@ -119,9 +119,9 @@ namespace AttentionAxia.Repositories
                 var totalDeRegistros = query.Count();
                 var modelo = new ListarSolicitudDTO();
                 modelo.Solicitudes = listado;
-                modelo.PaginaActual = filtro.Paginacion.Page;
+                modelo.PaginaActual = filtro.Page;
                 modelo.TotalDeRegistros = totalDeRegistros;
-                modelo.RegistrosPorPagina = filtro.Paginacion.PageSize;
+                modelo.RegistrosPorPagina = filtro.PageSize;
                 modelo.ValoresQueryString = new RouteValueDictionary();
                 modelo.ValoresQueryString["FechaInicial"] = filtro.FechaInicial;
                 modelo.ValoresQueryString["FechaFinal"] = filtro.FechaFinal;

@@ -8,52 +8,51 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="callout callout-info">
-                    <h5><i class="fas fa-filter mr-3"></i>Filtros</h5>
-                    <div class="row mb-3 mt-3">
-                        <div class="col-lg-6 mb-3">
-                            <label class="control-label col-lg-4">Célula</label>
-                            @Html.DropDownList("ddl_celulas", ViewBag.DDL_Celulas as SelectList, "--Seleccione--", new { @class = "form-control" })
+                @using (Html.BeginForm(null, null, FormMethod.Get, new { id = "FormularioFiltros" }))
+                {
+                    <div class="callout callout-info">
+                        <h5><i class="fas fa-filter mr-3"></i>Filtros</h5>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-lg-6 mb-3">
+                                <label class="control-label col-lg-4">Célula</label>
+                                @Html.DropDownList("Celula", ViewBag.DDL_Celulas as SelectList, "--Seleccione--", new { @class = "form-control" })
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="control-label col-lg-4">Línea</label>
+                                @Html.DropDownList("Linea", ViewBag.DDL_Lineas as SelectList, "--Seleccione--", new { @class = "form-control" })
+                            </div>
                         </div>
-                        <div class="col-lg-6">
-                            <label class="control-label col-lg-4">Línea</label>
-                            @Html.DropDownList("ddl_lineas", ViewBag.DDL_Lineas as SelectList, "--Seleccione--", new { @class = "form-control" })
+                        <div class="row mb-3 mt-3">
+                            <div class="col-lg-6">
+                                <label class="control-label col-lg-4">Responsable</label>
+                                @Html.DropDownList("Responsable", new SelectList(""), "--Seleccione--", new { @class = "form-control", disabled = "disabled" })
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label class="control-label col-lg-4"># Sprint</label>
+                                @Html.DropDownList("Sprint", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-lg-2 mb-3">
+                                <label class="control-label col-lg-4">Estado</label>
+                                @Html.DropDownList("Estado", ViewBag.DDL_Estados as SelectList, "--Seleccione--", new { @class = "form-control" })
+                            </div>
+                            <div class="col-lg-5 mb-3">
+                                <label class="control-label col-lg-6">Rango fechas sprint</label>
+                                <input type="text" class="form-control" name="FiltroFecha" id="DateFilter" />
+                            </div>
+                        </div>
+                        <div class="row mb-4 text-center">
+                            <div class="col d-flex justify-content-lg-start">
+                                <a class="btn btn-warning" onclick="Limpiar()" id="btn_limpiar"><i class="fa fa-eraser mr-2"></i><strong>Limpiar</strong></a>
+                            </div>
+                            <div class="col d-flex justify-content-lg-end">
+                                <button type="submit" class="btn btn-success" id="btn_buscar"><i class="fa fa-search mr-2"></i><strong>Buscar</strong></button>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3 mt-3">
-                        <div class="col-lg-6 mb-3">
-                            <label class="control-label col-lg-4"># Sprint</label>
-                            @Html.DropDownList("ddl_sprints", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", new { @class = "form-control" })
-                        </div>
-                        <div class="col-lg-6">
-                            <label class="control-label col-lg-4">Responsable</label>
-                            @Html.DropDownList("ddl_responsables", new SelectList(""), "--Seleccione--", new { @class = "form-control", disabled = "disabled" })
-                        </div>
-                    </div>
-                    <div class="row mb-3 mt-3">
-                        <div class="col-lg-2 mb-3">
-                            <label class="control-label col-lg-4">Estado</label>
-                            @Html.DropDownList("ddl_estados", ViewBag.DDL_Estados as SelectList, new { @class = "form-control" })
-                        </div>
-                        <div class="col-lg-5 mb-3">
-                            <label class="control-label col-lg-6">Rango fechas sprint</label>
-                            <input type="text" class="form-control" name="FiltroFecha" id="DateFilter" />
-                        </div>
-                        <div class="col-lg-5">
-                            <label class="control-label col-lg-4">Avance</label>
-                            <input class="avance" id="avance" type="text" name="Avance" value="0">
-                        </div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-lg-6 d-flex justify-content-lg-start">
-                            <button type="button" class="btn btn-warning" id="btn_limpiar"><i class="fa fa-eraser mr-2"></i><strong>Limpiar</strong></button>
-                        </div>
-                        <div class="col-lg-6 d-flex justify-content-lg-end">
-                            <button type="button" class="btn btn-success" id="btn_buscar"><i class="fa fa-search mr-2"></i><strong>Buscar</strong></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="invoice p-3 mb-3">
+                }
+                <div class="invoice p-3 mb-3" id="list_solicitudes">
                     <div class="row">
                         <div class="col-12">
                             <h4>
@@ -69,10 +68,7 @@
                             <a href="@Url.Action("Create", "Solicitud")" class="btn btn-primary ml-2 mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar solicitud</strong></a>
                         </div>
                     }
-                    <div class="row mb-4 d-flex justify-content-between">
-                        <div class="col-lg-2">
-                            @Html.DropDownListFor(x => x.RegistrosPorPagina, ViewBag.DDL_Items as SelectList, htmlAttributes: new { @class = "form-control" })
-                        </div>
+                    <div class="row mb-4 d-flex justify-content-center mr-5">
                         <div id="paginador-container">
                             @{ Html.RenderPartial("_PartialPaginador", Model); }
                         </div>
@@ -121,7 +117,7 @@
                                     </tr>
                                 </thead>
                                 @foreach (var item in Model.Solicitudes)
-                                {                                
+                                {
                                     <tr>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Responsable)
@@ -234,14 +230,25 @@
             step: 1,
             postfix: '%',
             prettify: false,
-            hasGrid: true 
+            hasGrid: true
         });
         $(function () {
             $('input[name="FiltroFecha"]').daterangepicker({
                 opens: 'left'
             });
         });
-        function EditarEstado(estadoId,avance) {
+
+        function Limpiar() {
+            var formulario = document.getElementById("formularioFiltros");
+
+            // Resetear los valores de los campos del formulario
+            formulario.reset();
+            // Deshabilitar el campo de Responsable
+            var responsable = formulario.querySelector("#Responsable");
+            responsable.disabled = true;
+            responsable.value = "";
+        }
+        function EditarEstado(estadoId, avance) {
             $('#modal_estados').val(estadoId);
             $('#modal_avance').val(avance);
             $('#modalEditEstado').modal('show');
