@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
@@ -21,7 +21,6 @@ namespace AttentionAxia.Controllers
         private readonly SprintRepository _sprintRepository;
         private readonly LineaRepository _lineaRepository;
         private readonly CelulaRepository _celulaRepository;
-
         public SolicitudController()
         {
             _solicitudRepository = new SolicitudRepository(_db);
@@ -80,17 +79,16 @@ namespace AttentionAxia.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]
-        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud, Microsoft.AspNetCore.Http.IFormFile archivoEse)
+        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud, HttpPostedFileBase fileAxia)
         {
-            if (archivoEse.Length > 0)
+            if (fileAxia.ContentLength > 0)
             {
-                using (var ms = new MemoryStream())
+
+                if (fileAxia != null)
                 {
-                    archivoEse.CopyTo(ms);
-                    var fileBytes = ms.ToArray();
-                    string s = Convert.ToBase64String(fileBytes);
-                    // act on the Base64 data
+                    fileAxia.SaveAs(Server.MapPath("~/Archivos/" + fileAxia.FileName));
                 }
+
             }
 
             solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
@@ -112,8 +110,10 @@ namespace AttentionAxia.Controllers
                 Iniciativa = solicitud.Iniciativa,
                 CelulaId = solicitud.CelulaId,
                 FechaCreacion = DateTime.Now,
-                Avance = 0
-            };
+                Avance = 0,
+                RutaArchivo = "~/Archivos/" + fileAxia.FileName,
+                NombreArchivo = fileAxia.FileName
+        };
             _solicitudRepository.Insert(entidadInsert);
             await _solicitudRepository.Save();
             SetAlert(GetConstants.ALERT_SUCCESS);

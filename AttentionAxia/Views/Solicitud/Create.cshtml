@@ -8,7 +8,7 @@
 <div class="container-lg">
     <h2 class="text-center">Crear Solicitud</h2>
     <hr />
-    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate>
+    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <div class="form-group">
             <div class="col-md-12">
@@ -99,7 +99,7 @@
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Archivo</label>
-                <input id="archivo" type="file" name="archivoEse">
+                <input class="input-sm" id="fileAxia" type="file" name="fileAxia">
             </div>
             <div class="invalid-feedback">
                 El archivo es requerido
@@ -176,7 +176,7 @@
                      const sprintfin = $('#SprintFinId').val();
                      const celula = $('#CelulaId').val();
                      const iniciativa = $('#text_iniciativa').val();
-                     const archivo = $('#archivo').val();
+                     const archivo = $('#fileAxia').val();
                      let dateInitialSprint = moment($('#DateInitialSprint').val()).format();
                      let dateFinalSprint = moment($('#DateEndSprint').val()).format();
                      const token = $('input[name="__RequestVerificationToken"]', form).val();
