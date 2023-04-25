@@ -5,11 +5,11 @@
 @{
     int paginaUno = 1;
     int Inicial = 1;
-    var activoInicial = Model.PaginaActual > 1 ? string.Empty : "active";
-    var activoFinal = Model.PaginaActual == cantidadPaginas ? "active" : string.Empty;
+    var activoInicial = Model.PaginaActual > 1 ? string.Empty : "page-item active";
+    var activoFinal = Model.PaginaActual == cantidadPaginas ? "page-item active" : "page-item";
 
 
-    var radio = 9;
+    var radio = 8;
     var cantidadMaximaDePaginas = radio * 2;
     int Final = (cantidadPaginas > cantidadMaximaDePaginas) ? cantidadMaximaDePaginas : cantidadPaginas;
     if (Model.PaginaActual > radio + 1)
@@ -25,17 +25,16 @@
         }
     }
 }
-<div class="col-lg-10 mt-2 justify-content-lg-end">
-    <ul class="pagination">
-        @{
-            Model.ValoresQueryString["page"] = 1;
-            Model.ValoresQueryString["pageSize"] = Model.RegistrosPorPagina;
-        }
+
+<div class="col-lg-10">
+    <ul class="pagination pagination-lg">
+        @{ Model.ValoresQueryString["page"] = 1;
+            Model.ValoresQueryString["pageSize"] = Model.RegistrosPorPagina; }
         @if (Model.PaginaActual == 1)
         {
             Model.ValoresQueryString["page"] = 1;
             <li class="invisible" title="anterior">
-                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Previous">
+                <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -44,16 +43,18 @@
         {
             Model.ValoresQueryString["page"] = Model.PaginaActual - 1;
             <li title="anterior">
-                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Previous">
+                <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
         }
-        @{
-            Model.ValoresQueryString["page"] = 1;
-            Model.ValoresQueryString["pageSize"] = Model.RegistrosPorPagina;
-        }
-        <li class="@activoInicial">@Html.ActionLink(paginaUno.ToString(), null, Model.ValoresQueryString)</li>
+        @{ Model.ValoresQueryString["page"] = 1;
+            Model.ValoresQueryString["pageSize"] = Model.RegistrosPorPagina; }
+        <li class="@activoInicial">
+            <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link">
+                @paginaUno.ToString()
+            </a>
+        </li>
         @if (paginaUno + 3 != Model.PaginaActual)
         {
             if (Model.PaginaActual >= paginaUno && Model.PaginaActual <= paginaUno + 3)
@@ -74,11 +75,19 @@
         {
             Model.ValoresQueryString["page"] = i; if (i == Model.PaginaActual)
             {
-                <li class="active">@Html.ActionLink(i.ToString(), null, Model.ValoresQueryString)</li>
+                <li class="page-item active">
+                    <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link">
+                        @i.ToString()
+                    </a>
+                </li>
             }
             else
             {
-                <li>@Html.ActionLink(i.ToString(), null, Model.ValoresQueryString)</li>
+                <li>
+                    <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link">
+                        @i.ToString()
+                    </a>
+                </li>
             }
         }
         @if (cantidadPaginas - 3 != Model.PaginaActual)
@@ -102,14 +111,18 @@
         @{Model.ValoresQueryString["page"] = cantidadPaginas; }
         @if (cantidadPaginas != paginaUno)
         {
-            <li class="@activoFinal">@Html.ActionLink(cantidadPaginas.ToString(), null, Model.ValoresQueryString)</li>
+            <li class="@activoFinal">
+                <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link">
+                    @cantidadPaginas.ToString()
+                </a>
+            </li>
         }
         @if (Model.PaginaActual == cantidadPaginas)
         {
             Model.ValoresQueryString["page"] = cantidadPaginas;
 
             <li class="invisible" title="siguiente">
-                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Next">
+                <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -118,12 +131,10 @@
         {
             Model.ValoresQueryString["page"] = Model.PaginaActual + 1;
             <li title="siguiente">
-                <a href="@Url.Action(null,Model.ValoresQueryString)" aria-label="Next">
+                <a href="@Url.Action(null, Model.ValoresQueryString)" class="page-link" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
         }
-
-
     </ul>
 </div>

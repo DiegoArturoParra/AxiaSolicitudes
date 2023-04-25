@@ -29,7 +29,14 @@ namespace AttentionAxia.Models
         public DateTime FechaInicioSprint { get; set; }
         [Required(ErrorMessage = "Campo requerido.")]
         [Column("fecha_fin_sprint")]
-        public DateTime FechaFinSprint { get; set; }
+        public DateTime FechaFinSprint { get; set; } 
+        [Required(ErrorMessage = "Fecha Creación requerida.")]
+        [Column("fecha_creacion_solicitud")]
+        public DateTime FechaCreacion { get; set; }
+        [Column("fecha_comienzo_solicitud")]
+        public DateTime? FechaComienzoSolicitud { get; set; }
+        [Column("fecha_finalizacion_solicitud")]
+        public DateTime? FechaFinalizacion { get; set; }
         [Column("avance_porcentual")]
         public byte Avance { get; set; }
         public virtual EstadoSolicitud Estado { get; set; }
