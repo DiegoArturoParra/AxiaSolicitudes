@@ -576,6 +576,8 @@
     <Content Include="adminlte\plugins\moment\moment-with-locales.min.js.map" />
     <Content Include="adminlte\plugins\moment\moment.min.js.map" />
     <None Include="Properties\PublishProfiles\AttentionAxia - Web Deploy.pubxml" />
+    <Content Include="REPOSITORIO_ARCHIVOS\SOLICITUDES\MER Desarrollo Solicitudes Axia.docx_17aeaa52-e45e-4118-943e-f5f9c9245a40.docx" />
+    <Content Include="REPOSITORIO_ARCHIVOS\SOLICITUDES\Reporte_2023-04-20[447].pdf" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
