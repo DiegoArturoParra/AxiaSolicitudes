@@ -7,6 +7,7 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Routing;
 
 namespace AttentionAxia.Repositories
@@ -16,6 +17,54 @@ namespace AttentionAxia.Repositories
         private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public SolicitudRepository(AxiaContext context) : base(context)
         {
+        }
+
+        public async Task<ResponseDTO> InsertWithArchive(Solicitud entity, HttpPostedFileBase file, string rutaInicial)
+        {
+            ResponseDTO response = null;
+            FileDTO fileDTO = null;
+            try
+            {
+                if (file != null && file.ContentLength > 0)
+                {
+                    FileHelper.FolderIsExist(rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES);
+                    response = FileHelper.SaveFile(file, rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES, file.FileName);
+                    if (!response.IsSuccess)
+                    {
+                        return Responses.SetErrorResponse(response.Message);
+                    }
+                    fileDTO = (FileDTO)response.Data;
+                    entity.RutaArchivo = fileDTO.PathArchivo;
+                    entity.NombreArchivo = fileDTO.NombreArchivo;
+                    Insert(entity);
+                    await Save();
+                }
+                else
+                {
+                    Insert(entity);
+                    await Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                return Responses.SetInternalServerErrorResponse(ex, ex.Message);
+            }
+            return Responses.SetCreateResponse();
+        }
+
+        public async Task<ResponseDTO> UpdateWithArchive(Solicitud entity, HttpPostedFileBase file, string rutaInicial)
+        {
+            try
+            {
+                Update(entity);
+                await Save();
+                return Responses.SetOkResponse("Edición satisfactoriamente.");
+            }
+            catch (Exception ex)
+            {
+                return Responses.SetInternalServerErrorResponse(ex, ex.Message);
+            }
         }
 
         public async Task<ResponseDTO> ValidationsOfBusiness(CreateSolicitudDTO solicitud)

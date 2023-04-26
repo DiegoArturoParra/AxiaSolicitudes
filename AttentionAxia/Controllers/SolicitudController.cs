@@ -2,10 +2,10 @@
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -77,47 +77,48 @@ namespace AttentionAxia.Controllers
 
         // POST: Solicitud/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]
-        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud, HttpPostedFileBase fileAxia)
+        public async Task<ActionResult> CreateSolicitud()
         {
-            if (fileAxia.ContentLength > 0)
-            {
+            var response = new ResponseDTO();
+            var req = Request;
+            HttpPostedFileBase FileDocument = req.Files["FileDocument"];
 
-                if (fileAxia != null)
+            var datos = req["Solicitud"];
+            if (datos != null)
+            {
+                var solicitud = JsonConvert.DeserializeObject<CreateSolicitudDTO>(datos);
+                solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
+                response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
+                if (!response.IsSuccess)
                 {
-                    fileAxia.SaveAs(Server.MapPath("~/Archivos/" + fileAxia.FileName));
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage(response.Message);
+                    return Json(new { response.IsSuccess, response.Message });
                 }
-
+                var entidadInsert = new Solicitud()
+                {
+                    ResponsableId = solicitud.ResponsableId,
+                    EstadoId = solicitud.EstadoId,
+                    SprintInicioId = solicitud.SprintInicioId,
+                    SprintFinId = solicitud.SprintFinId,
+                    FechaInicioSprint = solicitud.FechaInicial,
+                    FechaFinSprint = solicitud.FechaFinal,
+                    Iniciativa = solicitud.Iniciativa,
+                    CelulaId = solicitud.CelulaId,
+                    FechaCreacion = DateTime.Now,
+                    Avance = 0
+                };
+                response = await _solicitudRepository.InsertWithArchive(entidadInsert, FileDocument, PathActual);
+                if (!response.IsSuccess)
+                {
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage(response.Message);
+                    return Json(new { response.IsSuccess, response.Message });
+                }
+                SetAlert(GetConstants.ALERT_SUCCESS);
+                SetMessage("Creado satisfactoriamente.");
             }
-
-            solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
-            var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
-            if (!response.IsSuccess)
-            {
-                SetAlert(GetConstants.ALERT_ERROR);
-                SetMessage(response.Message);
-                return Json(new { response.IsSuccess, response.Message });
-            }
-            var entidadInsert = new Solicitud()
-            {
-                ResponsableId = solicitud.ResponsableId,
-                EstadoId = solicitud.EstadoId,
-                SprintInicioId = solicitud.SprintInicioId,
-                SprintFinId = solicitud.SprintFinId,
-                FechaInicioSprint = solicitud.FechaInicial,
-                FechaFinSprint = solicitud.FechaFinal,
-                Iniciativa = solicitud.Iniciativa,
-                CelulaId = solicitud.CelulaId,
-                FechaCreacion = DateTime.Now,
-                Avance = 0,
-                RutaArchivo = "~/Archivos/" + fileAxia.FileName,
-                NombreArchivo = fileAxia.FileName
-        };
-            _solicitudRepository.Insert(entidadInsert);
-            await _solicitudRepository.Save();
-            SetAlert(GetConstants.ALERT_SUCCESS);
-            SetMessage("Creado satisfactoriamente.");
             return Json(new { response.IsSuccess, response.Message });
         }
 

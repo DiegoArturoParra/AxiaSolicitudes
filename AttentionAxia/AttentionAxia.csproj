@@ -257,6 +257,7 @@
     <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
     <Compile Include="Core\Middleware\CustomExceptionFilter.cs" />
+    <Compile Include="DTOs\FileDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\PaginadorDTO.cs" />
     <Compile Include="DTOs\SolicitudDTO.cs" />
@@ -266,6 +267,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\EnumConfig.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\GetConstants.cs" />
     <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Core\Data\AxiaContext.cs" />
