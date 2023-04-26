@@ -21,7 +21,7 @@ namespace AttentionAxia.Controllers
 
         private string GetRutaInicial()
         {
-            var path = System.Web.HttpContext.Current.Server.MapPath(GetConstants.PATH_REPOSITORIO_ARCHIVOS);
+            var path = Server.MapPath(GetConstants.PATH_REPOSITORIO_ARCHIVOS);
             return path;
         }
         public string PathActual => GetRutaInicial();

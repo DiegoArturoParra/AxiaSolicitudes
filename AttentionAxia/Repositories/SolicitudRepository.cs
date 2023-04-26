@@ -21,14 +21,13 @@ namespace AttentionAxia.Repositories
 
         public async Task<ResponseDTO> InsertWithArchive(Solicitud entity, HttpPostedFileBase file, string rutaInicial)
         {
-            ResponseDTO response = null;
             FileDTO fileDTO = null;
             try
             {
                 if (file != null && file.ContentLength > 0)
                 {
                     FileHelper.FolderIsExist(rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES);
-                    response = FileHelper.SaveFile(file, rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES, file.FileName);
+                    var response = FileHelper.SaveFile(file, rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES, file.FileName);
                     if (!response.IsSuccess)
                     {
                         return Responses.SetErrorResponse(response.Message);
@@ -38,11 +37,13 @@ namespace AttentionAxia.Repositories
                     entity.NombreArchivo = fileDTO.NombreArchivo;
                     Insert(entity);
                     await Save();
+                    return Responses.SetCreateResponse();
                 }
                 else
                 {
                     Insert(entity);
                     await Save();
+                    return Responses.SetCreateResponse();
                 }
             }
             catch (Exception ex)
@@ -50,7 +51,6 @@ namespace AttentionAxia.Repositories
                 FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
                 return Responses.SetInternalServerErrorResponse(ex, ex.Message);
             }
-            return Responses.SetCreateResponse();
         }
 
         public async Task<ResponseDTO> UpdateWithArchive(Solicitud entity, HttpPostedFileBase file, string rutaInicial)

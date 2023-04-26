@@ -173,8 +173,6 @@ namespace AttentionAxia.Controllers
         }
 
         // POST: Solicitud/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]

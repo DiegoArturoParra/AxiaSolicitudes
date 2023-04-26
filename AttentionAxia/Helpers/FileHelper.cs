@@ -50,9 +50,9 @@ namespace AttentionAxia.Helpers
                     _logger.Error(mensaje);
                     respuesta = Responses.SetErrorResponse(mensaje);
                 }
-                // arma la ruta
+                // arma la ruta completa
                 var rutaCompleta = $@"{rutaInicial}\{rutaArchivo}";
-                nombreArchivo = $"{nombreArchivo}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                nombreArchivo = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
                 // arma la ruta del archivo
                 var rutaNombreArchivo = $@"{rutaCompleta}\{nombreArchivo}";
 
@@ -60,8 +60,8 @@ namespace AttentionAxia.Helpers
 
                 respuesta = Responses.SetOkResponse($"Se crea el archivo {nombreArchivo}", new FileDTO
                 {
-                    NombreArchivo = nombreArchivo,
-                    PathArchivo = rutaNombreArchivo
+                    NombreArchivo = Path.GetFileNameWithoutExtension(file.FileName),
+                    PathArchivo = $"{GetConstants.CARPETA_ARCHIVOS_SOLICITUDES}/{nombreArchivo}"
                 });
                 _logger.Info($"Se crea el archivo {nombreArchivo}");
 
