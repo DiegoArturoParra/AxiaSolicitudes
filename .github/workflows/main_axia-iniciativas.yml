@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'axia-iniciativas'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FAD7DCD6D74449EA9EB4B823F334B8C5 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_44731E4B74A94DE9A5BC6AA9742D1231 }}
           package: .
