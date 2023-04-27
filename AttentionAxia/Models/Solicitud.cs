@@ -39,6 +39,10 @@ namespace AttentionAxia.Models
         public DateTime? FechaFinalizacion { get; set; }
         [Column("avance_porcentual")]
         public byte Avance { get; set; }
+        [Column("ruta_archivo")]
+        public string RutaArchivo { get; set; }
+        [Column("nombre_archivo")]
+        public string NombreArchivo { get; set; }
         public virtual EstadoSolicitud Estado { get; set; }
         public virtual Responsable Responsable { get; set; }
         [ForeignKey("SprintInicioId")]

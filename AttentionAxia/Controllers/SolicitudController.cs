@@ -2,11 +2,13 @@
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
@@ -19,7 +21,6 @@ namespace AttentionAxia.Controllers
         private readonly SprintRepository _sprintRepository;
         private readonly LineaRepository _lineaRepository;
         private readonly CelulaRepository _celulaRepository;
-
         public SolicitudController()
         {
             _solicitudRepository = new SolicitudRepository(_db);
@@ -76,35 +77,48 @@ namespace AttentionAxia.Controllers
 
         // POST: Solicitud/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]
-        public async Task<ActionResult> Create(CreateSolicitudDTO solicitud)
+        public async Task<ActionResult> CreateSolicitud()
         {
-            solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
-            var response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
-            if (!response.IsSuccess)
+            var response = new ResponseDTO();
+            var req = Request;
+            HttpPostedFileBase FileDocument = req.Files["FileDocument"];
+
+            var datos = req["Solicitud"];
+            if (datos != null)
             {
-                SetAlert(GetConstants.ALERT_ERROR);
-                SetMessage(response.Message);
-                return Json(new { response.IsSuccess, response.Message });
+                var solicitud = JsonConvert.DeserializeObject<CreateSolicitudDTO>(datos);
+                solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
+                response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
+                if (!response.IsSuccess)
+                {
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage(response.Message);
+                    return Json(new { response.IsSuccess, response.Message });
+                }
+                var entidadInsert = new Solicitud()
+                {
+                    ResponsableId = solicitud.ResponsableId,
+                    EstadoId = solicitud.EstadoId,
+                    SprintInicioId = solicitud.SprintInicioId,
+                    SprintFinId = solicitud.SprintFinId,
+                    FechaInicioSprint = solicitud.FechaInicial,
+                    FechaFinSprint = solicitud.FechaFinal,
+                    Iniciativa = solicitud.Iniciativa,
+                    CelulaId = solicitud.CelulaId,
+                    FechaCreacion = DateTime.Now,
+                    Avance = 0
+                };
+                response = await _solicitudRepository.InsertWithArchive(entidadInsert, FileDocument, PathActual);
+                if (!response.IsSuccess)
+                {
+                    SetAlert(GetConstants.ALERT_ERROR);
+                    SetMessage(response.Message);
+                    return Json(new { response.IsSuccess, response.Message });
+                }
+                SetAlert(GetConstants.ALERT_SUCCESS);
+                SetMessage("Creado satisfactoriamente.");
             }
-            var entidadInsert = new Solicitud()
-            {
-                ResponsableId = solicitud.ResponsableId,
-                EstadoId = solicitud.EstadoId,
-                SprintInicioId = solicitud.SprintInicioId,
-                SprintFinId = solicitud.SprintFinId,
-                FechaInicioSprint = solicitud.FechaInicial,
-                FechaFinSprint = solicitud.FechaFinal,
-                Iniciativa = solicitud.Iniciativa,
-                CelulaId = solicitud.CelulaId,
-                FechaCreacion = DateTime.Now,
-                Avance = 0
-            };
-            _solicitudRepository.Insert(entidadInsert);
-            await _solicitudRepository.Save();
-            SetAlert(GetConstants.ALERT_SUCCESS);
-            SetMessage("Creado satisfactoriamente.");
             return Json(new { response.IsSuccess, response.Message });
         }
 
@@ -159,8 +173,6 @@ namespace AttentionAxia.Controllers
         }
 
         // POST: Solicitud/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]

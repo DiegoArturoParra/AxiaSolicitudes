@@ -95,22 +95,22 @@
                                             Iniciativa
                                         </th>
                                         <th>
-                                            Sprint inicio
+                                            SP inicio
                                         </th>
                                         <th>
-                                            Sprint fin
+                                            SP fin
                                         </th>
                                         <th>
-                                            Fecha inicio sprint
+                                            SP Fecha inicio
                                         </th>
                                         <th>
-                                            Fecha fin sprint
+                                            SP Fecha fin
                                         </th>
                                         <th>
                                             Estado
                                         </th>
                                         <th>
-                                            Avance %
+                                            Progreso %
                                         </th>
                                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
                                         {
@@ -152,8 +152,18 @@
                                                 @Html.DisplayFor(modelItem => item.Estado)
                                             </span>
                                         </td>
-                                        <td>
-                                            <input class="slider" type="text" name="Avance" value="@item.Avance">
+
+                                        @{
+                                            var progreso = $"{item.Avance}%";
+                                        }
+                                        <td class="project_progress">
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="@item.Avance" aria-valuemin="0" aria-valuemax="100" style="width: @progreso">
+                                                </div>
+                                            </div>
+                                            <small>
+                                                @item.Avance% completo
+                                            </small>
                                         </td>
                                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
                                         {
@@ -251,6 +261,7 @@
             $("#DateFilter").val("");
         }
         function EditarEstado(estadoId, avance) {
+            console.log(avance);
             $('#modal_estados').val(estadoId);
             $('#modal_avance').val(avance);
             $('#modalEditEstado').modal('show');

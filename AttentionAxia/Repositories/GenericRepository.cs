@@ -57,7 +57,6 @@ namespace AttentionAxia.Repositories
         }
         #endregion
 
-
         #region get de un objeto con condiciones 
         public async Task<T> GetWithCondition(Expression<Func<T, bool>> whereCondition)
         {
@@ -73,7 +72,7 @@ namespace AttentionAxia.Repositories
         #endregion
 
         #region Insert in BD 
-        public void Insert(T entity)
+        public virtual void Insert(T entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");
@@ -84,7 +83,7 @@ namespace AttentionAxia.Repositories
         #endregion
 
         #region Update in BD 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
 
             if (entity == null)
@@ -96,7 +95,7 @@ namespace AttentionAxia.Repositories
         #endregion
 
         #region Delete in BD 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
 
             if (entity == null)

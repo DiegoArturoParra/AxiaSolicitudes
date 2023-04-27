@@ -19,6 +19,12 @@ namespace AttentionAxia.Controllers
             _db = new AxiaContext();
         }
 
+        private string GetRutaInicial()
+        {
+            var path = Server.MapPath(GetConstants.PATH_REPOSITORIO_ARCHIVOS);
+            return path;
+        }
+        public string PathActual => GetRutaInicial();
         #region Creacion de carpeta si no existe
         public void FolderIsExist(string path)
         {
