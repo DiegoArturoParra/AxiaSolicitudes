@@ -119,7 +119,7 @@ namespace AttentionAxia.Repositories
                                  sprintInicio,
                                  sprintFin,
                                  responsable,
-                                 celula
+                                 celula,    
                              });
                 if (filtro.Estado.HasValue && filtro.Estado.Value > 0)
                 {
@@ -160,7 +160,9 @@ namespace AttentionAxia.Repositories
                             SprintFin = m.sprintFin.Sigla + " " + m.sprintFin.Periodo,
                             FechaFinal = m.solicitud.FechaFinSprint,
                             SprintInicioFechaGeneracion = m.sprintInicio.FechaGeneracion,
-                            SprintFinFechaGeneracion = m.sprintFin.FechaGeneracion
+                            SprintFinFechaGeneracion = m.sprintFin.FechaGeneracion,
+                            NombreArchivo = m.solicitud.NombreArchivo,
+                            RutaArchivo = m.solicitud.RutaArchivo
 
                         }).ToListAsync();
 

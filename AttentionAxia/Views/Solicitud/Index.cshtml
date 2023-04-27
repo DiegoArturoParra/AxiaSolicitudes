@@ -110,6 +110,9 @@
                                             Estado
                                         </th>
                                         <th>
+                                            Archivo
+                                        </th>
+                                        <th>
                                             Progreso %
                                         </th>
                                         @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
@@ -151,6 +154,9 @@
                                             <span class="badge badge-pill" style="background-color:@item.ColorEstado">
                                                 @Html.DisplayFor(modelItem => item.Estado)
                                             </span>
+                                        </td>
+                                        <td>
+                                            <a href="~/REPOSITORIO_ARCHIVOS/@item.RutaArchivo">@Html.DisplayFor(modelItem => item.NombreArchivo)</a>
                                         </td>
 
                                         @{
