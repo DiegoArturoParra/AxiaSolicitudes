@@ -32,7 +32,8 @@ namespace AttentionAxia.DTOs
         public string Celula { get; set; }
         public string Linea { get; set; }
         public string Iniciativa { get; set; }
-        public string Archivo { get; set; }
+        public string NombreArchivo { get; set; }
+        public string RutaArchivo { get; set; }
         public byte Avance { get; set; }
         [JsonIgnore]
         public DateTime FechaInicial { get; set; }
