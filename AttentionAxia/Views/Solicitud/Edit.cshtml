@@ -8,16 +8,11 @@
 <h2>Modificar Solicitud</h2>
 
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-
-    <div class="form-horizontal">
-        <h4>Solicitud</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="container-lg">
+    <h2 class="text-center">Editar Solicitud</h2>
+    <hr />
+    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate enctype="multipart/form-data">
         @Html.HiddenFor(model => model.Id)
-
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Responsable</label>
@@ -27,7 +22,6 @@
                 </div>
             </div>
         </div>
-
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Estado</label>
@@ -37,17 +31,24 @@
                 </div>
             </div>
         </div>
-
         <div class="form-group">
             <div class="col-md-12">
-                <label class="control-label col-md-3">Sprint</label>
-                @Html.DropDownList("SprintId", null, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <label class="control-label col-md-3">Sprint Inicio</label>
+                @Html.DropDownList("SprintInicioId", ViewBag.DDL_SprintsInicio as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
                 <div class="invalid-feedback">
-                    El sprint es requerido
+                    El sprint inicio es requerido
                 </div>
             </div>
         </div>
-
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Sprint Fin</label>
+                @Html.DropDownList("SprintFinId", ViewBag.DDL_SprintsFin as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El sprint fin es requerido
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <label class="control-label col-md-3">Fecha inicial del sprint:</label>
             <div class="input-group">
@@ -56,7 +57,7 @@
                         <i class="far fa-calendar-alt"></i>
                     </span>
                 </div>
-                <input type="text" class="form-control float-right" name="DateInitial" id="DateInitialSprint" required>
+                <input type="text" class="form-control float-right" name="DateInitial" value="@Model.FechaInicioSprint" id="DateInitialSprint" required>
                 <div class="invalid-feedback">
                     la fecha de inicio es requerida.
                 </div>
@@ -70,17 +71,25 @@
                         <i class="far fa-calendar-alt"></i>
                     </span>
                 </div>
-                <input type="text" class="form-control float-right" name="DateEnd" id="DateEndSprint" required>
+                <input type="text" class="form-control float-right" name="DateEnd" value="@Model.FechaFinSprint" id="DateEndSprint" required>
                 <div class="invalid-feedback">
                     la fecha fin es requerida.
                 </div>
             </div>
         </div>
-
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Célula iniciativa</label>
+                @Html.DropDownList("CelulaId", ViewBag.DDL_Celulas as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                <div class="invalid-feedback">
+                    El campo célula es requerido.
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Iniciativa</label>
-                <textarea id="text_iniciativa" class="form-control" maxlength="5000" minlength="10" placeholder="Escriba la iniciativa" required></textarea>
+                <textarea id="text_iniciativa" class="form-control" maxlength="5000" minlength="10" placeholder="Escriba la iniciativa" required>@Model.Iniciativa</textarea>
                 <div class="invalid-feedback">
                     La Iniciativa debe tener entre 10 y 5000 caracteres.
                 </div>
@@ -89,27 +98,36 @@
                 Maximo 5000 caracteres.
             </label>
         </div>
-
+        <div class="form-group">
+            <div class="col-md-12">
+                <label class="control-label col-md-3">Archivo</label>
+                <div class="custom-file">
+                    <input class="custom-file-input" id="fileAxia" type="file" lang="es" accept=".pdf,.doc,.docx" name="fileAxia">
+                    <label class="custom-file-label" for="validatedCustomFile">
+                        <i class="fa fa-file-pdf mr-2"></i>
+                        <i class="fa fa-file-word mr-2"></i>
+                        <strong>Seleccionar archivo....</strong>
+                    </label>
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Avance</label>
-                <input id="avance_solicitud_edit" type="text" name="Avance" value="0">
+                <input id="avance_solicitud_edit" type="text" name="Avance" value="@Model.Avance">
             </div>
             <div class="invalid-feedback">
                 El avance es requerido.
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+        <hr />
+        <div class="form-group mt-4">
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-outline-light text-dark mr-4" href="@Url.Action("Index","Solicitudes")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
+                <button type="button" id="btn-save" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>
-    </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+    </form>
 </div>
 
 @section Scripts {
@@ -123,8 +141,10 @@
             $('input[name="DateInitial"]').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
-                minDate: moment().add(-2, 'years').toDate(),
-                maxDate: moment().toDate()
+                locale: {
+                    format: 'DD/MM/YYYY'
+                },
+                minDate: moment().add(-2, 'years').toDate()
             });
         });
 
@@ -132,15 +152,16 @@
             $('input[name="DateEnd"]').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                },
                 maxDate: moment().add(1, 'years').toDate(),
-                minDate: moment().toDate(),
             });
         });
 
         $('#avance_solicitud_edit').ionRangeSlider({
             min: 0,
             max: 100,
-            from: 0,
             type: 'single',
             step: 1,
             postfix: '%',

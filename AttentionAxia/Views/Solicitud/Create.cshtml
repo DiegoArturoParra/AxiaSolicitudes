@@ -1,6 +1,4 @@
-﻿@model AttentionAxia.DTOs.CreateSolicitudDTO
-
-@{
+﻿@{
     ViewBag.Title = "Crear solicitud";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -136,6 +134,9 @@
             $('input[name="DateInitial"]').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                },
                 minDate: moment().add(-2, 'years').toDate(),
                 maxDate: moment().toDate()
             });
@@ -145,6 +146,9 @@
             $('input[name="DateEnd"]').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                },
                 maxDate: moment().add(1, 'years').toDate(),
                 minDate: moment().add(1,'day').toDate(),
             });

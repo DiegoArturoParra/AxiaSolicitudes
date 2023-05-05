@@ -144,8 +144,10 @@ namespace AttentionAxia.Controllers
             {
                 ViewBag.EstadoId = new SelectList(await _estadoRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.EstadoId);
                 ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres", solicitud.ResponsableId);
-                ViewBag.DDL_SprintsInicio = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint", solicitud.SprintInicioId);
-                ViewBag.SprintsFin = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint", solicitud.SprintFinId);
+
+                var sprints = await _sprintRepository.Table.ToListAsync();
+                ViewBag.DDL_SprintsInicio = new SelectList(sprints, "Id", "DescripcionSprint", solicitud.SprintInicioId);
+                ViewBag.DDL_SprintsFin = new SelectList(sprints, "Id", "DescripcionSprint", solicitud.SprintFinId);
                 ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.CelulaId);
             }
 
