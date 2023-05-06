@@ -53,6 +53,14 @@ namespace AttentionAxia.Controllers
             return View(solicitudes);
         }
 
+        [HttpGet]
+        public string ConsultaReponsable(int idLinea)
+        {
+            var listaResponsables = _responsableRepository.Table.Where(x => x.LineaPerteneceId == idLinea);
+            var jsonResponsables = JsonConvert.SerializeObject(listaResponsables);
+            return jsonResponsables;
+        }
+
         private void LoadLists()
         {
             ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
@@ -187,6 +195,13 @@ namespace AttentionAxia.Controllers
                     SetAlert(GetConstants.ALERT_ERROR);
                     SetMessage($"Ya existe un registro con la descripción {solicitud.Iniciativa.ToUpper()}");
                     return View(solicitud);
+                }
+                if (solicitud.Estado.Id == 2)
+                {
+                    solicitud.FechaComienzoSolicitud = DateTime.Now;
+                }else if (solicitud.Estado.Id == 4)
+                {
+                    solicitud.FechaFinalizacion = DateTime.Now;
                 }
                 _solicitudRepository.Update(solicitud);
                 await _solicitudRepository.Save();

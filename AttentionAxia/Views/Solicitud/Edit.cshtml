@@ -177,7 +177,7 @@
                  if (form.checkValidity()) {
                      $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Guardando...');
                      $('#btn-save').prop("disabled", true);
-                     let url = "@Url.Action("Create", "Solicitud")";
+                     let url = "@Url.Action("Edit", "Solicitud")";
                      const responsable = $('#ResponsableId').val();
                      const estado = $('#EstadoId').val();
                      const sprint = $('#SprintId').val();
@@ -198,6 +198,7 @@
                          if (data.IsSuccess) {
                              window.location.href = "@Url.Action("Index", "Solicitudes")";;
                          } else {
+                             console.log(data);
                              alertify.alert(error, data.Message);
                              $('#btn-save').html(originalBtnContent);
                              $('#btn-save').removeAttr('disabled');
