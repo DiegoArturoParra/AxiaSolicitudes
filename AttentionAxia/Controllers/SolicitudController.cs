@@ -36,14 +36,14 @@ namespace AttentionAxia.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(SolicitudFilterDTO filtro)
         {
-            LoadLists();
+            LoadLists(filtro.Linea, filtro.Responsable);
             var solicitudes = await _solicitudRepository.GetSolicitudes(filtro);
             return View(solicitudes);
         }
         [HttpGet]
         public async Task<ActionResult> Refresh()
         {
-            LoadLists();
+            LoadLists(null, null);
             SolicitudFilterDTO filterDTO = new SolicitudFilterDTO
             {
                 Page = 1,
@@ -54,15 +54,23 @@ namespace AttentionAxia.Controllers
         }
 
         [HttpGet]
-        public string ConsultaReponsable(int idLinea)
+        public async Task<JsonResult> ConsultaReponsables(int lineaId = 0)
         {
-            var listaResponsables = _responsableRepository.Table.Where(x => x.LineaPerteneceId == idLinea);
-            var jsonResponsables = JsonConvert.SerializeObject(listaResponsables);
-            return jsonResponsables;
+            var listaResponsables = await _responsableRepository.Table.Where(x => x.LineaPerteneceId == lineaId).Select(x => new
+            {
+                x.Id,
+                Nombre = x.Nombres
+            }).ToListAsync();
+            return Json(listaResponsables, JsonRequestBehavior.AllowGet);
         }
 
-        private void LoadLists()
+        private void LoadLists(int? linea, int? responsable)
         {
+            ViewBag.DDL_Responsables = new SelectList("");
+            if (linea.HasValue && responsable.HasValue)
+            {
+                ViewBag.DDL_Responsables = new SelectList(_responsableRepository.Table.Where(x => x.LineaPerteneceId == linea), "Id", "Nombres", responsable.Value);
+            }
             ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
             ViewBag.DDL_Lineas = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
             ViewBag.DDL_Celulas = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
@@ -199,7 +207,8 @@ namespace AttentionAxia.Controllers
                 if (solicitud.Estado.Id == 2)
                 {
                     solicitud.FechaComienzoSolicitud = DateTime.Now;
-                }else if (solicitud.Estado.Id == 4)
+                }
+                else if (solicitud.Estado.Id == 4)
                 {
                     solicitud.FechaFinalizacion = DateTime.Now;
                 }

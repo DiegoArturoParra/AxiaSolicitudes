@@ -45,15 +45,15 @@
                             </div>
                             <div class="col-lg-6">
                                 <label class="control-label col-lg-4">Línea</label>
-                                @Html.DropDownList("Linea", ViewBag.DDL_Lineas as SelectList, "--Seleccione--", new { @class = "form-control", @onchange = "ObtenerResponsable()" })                             
+                                @Html.DropDownList("Linea", ViewBag.DDL_Lineas as SelectList, "--Seleccione--", new { @class = "form-control" })
                             </div>
                         </div>
                         <div class="row mb-3 mt-3">
-                            <div class="col-lg-6">
-                                <label class="control-label col-lg-4">Responsable</label>
-                                @Html.DropDownList("Responsable", new SelectList(""), "--Seleccione--", new { @class = "form-control" })
-                            </div>
                             <div class="col-lg-6 mb-3">
+                                <label class="control-label col-lg-4">Responsable</label>
+                                @Html.DropDownList("Responsable", ViewBag.DDL_Responsables as SelectList, "--Seleccione--", new { @class = "form-control", disabled = "disabled" })
+                            </div>
+                            <div class="col-lg-6">
                                 <label class="control-label col-lg-4"># Sprint de inicio</label>
                                 @Html.DropDownList("Sprint", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", new { @class = "form-control" })
                             </div>
@@ -257,7 +257,7 @@
                         </div>
                         <div class="col-md-12">
                             <label class="control-label col-md-12">Avance</label>
-                            <input class="avance" type="text" id="modal_avance">
+                            <input class="avance" type="text" id="modal_avance" />
                         </div>
                     </div>
                 </form>
@@ -273,30 +273,19 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script>
+    <script>
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
         let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
         var originalBtnContent = $('#btn-save').html();
-        $('.slider').ionRangeSlider({
+        $('.avance').ionRangeSlider({
             min: 0,
             max: 100,
-            from: 0,
             type: 'single',
             step: 1,
             postfix: '%',
             prettify: false,
             hasGrid: true,
-            disable: true
-        });
-        $('.avance').ionRangeSlider({
-            min: 0,
-            max: 100,
-            from: 0,
-            type: 'single',
-            step: 1,
-            postfix: '%',
-            prettify: false,
-            hasGrid: true
+            disable: false
         });
         $(function () {
             $('input[name="FiltroFecha"]').daterangepicker({
@@ -304,29 +293,32 @@
             });
         });
 
-        function ObtenerResponsable() {
-            let url = "@Url.Action("ConsultaReponsable", "Solicitud")";
-            let id_linea = $("#Linea").val();
-            let formdata = {
-                idLinea = id_linea
+        $(document).ready(function () {
+            let linea = $("#Linea").val();
+            if (linea > 0) {
+                $('#Responsable').removeAttr('disabled');
             }
-            $.ajax({
-                url: url,
-                type: "GET",
-                contentType: false, // Not to set any content header
-                processData: false, // Not to process data
-                data: formdata,
-                success: function (data) {
-                    console.log(data);
-                    var jsonRes = JSON.parse(data);
-                    var $select = $("#Responsable");
-                    $each(data, function (key, value) {
-                        $select.append(`<option value="${key}">${value}</option>`);
-                    });
-                },
-                error: function (err) {
-                    alert("se murio");
+            $("#Linea").change(function () {
+                // VACIAMOS EL DropDownList
+                $("#Responsable").empty();
+                let linea = $("#Linea").val().length;
+                if (linea == 0) {
+                    $("#Responsable").append("<option value>--Seleccione--</option>")
+                    return;
                 }
+                GetResponsables($("#Linea").val());
+            });
+        });
+
+        function GetResponsables(lineaid) {
+            let url = "@Url.Action("ConsultaReponsables", "Solicitud")";
+            $.get(url, { lineaId: lineaid }, function (data) {
+                $('#Responsable').removeAttr('disabled');
+                $("#Responsable").append("<option value> -- Seleccione --</option>")
+                // CONSTRUIMOS EL DropDownList A PARTIR DEL RESULTADO Json (data)
+                $.each(data, function (index, row) {
+                    $("#Responsable").append("<option value='" + row.Id + "'>" + row.Nombre + "</option>")
+                });
             });
         }
 
@@ -341,8 +333,11 @@
         function EditarEstado(estadoId, avance) {
             console.log(avance);
             $('#modal_estados').val(estadoId);
-            $('#modal_avance').val(avance);
+             var slider = $('.avance').data("ionRangeSlider");
+             if (slider) {
+                 slider.update({from: avance});
+             }
             $('#modalEditEstado').modal('show');
         }
-</script>
+    </script>
 }
