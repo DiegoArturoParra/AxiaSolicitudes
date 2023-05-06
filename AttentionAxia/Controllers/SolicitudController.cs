@@ -53,6 +53,14 @@ namespace AttentionAxia.Controllers
             return View(solicitudes);
         }
 
+        [HttpGet]
+        public string ConsultaReponsable(int idLinea)
+        {
+            var listaResponsables = _responsableRepository.Table.Where(x => x.LineaPerteneceId == idLinea);
+            var jsonResponsables = JsonConvert.SerializeObject(listaResponsables);
+            return jsonResponsables;
+        }
+
         private void LoadLists()
         {
             ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
