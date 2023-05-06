@@ -28,7 +28,7 @@
                                 @Html.DropDownList("Responsable", new SelectList(""), "--Seleccione--", new { @class = "form-control", disabled = "disabled" })
                             </div>
                             <div class="col-lg-6 mb-3">
-                                <label class="control-label col-lg-4"># Sprint</label>
+                                <label class="control-label col-lg-4"># Sprint de inicio</label>
                                 @Html.DropDownList("Sprint", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", new { @class = "form-control" })
                             </div>
                         </div>
@@ -72,121 +72,141 @@
                             <a href="@Url.Action("Create", "Solicitud")" class="btn btn-primary ml-2 mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar solicitud</strong></a>
                         </div>
                     }
-                    <div class="row mb-4 d-flex justify-content-center mr-5">
-                        <div id="paginador-container">
-                            @{ Html.RenderPartial("_PartialPaginador", Model); }
+                    @if (Model.TotalDeRegistros > 0)
+                    {
+                        <div class="row mb-4 d-flex justify-content-center mr-5">
+                            <div id="paginador-container">
+                                @{ Html.RenderPartial("_PartialPaginador", Model); }
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            Responsable
-                                        </th>
-                                        <th>
-                                            Célula
-                                        </th>
-                                        <th>
-                                            Línea
-                                        </th>
-                                        <th>
-                                            Iniciativa
-                                        </th>
-                                        <th>
-                                            SP inicio
-                                        </th>
-                                        <th>
-                                            SP fin
-                                        </th>
-                                        <th>
-                                            SP Fecha inicio
-                                        </th>
-                                        <th>
-                                            SP Fecha fin
-                                        </th>
-                                        <th>
-                                            Estado
-                                        </th>
-                                        <th>
-                                            Archivo
-                                        </th>
-                                        <th>
-                                            Progreso %
-                                        </th>
-                                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
-                                        {
-                                            <th class="text-center">
-                                                Acciones
+                    }
+                    @if (Model.TotalDeRegistros == 0)
+                    {
+                        <div class="row mb-4 d-flex justify-content-center mr-5">
+                            <div class="alert alert-default-info alert-dismissible">
+                                <h5>
+                                    <i class="icon fas fa-info-circle"></i>
+                                    No se encontraron registros.
+                                </h5>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Responsable
                                             </th>
-                                        }
-                                    </tr>
-                                </thead>
-                                @foreach (var item in Model.Solicitudes)
-                                {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Responsable)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Celula)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Linea)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Iniciativa)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.SprintInicioFullText)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.SprintFinFullText)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.FechaInicialSprint)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.FechaFinSprint)
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill" style="background-color:@item.ColorEstado">
-                                                @Html.DisplayFor(modelItem => item.Estado)
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="~/REPOSITORIO_ARCHIVOS/@item.RutaArchivo">@Html.DisplayFor(modelItem => item.NombreArchivo)</a>
-                                        </td>
-
-                                        @{
-                                            var progreso = $"{item.Avance}%";
-                                        }
-                                        <td class="project_progress">
-                                            <div class="progress progress-sm">
-                                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="@item.Avance" aria-valuemin="0" aria-valuemax="100" style="width: @progreso">
-                                                </div>
-                                            </div>
-                                            <small>
-                                                @item.Avance% completo
-                                            </small>
-                                        </td>
-                                        @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
-                                        {
-                                            <td class="text-center">
-                                                <a href="@Url.Action("Edit","Solicitud", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
-                                                <a onclick="EditarEstado(@item.EstadoId,@item.Avance)" class="text-center btn btn-light mb-2">
-                                                    <i class="fa fa-pencil-alt"></i>
-                                                    <i class="fas fa-sad-tear fa-sm"></i>
-                                                </a>
-                                                <a href="@Url.Action("Delete","Sprint", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
+                                            <th>
+                                                Célula
+                                            </th>
+                                            <th>
+                                                Línea
+                                            </th>
+                                            <th>
+                                                Iniciativa
+                                            </th>
+                                            <th>
+                                                SP inicio
+                                            </th>
+                                            <th>
+                                                SP fin
+                                            </th>
+                                            <th>
+                                                Estado
+                                            </th>
+                                            <th>
+                                                Archivo
+                                            </th>
+                                            <th>
+                                                Progreso %
+                                            </th>
+                                            @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                            {
+                                                <th class="text-center">
+                                                    Acciones
+                                                </th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    @foreach (var item in Model.Solicitudes)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Responsable)
                                             </td>
-                                        }
-                                    </tr>
-                                }
-                            </table>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Celula)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Linea)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Iniciativa)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.SprintInicioFullText)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.SprintFinFullText)
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-pill" style="background-color:@item.ColorEstado">
+                                                    @Html.DisplayFor(modelItem => item.Estado)
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-sm btn-info" href="~/REPOSITORIO_ARCHIVOS/@item.RutaArchivo">
+                                                    <i class="fa fa-eye mr-2"></i>
+
+                                                    @if (item.NombreArchivo.Length > 15)
+                                                    {
+                                                        var nombreArchivo = item.NombreArchivo.Substring(0, 15) + "...";
+                                                        <span>@nombreArchivo</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DisplayFor(modelItem => item.NombreArchivo)
+                                                    }
+                                                </a>
+                                            </td>
+
+                                            @{
+                                                var progreso = $"{item.Avance}%";
+                                            }
+                                            <td class="project_progress">
+                                                <div class="progress progress-sm">
+                                                    <div class="progress-bar bg-green" role="progressbar" aria-valuenow="@item.Avance" aria-valuemin="0" aria-valuemax="100" style="width: @progreso">
+                                                    </div>
+                                                </div>
+                                                <small>
+                                                    @item.Avance% completo
+                                                </small>
+                                            </td>
+                                            @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                            {
+                                                <td class="dropdown">
+                                                    <button class="btn btn-dark dropdown-toggle" type="button" id="acciones-@item.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-hand-point-right mr-2"></i>Seleccione
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="acciones-@item.Id">
+                                                        <a class="dropdown-item" href="@Url.Action("Edit","Solicitud", new { id = item.Id })"><i class="fa fa-pencil-alt mr-2"></i>Editar</a>
+                                                        <a class="dropdown-item" onclick="EditarEstado(@item.EstadoId,@item.Avance)"><i class="fa fa-pencil-alt mr-2"></i>Editar estado</a>
+                                                        <a class="dropdown-item" href="@Url.Action("Delete","Sprint", new { id = item.Id })"><i class="fas fa-trash-alt mr-2"></i>Eliminar</a>
+                                                    </div>
+                                                </td>
+
+                                            }
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
                 <!-- /.invoice -->
             </div><!-- /.col -->
