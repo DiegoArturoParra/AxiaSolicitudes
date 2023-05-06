@@ -196,6 +196,13 @@ namespace AttentionAxia.Controllers
                     SetMessage($"Ya existe un registro con la descripción {solicitud.Iniciativa.ToUpper()}");
                     return View(solicitud);
                 }
+                if (solicitud.Estado.Id == 2)
+                {
+                    solicitud.FechaComienzoSolicitud = DateTime.Now;
+                }else if (solicitud.Estado.Id == 4)
+                {
+                    solicitud.FechaFinalizacion = DateTime.Now;
+                }
                 _solicitudRepository.Update(solicitud);
                 await _solicitudRepository.Save();
                 SetAlert(GetConstants.ALERT_SUCCESS);
