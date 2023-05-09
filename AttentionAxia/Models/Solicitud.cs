@@ -32,17 +32,21 @@ namespace AttentionAxia.Models
         public DateTime FechaFinSprint { get; set; } 
         [Required(ErrorMessage = "Fecha Creación requerida.")]
         [Column("fecha_creacion_solicitud")]
-        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaCreacionSolicitud { get; set; }
         [Column("fecha_comienzo_solicitud")]
         public DateTime? FechaComienzoSolicitud { get; set; }
         [Column("fecha_finalizacion_solicitud")]
-        public DateTime? FechaFinalizacion { get; set; }
+        public DateTime? FechaFinalizacionSolicitud { get; set; }
         [Column("avance_porcentual")]
         public byte Avance { get; set; }
         [Column("ruta_archivo")]
         public string RutaArchivo { get; set; }
         [Column("nombre_archivo")]
         public string NombreArchivo { get; set; }
+        [Column("cycle_time")]
+        public short? CycleTime { get; set; }
+        [Column("lead_time")]
+        public short? LeadTime { get; set; }
         public virtual EstadoSolicitud Estado { get; set; }
         public virtual Responsable Responsable { get; set; }
         [ForeignKey("SprintInicioId")]

@@ -260,30 +260,30 @@
     <Compile Include="DTOs\FileDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\PaginadorDTO.cs" />
+    <Compile Include="DTOs\PublicHolidayDTO.cs" />
     <Compile Include="DTOs\SolicitudDTO.cs" />
     <Compile Include="DTOs\SolicitudFilterDTO.cs" />
     <Compile Include="DTOs\UsuarioDTO.cs" />
+    <Compile Include="ExternalServices\PublicHolidayService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\EnumConfig.cs" />
+    <Compile Include="Helpers\EstadosSolicitudEnum.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\GetConstants.cs" />
     <Compile Include="Helpers\HashHelper.cs" />
     <Compile Include="Core\Data\AxiaContext.cs" />
     <Compile Include="Helpers\Response.cs" />
     <Compile Include="Helpers\RolesEnum.cs" />
-    <Compile Include="Migrations\202304242125229_Initial.cs" />
-    <Compile Include="Migrations\202304242125229_Initial.designer.cs">
-      <DependentUpon>202304242125229_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202304251632178_1.cs" />
-    <Compile Include="Migrations\202304251632178_1.designer.cs">
-      <DependentUpon>202304251632178_1.cs</DependentUpon>
+    <Compile Include="Migrations\202305082244062_Initial.cs" />
+    <Compile Include="Migrations\202305082244062_Initial.designer.cs">
+      <DependentUpon>202305082244062_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
     <Compile Include="Models\EstadoSolicitud.cs" />
+    <Compile Include="Models\Festivos.cs" />
     <Compile Include="Models\Linea.cs" />
     <Compile Include="Models\Partials\EstadoSolicitud.cs" />
     <Compile Include="Models\Partials\Sprint.cs" />
@@ -295,6 +295,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CelulaRepository.cs" />
     <Compile Include="Repositories\EstadoRepository.cs" />
+    <Compile Include="Repositories\FestivosRepository.cs" />
     <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="Repositories\IGenericRepository.cs" />
     <Compile Include="Repositories\LineaRepository.cs" />
@@ -575,7 +576,7 @@
     <Content Include="adminlte\plugins\moment\locales.min.js.map" />
     <Content Include="adminlte\plugins\moment\moment-with-locales.min.js.map" />
     <Content Include="adminlte\plugins\moment\moment.min.js.map" />
-    <None Include="Properties\PublishProfiles\axia-iniciativas - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\Axia-Solicitudes - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
@@ -725,11 +726,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202304242125229_Initial.resx">
-      <DependentUpon>202304242125229_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202304251632178_1.resx">
-      <DependentUpon>202304251632178_1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202305082244062_Initial.resx">
+      <DependentUpon>202305082244062_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -4,32 +4,6 @@
     ViewBag.Title = "Solicitudes Axia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script>
-    function ObtenerResponsable() {
-            let url = "@Url.Action("ConsultaReponsable", "Solicitud")";
-            let id_linea = $("#Linea").val();
-            $.ajax({
-                url: url,
-                type: "GET",
-                contentType: false, // Not to set any content header
-                processData: false, // Not to process data
-                data: {
-                    idLinea: id_linea
-                },
-                success: function (data) {
-                    console.log(data);
-                    var jsonRes = JSON.parse(data);
-                    var $select = $("#Responsable");
-                    $each(data, function (key, value) {
-                        $select.append(`<option value="${key}">${value}</option>`);
-                    });
-                },
-                error: function (err) {
-                    alert("se murio");
-                }
-            });
-        }
-</script>
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -149,6 +123,12 @@
                                                 Archivo
                                             </th>
                                             <th>
+                                                Cycle Time
+                                            </th>
+                                            <th>
+                                                Lead Time
+                                            </th>
+                                            <th>
                                                 Progreso %
                                             </th>
                                             @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
@@ -161,7 +141,7 @@
                                     </thead>
                                     @foreach (var item in Model.Solicitudes)
                                     {
-                                        <tr>
+                                        <tr class="text-center">
                                             <td>
                                                 @Html.DisplayFor(modelItem => item.Responsable)
                                             </td>
@@ -186,7 +166,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a class="btn btn-sm btn-info" href="~/REPOSITORIO_ARCHIVOS/@item.RutaArchivo">
+                                                <a class="btn btn-sm btn-info" href="@AttentionAxia.Helpers.GetConstants.PATH_REPOSITORIO_ARCHIVOS/@item.RutaArchivo">
                                                     <i class="fa fa-eye mr-2"></i>
 
                                                     @if (item.NombreArchivo.Length > 15)
@@ -200,7 +180,20 @@
                                                     }
                                                 </a>
                                             </td>
+                                            <td>
+                                                @if (item.CycleTime == null)
+                                                {
+                                                    <span>N/A</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@item.CycleTime Días</span>
+                                                }
 
+                                            </td>
+                                            <td>
+                                                <span>@item.LeadTime Días</span>
+                                            </td>
                                             @{
                                                 var progreso = $"{item.Avance}%";
                                             }

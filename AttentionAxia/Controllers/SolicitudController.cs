@@ -3,7 +3,6 @@ using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -21,6 +20,7 @@ namespace AttentionAxia.Controllers
         private readonly SprintRepository _sprintRepository;
         private readonly LineaRepository _lineaRepository;
         private readonly CelulaRepository _celulaRepository;
+        private readonly FestivosRepository _festivoRepository;
         public SolicitudController()
         {
             _solicitudRepository = new SolicitudRepository(_db);
@@ -29,6 +29,7 @@ namespace AttentionAxia.Controllers
             _sprintRepository = new SprintRepository(_db);
             _lineaRepository = new LineaRepository(_db);
             _celulaRepository = new CelulaRepository(_db);
+            _festivoRepository = new FestivosRepository(_db);
         }
 
         // GET: Solicitud
@@ -36,6 +37,7 @@ namespace AttentionAxia.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(SolicitudFilterDTO filtro)
         {
+            //await _festivoRepository.InsertHolidays();
             LoadLists(filtro.Linea, filtro.Responsable);
             var solicitudes = await _solicitudRepository.GetSolicitudes(filtro);
             return View(solicitudes);
@@ -56,11 +58,7 @@ namespace AttentionAxia.Controllers
         [HttpGet]
         public async Task<JsonResult> ConsultaReponsables(int lineaId = 0)
         {
-            var listaResponsables = await _responsableRepository.Table.Where(x => x.LineaPerteneceId == lineaId).Select(x => new
-            {
-                x.Id,
-                Nombre = x.Nombres
-            }).ToListAsync();
+            var listaResponsables = await _responsableRepository.GetPersonsByLineId(lineaId);
             return Json(listaResponsables, JsonRequestBehavior.AllowGet);
         }
 
@@ -87,7 +85,7 @@ namespace AttentionAxia.Controllers
         [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> Create()
         {
-            await LoadListsCreateAsync(null);
+            await LoadListsForCreateAsync(null);
             return View();
         }
 
@@ -99,33 +97,11 @@ namespace AttentionAxia.Controllers
             var response = new ResponseDTO();
             var req = Request;
             HttpPostedFileBase FileDocument = req.Files["FileDocument"];
-
             var datos = req["Solicitud"];
-            if (datos != null)
+            if (!string.IsNullOrWhiteSpace(datos))
             {
                 var solicitud = JsonConvert.DeserializeObject<CreateSolicitudDTO>(datos);
-                solicitud.FechaFinal = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
-                response = await _solicitudRepository.ValidationsOfBusiness(solicitud);
-                if (!response.IsSuccess)
-                {
-                    SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage(response.Message);
-                    return Json(new { response.IsSuccess, response.Message });
-                }
-                var entidadInsert = new Solicitud()
-                {
-                    ResponsableId = solicitud.ResponsableId,
-                    EstadoId = solicitud.EstadoId,
-                    SprintInicioId = solicitud.SprintInicioId,
-                    SprintFinId = solicitud.SprintFinId,
-                    FechaInicioSprint = solicitud.FechaInicial,
-                    FechaFinSprint = solicitud.FechaFinal,
-                    Iniciativa = solicitud.Iniciativa,
-                    CelulaId = solicitud.CelulaId,
-                    FechaCreacion = DateTime.Now,
-                    Avance = 0
-                };
-                response = await _solicitudRepository.InsertWithArchive(entidadInsert, FileDocument, PathActual);
+                response = await _solicitudRepository.InsertWithArchive(solicitud, FileDocument, PathActual);
                 if (!response.IsSuccess)
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
@@ -136,37 +112,6 @@ namespace AttentionAxia.Controllers
                 SetMessage("Creado satisfactoriamente.");
             }
             return Json(new { response.IsSuccess, response.Message });
-        }
-
-        private async Task LoadListsCreateAsync(Solicitud solicitud)
-        {
-            if (solicitud == null)
-            {
-                var estados = _estadoRepository.Table;
-                var primerEstado = await estados.Where(x => x.Descripcion.ToUpper().Contains("HACER")).FirstOrDefaultAsync();
-                if (primerEstado == null)
-                {
-                    ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
-                }
-                else
-                {
-                    ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", primerEstado.Id);
-                }
-                ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres");
-                ViewBag.DDL_Sprints = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint");
-                ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
-            }
-            else
-            {
-                ViewBag.EstadoId = new SelectList(await _estadoRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.EstadoId);
-                ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres", solicitud.ResponsableId);
-
-                var sprints = await _sprintRepository.Table.ToListAsync();
-                ViewBag.DDL_SprintsInicio = new SelectList(sprints, "Id", "DescripcionSprint", solicitud.SprintInicioId);
-                ViewBag.DDL_SprintsFin = new SelectList(sprints, "Id", "DescripcionSprint", solicitud.SprintFinId);
-                ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.CelulaId);
-            }
-
         }
 
         // GET: Solicitud/Edit/5
@@ -186,40 +131,33 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            await LoadListsCreateAsync(solicitud);
+            await LoadListsForCreateAsync(solicitud);
             return View(solicitud);
         }
 
-        // POST: Solicitud/Edit/5
+        // POST: Solicitud
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador-Axia")]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,ResponsableId,EstadoId,SprintId,Iniciativa,FechaInicioSprint,FechaFinSprint,Avance")] Solicitud solicitud)
+        public async Task<ActionResult> EditSolicitud()
         {
-            if (ModelState.IsValid)
+            var response = new ResponseDTO();
+            var req = Request;
+            HttpPostedFileBase FileDocument = req.Files["FileDocument"];
+            var datos = req["Solicitud"];
+            if (!string.IsNullOrWhiteSpace(datos))
             {
-                if (await _solicitudRepository.AnyWithCondition(x => x.Id == solicitud.Id))
+                var solicitud = JsonConvert.DeserializeObject<EditSolicitudDTO>(datos);
+                response = await _solicitudRepository.UpdateWithArchive(solicitud, FileDocument, PathActual);
+                if (!response.IsSuccess)
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
-                    SetMessage($"Ya existe un registro con la descripción {solicitud.Iniciativa.ToUpper()}");
-                    return View(solicitud);
+                    SetMessage(response.Message);
+                    return Json(new { response.IsSuccess, response.Message });
                 }
-                if (solicitud.Estado.Id == 2)
-                {
-                    solicitud.FechaComienzoSolicitud = DateTime.Now;
-                }
-                else if (solicitud.Estado.Id == 4)
-                {
-                    solicitud.FechaFinalizacion = DateTime.Now;
-                }
-                _solicitudRepository.Update(solicitud);
-                await _solicitudRepository.Save();
                 SetAlert(GetConstants.ALERT_SUCCESS);
-                SetMessage("Actualizado satisfactoriamente.");
-                return RedirectToAction("Index");
+                SetMessage("Editado satisfactoriamente.");
             }
-            await LoadListsCreateAsync(solicitud);
-            return View(solicitud);
+            return Json(new { response.IsSuccess, response.Message });
         }
 
         // GET: Solicitud/Delete/5
@@ -253,7 +191,36 @@ namespace AttentionAxia.Controllers
             await _solicitudRepository.Save();
             return RedirectToAction("Index");
         }
+        private async Task LoadListsForCreateAsync(Solicitud solicitud)
+        {
+            if (solicitud == null)
+            {
+                var estados = _estadoRepository.Table;
+                var primerEstado = await estados.Where(x => x.Descripcion.ToUpper().Contains("HACER")).FirstOrDefaultAsync();
+                if (primerEstado == null)
+                {
+                    ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
+                }
+                else
+                {
+                    ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", primerEstado.Id);
+                }
+                ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres");
+                ViewBag.DDL_Sprints = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint");
+                ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
+            }
+            else
+            {
+                ViewBag.EstadoId = new SelectList(await _estadoRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.EstadoId);
+                ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres", solicitud.ResponsableId);
 
+                var sprints = await _sprintRepository.Table.ToListAsync();
+                ViewBag.DDL_SprintsInicio = new SelectList(sprints, "Id", "DescripcionSprint", solicitud.SprintInicioId);
+                ViewBag.DDL_SprintsFin = new SelectList(sprints, "Id", "DescripcionSprint", solicitud.SprintFinId);
+                ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", solicitud.CelulaId);
+            }
+
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
