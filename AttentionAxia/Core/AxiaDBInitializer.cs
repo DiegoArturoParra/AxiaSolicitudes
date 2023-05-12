@@ -70,24 +70,20 @@ namespace AttentionAxia.Core
             {
               new EstadoSolicitud
               {
-                Descripcion = "Por Hacer",
-                 Nivel = "#b8c0c7",
+                  Id= 1,
+                  Descripcion =  EnumConfig.GetDescription(EstadosSolicitudEnum.PorHacer),
+                  Nivel = "#b8c0c7",
               },
               new EstadoSolicitud
               {
-                 Descripcion = "En Progreso",
-                 Nivel = "#bb8f30",
-
+                  Id= 2,
+                  Descripcion =  EnumConfig.GetDescription(EstadosSolicitudEnum.EnProgreso),
+                  Nivel = "#bb8f30",
               },
-               new EstadoSolicitud
+              new EstadoSolicitud
               {
-                 Descripcion = "Stand By",
-                 Nivel = "#e89259",
-
-              },
-                new EstadoSolicitud
-              {
-                Descripcion = "Finalizado",
+                 Id= 3,
+                 Descripcion = EnumConfig.GetDescription(EstadosSolicitudEnum.Finalizado),
                  Nivel = "#92e897",
               }
             };
@@ -109,6 +105,7 @@ namespace AttentionAxia.Core
                 Descripcion = "Desarrollo"
               }
             };
+
 
             context.TablaLineas.AddRange(defaultLineas);
 

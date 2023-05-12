@@ -1,11 +1,19 @@
-﻿using System.Web.Mvc;
+﻿using AttentionAxia.Repositories;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        public ActionResult Index()
+        private readonly FestivosRepository _festivoRepository;
+        public HomeController()
         {
+            _festivoRepository = new FestivosRepository(_db);
+        }
+        public async Task<ActionResult> Index()
+        {
+            //await _festivoRepository.InsertHolidays();
             return View();
         }
     }

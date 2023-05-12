@@ -100,8 +100,11 @@ namespace AttentionAxia.Repositories
 
             if (await Context.TablaSolicitudes.AnyAsync())
             {
-                var haySprintsConTareas = await Context.TablaSolicitudes.Where(x => listado.Select(y => y.Id).Contains(x.SprintInicioId) ||
-                                                                          listado.Select(y => y.Id).Contains(x.SprintFinId)).AnyAsync();
+                var listaIds = listado.Select(y => y.Id).ToList();
+                var haySprintsConTareas = await Context.TablaSolicitudes
+                    .Where(x => listaIds.Contains(x.SprintInicioId) || listaIds.Contains(x.SprintFinId))
+                    .Select(x => x.Id)
+                    .AnyAsync();
                 if (haySprintsConTareas)
                 {
                     return Responses.SetErrorResponse($"hay sprints para el periodo {period}-{year} vinculados en una iniciativa.");

@@ -52,36 +52,37 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
-    let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
-    let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
-    var originalBtnContent = $('#btn-save').html();
-    $('#btn-save').click(function (e) {
-         var forms = document.querySelectorAll('.needs-validation')
+        let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+        let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
+        var originalBtnContent = $('#btn-save').html();
+        $('#btn-save').click(function (e) {
+            e.preventDefault();
+            var forms = document.querySelectorAll('.needs-validation')
          // Loop over them and prevent submission
-         Array.prototype.slice.call(forms).forEach(function (form) {
-             if (form.checkValidity()) {
-                 form.classList.add('was-validated')
-                 $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Agregando...');
-                 $('#btn-save').prop("disabled", true);
-                 let sigla = $("#Sigla").val();
-                 let cantidad = $("#CantidadSprints").val();
-                 let periodo = $("#Periodo").val();
-                 let url = "@Url.Action("CrearMultipleSprints", "Sprint")";
-                 var form = $('#__AjaxAntiForgeryForm');
-                 var token = $('input[name="__RequestVerificationToken"]', form).val();
-                 let data = { sprint: { Periodo: periodo, Sigla: sigla }, CantidadSprints: cantidad, __RequestVerificationToken: token};
-                 $.post(url, data).done(function (data) {
-                     if (data.IsSuccess) {
-                         window.location.href = "@Url.Action("Index", "Sprint")";;
-                     } else {
-                         alertify.alert(error, data.Message);
-                         $('#btn-save').html(originalBtnContent);
-                         $('#btn-save').removeAttr('disabled');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                if (form.checkValidity()) {
+                    form.classList.add('was-validated')
+                    $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Agregando...');
+                    $('#btn-save').prop("disabled", true);
+                    let sigla = $("#Sigla").val();
+                    let cantidad = $("#CantidadSprints").val();
+                    let periodo = $("#Periodo").val();
+                    let url = "@Url.Action("CrearMultipleSprints", "Sprint")";
+                    var form = $('#__AjaxAntiForgeryForm');
+                    var token = $('input[name="__RequestVerificationToken"]', form).val();
+                    let data = { sprint: { Periodo: periodo, Sigla: sigla }, CantidadSprints: cantidad, __RequestVerificationToken: token};
+                    $.post(url, data).done(function (data) {
+                        if (data.IsSuccess) {
+                            window.location.href = "@Url.Action("Index", "Sprint")";;
+                        } else {
+                            alertify.alert(error, data.Message);
+                            $('#btn-save').html(originalBtnContent);
+                            $('#btn-save').removeAttr('disabled');
 
-                     }
-                 }).fail(function (errorCode) { alertify.alert(error, errorCode) });
-             }
-             form.classList.add('was-validated')
+                        }
+                    }).fail(function (errorCode) { alertify.alert(error, errorCode) });
+                }
+                form.classList.add('was-validated');
          })
     });
     </script>

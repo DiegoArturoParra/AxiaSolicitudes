@@ -22,6 +22,7 @@ namespace AttentionAxia.Core.Data
         public virtual DbSet<Responsable> TablaResponsables { get; set; }
         public virtual DbSet<Solicitud> TablaSolicitudes { get; set; }
         public virtual DbSet<Sprint> TablaSprints { get; set; }
+        public virtual DbSet<Festivo> TablaFestivosColombia { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

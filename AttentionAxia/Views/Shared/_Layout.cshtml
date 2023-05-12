@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--LOGO WEB-->
     <link href="~/adminlte/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     @Styles.Render("~/alertifyjs/css")
     @Scripts.Render("~/bundles/modernizr")
     @Styles.Render("~/adminlte/css")
@@ -192,11 +190,11 @@
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/Alertify")
-    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/adminlte/js")
     @RenderSection("scripts", required: false)
     <script>
-        $(document).ready(function (e) {
+        $(function (e) {
+
             let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
             let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
             let message = '@TempData[AttentionAxia.Helpers.GetConstants.MESSAGE]';
@@ -207,6 +205,7 @@
                 }
                 else if (errorAlert === '@AttentionAxia.Helpers.GetConstants.ALERT_ERROR')
                 {
+                    console.log("entro acá");
                     alertify.alert(error, message);
                 }
                 else if (errorAlert === '@AttentionAxia.Helpers.GetConstants.ALERT_WARNING')

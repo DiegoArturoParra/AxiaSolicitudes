@@ -16,7 +16,7 @@ namespace AttentionAxia
             routes.IgnoreRoute("Error/Index");
             routes.IgnoreRoute("Error/Status404");
             routes.IgnoreRoute("Solicitud/Index");
-
+            routes.IgnoreRoute("Solicitud");
             routes.MapRoute(
             name: "Page-Solicitudes",
             url: "Solicitudes",

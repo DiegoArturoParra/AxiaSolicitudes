@@ -17,6 +17,7 @@
             if (context.TablaRoles.Count() == 0 && context.TablaUsuarios.Count() == 0)
             {
                 AxiaDBInitializer.Seed(context);
+
             }
             base.Seed(context);
         }

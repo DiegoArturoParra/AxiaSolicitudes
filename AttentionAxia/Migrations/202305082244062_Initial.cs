@@ -33,6 +33,10 @@
                         fecha_comienzo_solicitud = c.DateTime(),
                         fecha_finalizacion_solicitud = c.DateTime(),
                         avance_porcentual = c.Byte(nullable: false),
+                        ruta_archivo = c.String(),
+                        nombre_archivo = c.String(),
+                        cycle_time = c.Short(),
+                        lead_time = c.Short(),
                     })
                 .PrimaryKey(t => t.id_solicitud)
                 .ForeignKey("AXIA.ESTADO_SOLICITUD", t => t.estado_solicitud_id)
@@ -89,6 +93,15 @@
                 .PrimaryKey(t => t.id_sprint);
             
             CreateTable(
+                "dbo.EXPLORA_FESTIVOS",
+                c => new
+                    {
+                        id = c.Int(nullable: false, identity: true),
+                        festivo = c.DateTime(nullable: false, storeType: "date"),
+                    })
+                .PrimaryKey(t => t.id);
+            
+            CreateTable(
                 "AXIA.ROL",
                 c => new
                     {
@@ -133,6 +146,7 @@
             DropIndex("AXIA.DETALLE_SOLICITUD", new[] { "responsable_id" });
             DropTable("AXIA.USUARIO");
             DropTable("AXIA.ROL");
+            DropTable("dbo.EXPLORA_FESTIVOS");
             DropTable("AXIA.SPRINT");
             DropTable("AXIA.LINEA_DE_TRABAJO");
             DropTable("AXIA.RESPONSABLE");
