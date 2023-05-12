@@ -6,7 +6,7 @@
 <div class="container-lg">
     <h2 class="text-center">Crear Solicitud</h2>
     <hr />
-    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate enctype="multipart/form-data">
+    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate method="post" enctype="multipart/form-data">
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Responsable</label>
@@ -100,7 +100,7 @@
                     <label class="custom-file-label" for="validatedCustomFile">
                         <i class="fa fa-file-pdf mr-2"></i>
                         <i class="fa fa-file-word mr-2"></i>
-                        <strong>Seleccionar archivo....</strong>
+                        <strong>Seleccione archivo...</strong>
                     </label>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                     format: 'DD/MM/YYYY'
                 },
                 minDate: moment().add(-2, 'years').toDate(),
-                maxDate: moment().toDate()
+                maxDate: moment().add(1, 'years').toDate(),
             });
         });
 
@@ -176,10 +176,12 @@
             if (!(regex.test(val))) {
                 $(this).val();
                 toastr.error("Ingrese un archivo valido, Pdf o Word");
+                $('#fileAxia').val(null);
             }
         });
 
-        $('#btn-save').click(function () {
+        $('#btn-save').click(function (e) {
+            e.preventDefault();
             var forms = document.querySelectorAll('.needs-validation')
              // Loop over them and prevent submission
              Array.prototype.slice.call(forms).forEach(function (form) {
@@ -194,38 +196,41 @@
                      const sprintfin = $('#SprintFinId').val();
                      const celula = $('#CelulaId').val();
                      const iniciativa = $('#text_iniciativa').val();
-                     let dateInitialSprint = moment($('#DateInitialSprint').val()).format();
-                     let dateFinalSprint = moment($('#DateEndSprint').val()).format();
-                     let data = {
-                         ResponsableId: responsable,
-                         EstadoId: estado, SprintInicioId: sprintinicio,
-                         CelulaId: celula, SprintFinId: sprintfin,
-                         FechaFinal: dateFinalSprint,
-                         Iniciativa: iniciativa, FechaInicial: dateInitialSprint,
-                     };
-                     console.log(JSON.stringify(data));
-                     const archivo = $('#fileAxia')[0].files[0];
+                     const dateInitialSprint = $('#DateInitialSprint').val();
+                     const dateFinalSprint = $('#DateEndSprint').val();
+                     const archivo = $('#fileAxia')[0].files[0];             
                      var formdata = new FormData();
                      formdata.append("FileDocument", archivo);
-                     formdata.append("Solicitud", JSON.stringify(data));
+                     formdata.append("json", JSON.stringify({
+                         ResponsableId: responsable,
+                         EstadoId: estado,
+                         SprintInicioId: sprintinicio,
+                         SprintFinId: sprintfin,
+                         CelulaId: celula,
+                         Iniciativa: iniciativa,
+                         FechaInicial: dateInitialSprint,
+                         FechaFinal: dateFinalSprint
+                     }));
                      $.ajax({
                          url: url,
                          type: "POST",
                          contentType: false, // Not to set any content header
                          processData: false, // Not to process data
                          data: formdata,
+                         cache: false,
                          success: function (data) {
-                              if (data.IsSuccess) {
-                                 window.location.href = "@Url.Action("Index", "Solicitudes")";;
+                              if (!data.IsSuccess) {
+                                  alertify.alert(error, data.Message);
+                                  $('#btn-save').html(originalBtnContent);
+                                  $('#btn-save').removeAttr('disabled');
                                 }
-                                else {
-                                    alertify.alert(error, data.Message);
-                                    $('#btn-save').html(originalBtnContent);
-                                    $('#btn-save').removeAttr('disabled');
+                              else {
+                                    window.location.href = "@Url.Action("Index", "Solicitudes")";;
                                 }
                          },
                          error: function (err) {
-                             alert(err.statusText);
+                             console.log(err);
+                             toastr.error(err.statusText);
                          }
                      });
                  }

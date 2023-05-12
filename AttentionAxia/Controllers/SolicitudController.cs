@@ -20,7 +20,6 @@ namespace AttentionAxia.Controllers
         private readonly SprintRepository _sprintRepository;
         private readonly LineaRepository _lineaRepository;
         private readonly CelulaRepository _celulaRepository;
-        private readonly FestivosRepository _festivoRepository;
         public SolicitudController()
         {
             _solicitudRepository = new SolicitudRepository(_db);
@@ -29,7 +28,6 @@ namespace AttentionAxia.Controllers
             _sprintRepository = new SprintRepository(_db);
             _lineaRepository = new LineaRepository(_db);
             _celulaRepository = new CelulaRepository(_db);
-            _festivoRepository = new FestivosRepository(_db);
         }
 
         // GET: Solicitud
@@ -94,10 +92,13 @@ namespace AttentionAxia.Controllers
         [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> CreateSolicitud()
         {
-            var response = new ResponseDTO();
+            var response = new ResponseDTO
+            {
+                Message = "Ha ocurrido un error, comuniquese con el administrador."
+            };
             var req = Request;
             HttpPostedFileBase FileDocument = req.Files["FileDocument"];
-            var datos = req["Solicitud"];
+            var datos = req["json"];
             if (!string.IsNullOrWhiteSpace(datos))
             {
                 var solicitud = JsonConvert.DeserializeObject<CreateSolicitudDTO>(datos);
@@ -140,10 +141,13 @@ namespace AttentionAxia.Controllers
         [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> EditSolicitud()
         {
-            var response = new ResponseDTO();
+            var response = new ResponseDTO
+            {
+                Message = "Ha ocurrido un error, comuniquese con el administrador."
+            };
             var req = Request;
-            HttpPostedFileBase FileDocument = req.Files["FileDocument"];
-            var datos = req["Solicitud"];
+            HttpPostedFileBase FileDocument = req.Files["filedocument"];
+            var datos = req["json"];
             if (!string.IsNullOrWhiteSpace(datos))
             {
                 var solicitud = JsonConvert.DeserializeObject<EditSolicitudDTO>(datos);

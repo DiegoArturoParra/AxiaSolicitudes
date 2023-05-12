@@ -32,10 +32,10 @@ namespace AttentionAxia.Helpers
             ResponseDTO respuesta = null;
             try
             {
-                rutaInicial = string.IsNullOrEmpty(rutaInicial) ? rutaInicial.Trim() : rutaInicial;
-                nombreArchivo = string.IsNullOrEmpty(nombreArchivo) ? nombreArchivo.Trim() : nombreArchivo;
+                rutaInicial = !string.IsNullOrWhiteSpace(rutaInicial) ? rutaInicial.Trim() : rutaInicial;
+                nombreArchivo = !string.IsNullOrWhiteSpace(rutaArchivo) ? nombreArchivo.Trim() : nombreArchivo;
 
-                if (string.IsNullOrEmpty(rutaInicial))
+                if (string.IsNullOrWhiteSpace(rutaInicial))
                 {
                     string mensaje = "Error, la ruta no es valida. Por favor contacte al administrador del sistema.";
                     _logger.Error(mensaje);
@@ -85,15 +85,10 @@ namespace AttentionAxia.Helpers
             ResponseDTO respuesta = null;
             try
             {
-                rutaInicial = string.IsNullOrEmpty(rutaInicial) ? rutaInicial.Trim() : rutaInicial;
-                rutaArchivo = string.IsNullOrEmpty(rutaArchivo) ? rutaArchivo.Trim() : rutaArchivo;
+                rutaInicial = !string.IsNullOrWhiteSpace(rutaInicial) ? rutaInicial.Trim() : rutaInicial;
+                rutaArchivo = !string.IsNullOrWhiteSpace(rutaArchivo) ? rutaArchivo.Trim() : rutaArchivo;
 
-                if (string.IsNullOrEmpty(rutaInicial))
-                {
-                    respuesta = Responses.SetErrorResponse("Error, la ruta no es valida. Por favor contacte al administrador del sistema.");
-                }
-
-                if (string.IsNullOrEmpty(rutaArchivo))
+                if (string.IsNullOrWhiteSpace(rutaInicial) && string.IsNullOrWhiteSpace(rutaArchivo))
                 {
                     respuesta = Responses.SetErrorResponse("Error, la ruta no es valida. Por favor contacte al administrador del sistema.");
                 }

@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Owin;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace AttentionAxia.DTOs
 {
@@ -11,8 +13,10 @@ namespace AttentionAxia.DTOs
         public int SprintInicioId { get; set; }
         public int SprintFinId { get; set; }
         public int CelulaId { get; set; }
-        public DateTime FechaInicial { get; set; }
-        public DateTime FechaFinal { get; set; }
+        public string FechaInicial { get; set; }
+        public string FechaFinal { get; set; }
+        public DateTime FechaInicialParse => DateTime.ParseExact(FechaInicial, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        public DateTime FechaFinalParse => DateTime.ParseExact(FechaFinal, "dd/MM/yyyy", CultureInfo.InvariantCulture);
         public string Iniciativa { get; set; }
     }
 
@@ -24,8 +28,10 @@ namespace AttentionAxia.DTOs
         public int SprintInicioId { get; set; }
         public int SprintFinId { get; set; }
         public int CelulaId { get; set; }
-        public DateTime FechaInicial { get; set; }
-        public DateTime FechaFinal { get; set; }
+        public string FechaInicial { get; set; }
+        public string FechaFinal { get; set; }
+        public DateTime FechaInicialParse => DateTime.ParseExact(FechaInicial, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        public DateTime FechaFinalParse => DateTime.ParseExact(FechaFinal, "dd/MM/yyyy", CultureInfo.InvariantCulture);
         public string Iniciativa { get; set; }
         public byte Avance { get; set; }
     }

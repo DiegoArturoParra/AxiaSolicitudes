@@ -96,8 +96,8 @@
                         <div class="row">
                             <div class="col-12 table-responsive">
                                 <table class="table table-striped">
-                                    <thead>
-                                        <tr>
+                                    <thead class="text-center">
+                                        <tr class="text-center">
                                             <th>
                                                 Responsable
                                             </th>
@@ -166,19 +166,25 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a class="btn btn-sm btn-info" href="@AttentionAxia.Helpers.GetConstants.PATH_REPOSITORIO_ARCHIVOS/@item.RutaArchivo">
-                                                    <i class="fa fa-eye mr-2"></i>
-
-                                                    @if (item.NombreArchivo.Length > 15)
-                                                    {
-                                                        var nombreArchivo = item.NombreArchivo.Substring(0, 15) + "...";
-                                                        <span>@nombreArchivo</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        @Html.DisplayFor(modelItem => item.NombreArchivo)
-                                                    }
-                                                </a>
+                                                @if (!string.IsNullOrEmpty(item.RutaArchivo))
+                                                {
+                                                    <a class="btn btn-sm btn-info" href="~/REPOSITORIO_ARCHIVOS/@item.RutaArchivo">
+                                                        <i class="fa fa-eye mr-2"></i>
+                                                        @if (item.NombreArchivo.Length > 30)
+                                                        {
+                                                            var nombreArchivo = item.NombreArchivo.Substring(0, 30) + "...";
+                                                            <span>@nombreArchivo</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.NombreArchivo)
+                                                        }
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span>N/A</span>
+                                                }
                                             </td>
                                             <td>
                                                 @if (item.CycleTime == null)
@@ -265,6 +271,7 @@
     <!-- /.modal-dialog -->
 </div>
 @section Scripts {
+    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")
     <script>
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';

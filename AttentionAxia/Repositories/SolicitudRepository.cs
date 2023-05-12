@@ -19,7 +19,6 @@ namespace AttentionAxia.Repositories
         {
         }
 
-
         public async Task<ListarSolicitudDTO> GetSolicitudes(SolicitudFilterDTO filtro)
         {
             try
@@ -153,8 +152,8 @@ namespace AttentionAxia.Repositories
                     EstadoId = solicitud.EstadoId,
                     SprintInicioId = solicitud.SprintInicioId,
                     SprintFinId = solicitud.SprintFinId,
-                    FechaInicioSprint = solicitud.FechaInicial,
-                    FechaFinSprint = solicitud.FechaFinal.AddHours(24).AddSeconds(-1),
+                    FechaInicioSprint = solicitud.FechaInicialParse,
+                    FechaFinSprint = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1),
                     Iniciativa = solicitud.Iniciativa,
                     CelulaId = solicitud.CelulaId,
                     FechaCreacionSolicitud = DateTime.Now,
@@ -163,7 +162,7 @@ namespace AttentionAxia.Repositories
                 response = await ValidationsOfBusiness(entity);
                 if (response.IsSuccess)
                 {
-                    if (file == null && file.ContentLength == 0)
+                    if (file == null)
                     {
                         Insert(entity);
                         await Save();
@@ -205,8 +204,8 @@ namespace AttentionAxia.Repositories
                 entity.EstadoId = solicitud.EstadoId;
                 entity.SprintInicioId = solicitud.SprintInicioId;
                 entity.SprintFinId = solicitud.SprintFinId;
-                entity.FechaInicioSprint = solicitud.FechaInicial;
-                entity.FechaFinSprint = solicitud.FechaFinal.AddHours(24).AddSeconds(-1);
+                entity.FechaInicioSprint = solicitud.FechaInicialParse;
+                entity.FechaFinSprint = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1);
                 entity.Iniciativa = solicitud.Iniciativa;
                 entity.CelulaId = solicitud.CelulaId;
                 entity.Avance = solicitud.Avance;
@@ -215,14 +214,17 @@ namespace AttentionAxia.Repositories
                 if (response.IsSuccess)
                 {
                     entity = InsertDateByState(entity);
-                    if (file == null && file.ContentLength == 0)
+                    if (file == null)
                     {
                         Update(entity);
                         await Save();
                         return Responses.SetCreateResponse();
                     }
                     FileHelper.FolderIsExist(rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES);
-                    FileHelper.DeleteFile(rutaInicial, entity.RutaArchivo);
+                    if (!string.IsNullOrWhiteSpace(entity.RutaArchivo))
+                    {
+                        FileHelper.DeleteFile(rutaInicial, entity.RutaArchivo);
+                    }
                     response = FileHelper.SaveFile(file, rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES, file.FileName);
                     if (!response.IsSuccess)
                     {
@@ -246,11 +248,11 @@ namespace AttentionAxia.Repositories
 
         private Solicitud InsertDateByState(Solicitud entity)
         {
-            if (entity.EstadoId == (int)EstadosSolicitudEnum.EnProgreso)
+            if (entity.EstadoId == (int)EstadosSolicitudEnum.EnProgreso && !entity.FechaComienzoSolicitud.HasValue)
             {
                 entity.FechaComienzoSolicitud = DateTime.Now;
             }
-            else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado)
+            else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado && !entity.FechaFinalizacionSolicitud.HasValue)
             {
                 entity.FechaFinalizacionSolicitud = DateTime.Now;
             }

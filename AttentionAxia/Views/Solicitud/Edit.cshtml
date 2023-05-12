@@ -4,14 +4,10 @@
     ViewBag.Title = "Solicitud - Axia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Modificar Solicitud</h2>
-
-
 <div class="container-lg">
     <h2 class="text-center">Editar Solicitud</h2>
     <hr />
-    <form id="__AjaxAntiForgeryForm" class="needs-validation" novalidate enctype="multipart/form-data">
+    <form id="__AjaxAntiForgeryForm" class="needs-validation" method="post" novalidate enctype="multipart/form-data">
         @Html.HiddenFor(model => model.Id)
         <div class="form-group">
             <div class="col-md-12">
@@ -102,11 +98,19 @@
             <div class="col-md-12">
                 <label class="control-label col-md-3">Archivo</label>
                 <div class="custom-file">
-                    <input class="custom-file-input" id="fileAxia" type="file" lang="es" accept=".pdf,.doc,.docx" name="fileAxia">
+                    <input class="custom-file-input" id="fileAxiaEdit" type="file" lang="es" accept=".pdf,.doc,.docx">
                     <label class="custom-file-label" for="validatedCustomFile">
                         <i class="fa fa-file-pdf mr-2"></i>
                         <i class="fa fa-file-word mr-2"></i>
-                        <strong>Seleccionar archivo....</strong>
+                        @if (string.IsNullOrWhiteSpace(Model.NombreArchivo))
+                        {
+                            <strong>Seleccione archivo...</strong>
+                        }
+                        else
+                        {
+                            <strong>@Model.NombreArchivo</strong>
+                        }
+
                     </label>
                 </div>
             </div>
@@ -124,7 +128,7 @@
         <div class="form-group mt-4">
             <div class="d-flex justify-content-end">
                 <a class="btn btn-outline-light text-dark mr-4" href="@Url.Action("Index","Solicitudes")"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</a>
-                <button type="button" id="btn-save" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
+                <button type="submit" id="btn-save" class="btn btn-primary mr-2"><i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>
     </form>
@@ -146,6 +150,20 @@
                 },
                 minDate: moment().add(-2, 'years').toDate()
             });
+        });
+
+        $('input[type=file]').change(function () {
+            var val = $(this).val().toLowerCase(),
+                regex = new RegExp("(.*?)\.(pdf|doc|docx)$");
+            if (!(regex.test(val))) {
+                $(this).val();
+                toastr.error("Ingrese un archivo valido, Pdf o Word");
+                $('#fileAxia').val(null);
+            }
+        });
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
 
         $(function () {
@@ -170,43 +188,66 @@
             disable: false
         });
 
-         $('#btn-save').click(function () {
-             var forms = document.querySelectorAll('.needs-validation')
+        $('#btn-save').click(function (e) {
+            e.preventDefault();
+            var forms = document.querySelectorAll('.needs-validation')
              // Loop over them and prevent submission
-             Array.prototype.slice.call(forms).forEach(function (form) {
-                 if (form.checkValidity()) {
-                     $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Guardando...');
-                     $('#btn-save').prop("disabled", true);
-                     let url = "@Url.Action("Edit", "Solicitud")";
-                     const responsable = $('#ResponsableId').val();
-                     const estado = $('#EstadoId').val();
-                     const sprint = $('#SprintId').val();
-                     const iniciativa = $('#text_iniciativa').val();
-                     let dateInitialSprint = $('#DateInitialSprint').val();
-                     let dateFinalSprint = $('#DateEndSprint').val();
-                     console.log(dateInitialSprint);
-                     console.log(dateFinalSprint);
-                     const token = $('input[name="__RequestVerificationToken"]', form).val();
-                     let data = {
-                         ResponsableId: responsable,
-                         EstadoId: estado, SprintId: sprint,
-                         FechaFinal: dateFinalSprint,
-                         Iniciativa: iniciativa, FechaInicial: dateInitialSprint,
-                        __RequestVerificationToken: token
-                     };
-                     $.post(url, data).done(function (data) {
-                         if (data.IsSuccess) {
-                             window.location.href = "@Url.Action("Index", "Solicitudes")";;
-                         } else {
-                             console.log(data);
-                             alertify.alert(error, data.Message);
-                             $('#btn-save').html(originalBtnContent);
-                             $('#btn-save').removeAttr('disabled');
-                         }
-                     }).fail(function (errorCode) { alertify.alert(error, errorCode) });
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                if (form.checkValidity()) {
+                    form.classList.add('was-validated')
+                    $('#btn-save').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Guardando...');
+                    $('#btn-save').prop("disabled", true);
+                    const solicitud = $('#Id').val();
+                    const responsable = $('#ResponsableId').val();
+                    const estado = $('#EstadoId').val();
+                    const sprintinicio = $('#SprintInicioId').val();
+                    const sprintfin = $('#SprintFinId').val();
+                    const celula = $('#CelulaId').val();
+                    const iniciativa = $('#text_iniciativa').val();
+                    const avance = $('#avance_solicitud_edit').val();
+                    const dateInitialSprint = $('#DateInitialSprint').val();
+                    const dateFinalSprint = $('#DateEndSprint').val();
+                    const archivo = $('#fileAxiaEdit')[0].files[0];
+                    var formdata = new FormData();
+                    formdata.append("filedocument", archivo);
+                    formdata.append("json", JSON.stringify({
+                        SolicitudId: solicitud,
+                        ResponsableId: responsable,
+                        EstadoId: estado,
+                        SprintInicioId: sprintinicio,
+                        SprintFinId: sprintfin,
+                        CelulaId: celula,
+                        Iniciativa: iniciativa,
+                        FechaInicial: dateInitialSprint,
+                        FechaFinal: dateFinalSprint,
+                        Avance: avance
+                    }));
+                    const url = "@Url.Action("EditSolicitud", "Solicitud")";
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: formdata,
+                        cache: false
+                    })
+                        .done(function (data) {
+                            if (!data.IsSuccess) {
+                                alertify.alert(error, data.Message);
+                                $('#btn-save').html(originalBtnContent);
+                                $('#btn-save').removeAttr('disabled');
+                            }
+                            else{
+                                window.location.href = "@Url.Action("Index", "Solicitudes")";;
+                            }
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error en la solicitud:", textStatus, errorThrown);
+                     });
                  }
                  form.classList.add('was-validated')
              })
         });
+
     </script>
 }

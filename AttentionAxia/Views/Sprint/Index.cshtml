@@ -97,7 +97,8 @@
             $("#modalDeleteMultiple").modal("show");
         }
 
-        $("#btnDeleteMultiple").on("click", function () {
+        $("#btnDeleteMultiple").on("click", function (e) {
+            e.preventDefault(); 
             $('#btnDeleteMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Eliminando...');
             $('#btnDeleteMultiple').prop("disabled", true);
             let url = "@Url.Action("Index", "Sprint")";
