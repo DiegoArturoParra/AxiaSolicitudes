@@ -122,12 +122,25 @@
                                             <th>
                                                 Archivo
                                             </th>
+                                            @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                            {
+                                                <th>
+                                                    Fecha Creación
+                                                </th>
+                                                <th>
+                                                    Fecha en proceso
+                                                </th>
+                                                <th>
+                                                    Fecha Finalización
+                                                </th>
+                                            }
                                             <th>
                                                 Cycle Time
                                             </th>
                                             <th>
                                                 Lead Time
                                             </th>
+
                                             <th>
                                                 Progreso %
                                             </th>
@@ -186,6 +199,18 @@
                                                     <span>N/A</span>
                                                 }
                                             </td>
+                                            @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                            {
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DateCreated)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DateProcess)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DateFinish)
+                                                </td>
+                                            }
                                             <td>
                                                 @if (item.CycleTime == null)
                                                 {
@@ -200,6 +225,7 @@
                                             <td>
                                                 <span>@item.LeadTime Días</span>
                                             </td>
+
                                             @{
                                                 var progreso = $"{item.Avance}%";
                                             }
@@ -220,7 +246,7 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="acciones-@item.Id">
                                                         <a class="dropdown-item" href="@Url.Action("Edit","Solicitud", new { id = item.Id })"><i class="fa fa-pencil-alt mr-2"></i>Editar</a>
-                                                        <a class="dropdown-item" onclick="EditarEstado(@item.EstadoId,@item.Avance)"><i class="fa fa-pencil-alt mr-2"></i>Editar estado</a>
+                                                        <a class="dropdown-item" onclick="ShowModalEdit(@item.Id, @item.EstadoId,@item.Avance)"><i class="fa fa-pencil-alt mr-2"></i>Editar estado</a>
                                                         <a class="dropdown-item" href="@Url.Action("Delete","Sprint", new { id = item.Id })"><i class="fas fa-trash-alt mr-2"></i>Eliminar</a>
                                                     </div>
                                                 </td>
@@ -249,10 +275,11 @@
             </div>
             <div class="modal-body">
                 <form class="needs-validation" novalidate>
+                    <input type="hidden" name="id" id="modal_id" />
                     <div class="row">
                         <div class="col-md-12">
                             <label class="control-label col-md-12">Estado</label>
-                            @Html.DropDownList("modal_estados", ViewBag.DDL_Estados as SelectList, new { @class = "form-control", @required = "" })
+                            @Html.DropDownList("modal_estado", ViewBag.DDL_Estados as SelectList, new { @class = "form-control", @required = "" })
                         </div>
                         <div class="col-md-12">
                             <label class="control-label col-md-12">Avance</label>
@@ -262,8 +289,12 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-outline-light text-dark" data-dismiss="modal"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</button>
-                <button id="btnSaveEstado" type="button" class="btn btn-primary"><i class="fa fa-save mr-3"></i>Guardar</button>
+                <button type="button" class="btn btn-outline-light text-dark" data-dismiss="modal">
+                    <i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar
+                </button>
+                <button id="btnSaveEstado" type="button" class="btn btn-primary" onclick="GuardarEdicionEstado()" data-dismiss="modal">
+                    <i class="fa fa-save mr-3"></i>Guardar
+                </button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -330,14 +361,44 @@
             $("#Estado").val("");
             $("#DateFilter").val("");
         }
-        function EditarEstado(estadoId, avance) {
-            console.log(avance);
-            $('#modal_estados').val(estadoId);
+        function ShowModalEdit(id, estadoId, avance) {
+            $('#modal_id').val(id);
+            $('#modal_estado').val(estadoId);
              var slider = $('.avance').data("ionRangeSlider");
              if (slider) {
                  slider.update({from: avance});
              }
             $('#modalEditEstado').modal('show');
+        };
+
+        function GuardarEdicionEstado() {
+            let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
+            var originalBtnContent = $('#btnSaveEstado').html();
+            var forms = document.querySelectorAll('.needs-validation')
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                if (form.checkValidity()) {
+                    form.classList.add('was-validated')
+                    $('#btnSaveEstado').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Guardando...');
+                    $('#btnSaveEstado').prop("disabled", true);
+                    let id_estado = $('#modal_estado').val();
+                    let id_edit = $('#modal_id').val();
+                    let avance_val = $('#modal_avance').val();
+                    let url = "@Url.Action("EditSolicitudByState", "Solicitud")";
+                    let data = { SolicitudId: id_edit, EstadoId: id_estado, Avance: avance_val };
+                    $.post(url, data).done(function (data) {
+                        if (data.IsSuccess) {
+                            window.location.href = "@Url.Action("Index", "Solicitud")";;
+                        } else {
+                            alertify.alert(error, data.Message);
+                            $('#btn-save').html(originalBtnContent);
+                            $('#btn-save').removeAttr('disabled');
+
+                        }
+                    }).fail(function (errorCode) { alertify.alert(error, errorCode) });
+                }
+                form.classList.add('was-validated');
+            });
         }
     </script>
 }

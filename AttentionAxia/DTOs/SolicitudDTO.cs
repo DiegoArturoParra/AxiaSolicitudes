@@ -20,6 +20,13 @@ namespace AttentionAxia.DTOs
         public string Iniciativa { get; set; }
     }
 
+    public class EditSolicitudByStateDTO
+    {
+        public int SolicitudId { get; set; }
+        public int EstadoId { get; set; }
+        public byte Avance { get; set; }
+    }
+
     public class EditSolicitudDTO
     {
         public int SolicitudId { get; set; }
@@ -60,6 +67,9 @@ namespace AttentionAxia.DTOs
         public string NombreArchivo { get; set; }
         public string RutaArchivo { get; set; }
         public byte Avance { get; set; }
+        public string DateCreated => FechaCreacion.ToString("dd/MM/yyyy");
+        public string DateProcess => FechaComienzo.HasValue ? FechaComienzo.Value.ToString("dd/MM/yyyy") : "N/A";
+        public string DateFinish => FechaFinalizacion.HasValue ? FechaFinalizacion.Value.ToString("dd/MM/yyyy") : "N/A";
         public string SprintInicioFullText => string.Format("{0} - {1:yyyy}", SprintInicio, SprintInicioFechaGeneracion);
         public string SprintFinFullText => string.Format("{0} - {1:yyyy}", SprintFin, SprintFinFechaGeneracion);
     }
