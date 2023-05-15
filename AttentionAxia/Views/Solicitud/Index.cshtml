@@ -220,11 +220,11 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="acciones-@item.Id">
                                                         <a class="dropdown-item" href="@Url.Action("Edit","Solicitud", new { id = item.Id })"><i class="fa fa-pencil-alt mr-2"></i>Editar</a>
-                                                        <a class="dropdown-item" onclick="EditarEstado(@item.EstadoId,@item.Avance)"><i class="fa fa-pencil-alt mr-2"></i>Editar estado</a>
+                                                        <a class="dropdown-item" onclick="EditarEstado(@item.Id, @item.EstadoId,@item.Avance)"><i class="fa fa-pencil-alt mr-2"></i>Editar estado</a>
                                                         <a class="dropdown-item" href="@Url.Action("Delete","Sprint", new { id = item.Id })"><i class="fas fa-trash-alt mr-2"></i>Eliminar</a>
                                                     </div>
-                                                </td>
-
+                                                    <input id="id_edit" name="id_edit" value="@item.Id" class="d-none" />
+                                                </td>                                             
                                             }
                                         </tr>
                                     }
@@ -263,7 +263,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-outline-light text-dark" data-dismiss="modal"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</button>
-                <button id="btnSaveEstado" type="button" class="btn btn-primary"><i class="fa fa-save mr-3"></i>Guardar</button>
+                <button id="btnSaveEstado" type="button" class="btn btn-primary" onclick="GuardarEdicionEstado()"<i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -330,7 +330,7 @@
             $("#Estado").val("");
             $("#DateFilter").val("");
         }
-        function EditarEstado(estadoId, avance) {
+        function EditarEstado(id, estadoId, avance) {
             console.log(avance);
             $('#modal_estados').val(estadoId);
              var slider = $('.avance').data("ionRangeSlider");
@@ -338,6 +338,27 @@
                  slider.update({from: avance});
              }
             $('#modalEditEstado').modal('show');
+        }
+
+        function GuardarEdicionEstado() {
+            var id_estado = $('#modal_estdos').val();
+            var id_edit = $('#id_edit').val();
+            var avance_val = $('#modal_avance').val();
+
+            $.ajax({
+                method: "POST",
+                url: "some.php",
+                data: {
+                    name: "John",
+                    location: "Boston"
+                },
+                success: function (msg) {
+                    alert("Data Saved: " + msg);
+                },
+                error: function (e) {
+                    alert("Error: " + e);
+                }
+            });
         }
     </script>
 }

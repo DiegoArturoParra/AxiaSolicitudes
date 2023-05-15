@@ -164,6 +164,38 @@ namespace AttentionAxia.Controllers
             return Json(new { response.IsSuccess, response.Message });
         }
 
+        public void EditSolicitudEstado(int id_data, int id_estado, byte avance_val)
+        {
+            Solicitud data = _solicitudRepository.FindById(id_data);
+
+            Solicitud solicitud = new Solicitud
+            {
+                Id = id_data,
+                EstadoId = id_estado,
+                Avance = avance_val,
+                ResponsableId = data.ResponsableId,
+                SprintInicioId = data.SprintInicioId,
+                SprintFinId = data.SprintFinId,
+                CelulaId = data.CelulaId,
+                Iniciativa = data.Iniciativa,
+                FechaInicioSprint = data.FechaInicioSprint,
+                FechaFinSprint = data.FechaFinSprint,
+                FechaCreacionSolicitud = data.FechaCreacionSolicitud,
+                FechaComienzoSolicitud = data.FechaComienzoSolicitud,
+                FechaFinalizacionSolicitud = data.FechaFinalizacionSolicitud,
+                RutaArchivo = data.RutaArchivo,
+                NombreArchivo = data.NombreArchivo,
+                CycleTime = data.CycleTime,
+                LeadTime = data.LeadTime,
+                Responsable = data.Responsable,
+                SprintInicio = data.SprintInicio,
+                SprintFin = data.SprintFin,
+                Celula = data.Celula
+            };
+            _solicitudRepository.Update(solicitud);
+        }
+
+
         // GET: Solicitud/Delete/5
         [Authorize(Roles = "Administrador-Axia")]
         public ActionResult Delete(int? id)
