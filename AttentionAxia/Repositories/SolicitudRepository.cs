@@ -3,6 +3,7 @@ using AttentionAxia.DTOs;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using log4net;
+using Microsoft.Ajax.Utilities;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -229,7 +230,7 @@ namespace AttentionAxia.Repositories
                     {
                         Update(entity);
                         await Save();
-                        return Responses.SetCreateResponse();
+                        return Responses.SetOkResponse("Edición satisfactoriamente.");
                     }
                     FileHelper.FolderIsExist(rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES);
                     if (!string.IsNullOrWhiteSpace(entity.RutaArchivo))
@@ -253,6 +254,35 @@ namespace AttentionAxia.Repositories
             catch (Exception ex)
             {
                 FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                return Responses.SetInternalServerErrorResponse(ex, ex.Message);
+            }
+        }
+
+
+        public async Task<ResponseDTO> UpdateByState(EditSolicitudByStateDTO editSolicitud)
+        {
+            try
+            {
+                var response = new ResponseDTO();
+                var entity = FindById(editSolicitud.SolicitudId);
+                if (entity == null)
+                {
+                    return Responses.SetErrorResponse("No existe la solicitud.");
+                }
+                entity.EstadoId = editSolicitud.EstadoId;
+                entity.Avance = editSolicitud.Avance;
+                response = await ValidationsOfBusiness(entity);
+                if (response.IsSuccess)
+                {
+                    entity = InsertDateByState(entity);
+                    Update(entity);
+                    await Save();
+                    response = Responses.SetOkResponse("Edición satisfactoriamente.");
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
                 return Responses.SetInternalServerErrorResponse(ex, ex.Message);
             }
         }

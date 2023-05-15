@@ -59,26 +59,6 @@ namespace AttentionAxia.Controllers
             var listaResponsables = await _responsableRepository.GetPersonsByLineId(lineaId);
             return Json(listaResponsables, JsonRequestBehavior.AllowGet);
         }
-
-        private void LoadLists(int? linea, int? responsable)
-        {
-            ViewBag.DDL_Responsables = new SelectList("");
-            if (linea.HasValue && responsable.HasValue)
-            {
-                ViewBag.DDL_Responsables = new SelectList(_responsableRepository.Table.Where(x => x.LineaPerteneceId == linea), "Id", "Nombres", responsable.Value);
-            }
-            ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
-            ViewBag.DDL_Lineas = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
-            ViewBag.DDL_Celulas = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
-            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
-            List<int> items = new List<int>()
-            {
-                25, 50, 100, 250, 500
-            };
-
-            ViewBag.DDL_Items = new SelectList(items);
-        }
-
         // GET: Solicitud/Create
         [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> Create()
@@ -136,7 +116,10 @@ namespace AttentionAxia.Controllers
             return View(solicitud);
         }
 
-        // POST: Solicitud
+        /// <summary>
+        /// Editar solicitud
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "Administrador-Axia")]
         public async Task<ActionResult> EditSolicitud()
@@ -164,35 +147,20 @@ namespace AttentionAxia.Controllers
             return Json(new { response.IsSuccess, response.Message });
         }
 
-        public void EditSolicitudEstado(int id_data, int id_estado, byte avance_val)
+        [HttpPost]
+        [Authorize(Roles = "Administrador-Axia")]
+        public async Task<ActionResult> EditSolicitudByState(EditSolicitudByStateDTO solicitud)
         {
-            Solicitud data = _solicitudRepository.FindById(id_data);
-
-            Solicitud solicitud = new Solicitud
+            var response = new ResponseDTO
             {
-                Id = id_data,
-                EstadoId = id_estado,
-                Avance = avance_val,
-                ResponsableId = data.ResponsableId,
-                SprintInicioId = data.SprintInicioId,
-                SprintFinId = data.SprintFinId,
-                CelulaId = data.CelulaId,
-                Iniciativa = data.Iniciativa,
-                FechaInicioSprint = data.FechaInicioSprint,
-                FechaFinSprint = data.FechaFinSprint,
-                FechaCreacionSolicitud = data.FechaCreacionSolicitud,
-                FechaComienzoSolicitud = data.FechaComienzoSolicitud,
-                FechaFinalizacionSolicitud = data.FechaFinalizacionSolicitud,
-                RutaArchivo = data.RutaArchivo,
-                NombreArchivo = data.NombreArchivo,
-                CycleTime = data.CycleTime,
-                LeadTime = data.LeadTime,
-                Responsable = data.Responsable,
-                SprintInicio = data.SprintInicio,
-                SprintFin = data.SprintFin,
-                Celula = data.Celula
+                Message = "Ha ocurrido un error, comuniquese con el administrador."
             };
-            _solicitudRepository.Update(solicitud);
+            if (solicitud != null)
+            {
+                response = await _solicitudRepository.UpdateByState(solicitud);
+            }
+
+            return Json(new { response.IsSuccess, response.Message });
         }
 
 
@@ -226,6 +194,24 @@ namespace AttentionAxia.Controllers
             _solicitudRepository.Delete(solicitud);
             await _solicitudRepository.Save();
             return RedirectToAction("Index");
+        }
+        private void LoadLists(int? linea, int? responsable)
+        {
+            ViewBag.DDL_Responsables = new SelectList("");
+            if (linea.HasValue && responsable.HasValue)
+            {
+                ViewBag.DDL_Responsables = new SelectList(_responsableRepository.Table.Where(x => x.LineaPerteneceId == linea), "Id", "Nombres", responsable.Value);
+            }
+            ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Lineas = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Celulas = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
+            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
+            List<int> items = new List<int>()
+            {
+                25, 50, 100, 250, 500
+            };
+
+            ViewBag.DDL_Items = new SelectList(items);
         }
         private async Task LoadListsForCreateAsync(Solicitud solicitud)
         {

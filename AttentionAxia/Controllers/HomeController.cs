@@ -11,7 +11,7 @@ namespace AttentionAxia.Controllers
         {
             _festivoRepository = new FestivosRepository(_db);
         }
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
             //await _festivoRepository.InsertHolidays();
             return View();

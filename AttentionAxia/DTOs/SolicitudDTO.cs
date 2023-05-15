@@ -20,6 +20,13 @@ namespace AttentionAxia.DTOs
         public string Iniciativa { get; set; }
     }
 
+    public class EditSolicitudByStateDTO
+    {
+        public int SolicitudId { get; set; }
+        public int EstadoId { get; set; }
+        public byte Avance { get; set; }
+    }
+
     public class EditSolicitudDTO
     {
         public int SolicitudId { get; set; }
