@@ -88,11 +88,11 @@ namespace AttentionAxia.Repositories
                       }).ToListAsync();
                     foreach (var item in listado)
                     {
-                        item.LeadTime = !item.LeadTime.HasValue ? GetLeadTime(item.FechaCreacion) : item.LeadTime;
-                        item.CycleTime = !item.CycleTime.HasValue ? GetCycleTime(item.FechaComienzo) : item.CycleTime;
+                        item.LeadTime = !item.LeadTime.HasValue ? GetLeadTime(item.FechaCreacion, null) : item.LeadTime;
+                        item.CycleTime = !item.CycleTime.HasValue ? GetCycleTime(item.FechaComienzo, null) : item.CycleTime;
                     }
 
-                    var totalDeRegistros = query.Count();
+                    int totalDeRegistros = query.Count();
                     modelo.Solicitudes = listado;
                     modelo.PaginaActual = filtro.Page;
                     modelo.TotalDeRegistros = totalDeRegistros;
@@ -113,31 +113,40 @@ namespace AttentionAxia.Repositories
             }
         }
 
-        public short? GetLeadTime(DateTime dateCreated)
+        public short? GetLeadTime(DateTime dateCreated, DateTime? dateFinish)
         {
-            var dateCurrent = DateTime.Now;
-            var dateInitial = new DateTime(dateCreated.Year, dateCreated.Month, dateCreated.Day, 0, 0, 0);
-            var dateFinal = new DateTime(dateCurrent.Year, dateCurrent.Month, dateCurrent.Day, 0, 0, 0).AddHours(24).AddSeconds(-1);
+            DateTime dateCurrent = DateTime.Now;
+            if (dateFinish.HasValue)
+            {
+                dateCurrent = dateFinish.Value;
+            }
+
+            DateTime dateInitial = new DateTime(dateCreated.Year, dateCreated.Month, dateCreated.Day, 0, 0, 0);
+            DateTime dateFinal = new DateTime(dateCurrent.Year, dateCurrent.Month, dateCurrent.Day, 0, 0, 0).AddHours(24).AddSeconds(-1);
             var datesHolidays = Context.TablaFestivosColombia.Where(f => f.FechaFestivo >= dateInitial && f.FechaFestivo <= dateFinal).ToList();
-            var totalDays = dateCurrent.Subtract(dateCreated).Days + 1;
-            var businessDays = Enumerable.Range(0, totalDays).Select(i => dateInitial.AddDays(i)).
+            int totalDays = dateCurrent.Subtract(dateCreated).Days + 1;
+            int businessDays = Enumerable.Range(0, totalDays).Select(i => dateInitial.AddDays(i)).
                 Count(date => !datesHolidays.Any(y => y.FechaFestivo == date) && date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday);
             return (short)businessDays;
         }
 
 
-        public short? GetCycleTime(DateTime? dateInProcess)
+        public short? GetCycleTime(DateTime? dateInProcess, DateTime? dateFinish)
         {
             if (!dateInProcess.HasValue)
             {
                 return null;
             }
-            var dateCurrent = DateTime.Now;
-            var dateInitial = new DateTime(dateInProcess.Value.Year, dateInProcess.Value.Month, dateInProcess.Value.Day, 0, 0, 0);
-            var dateFinal = new DateTime(dateCurrent.Year, dateCurrent.Month, dateCurrent.Day, 0, 0, 0).AddHours(24).AddSeconds(-1);
+            DateTime dateCurrent = DateTime.Now;
+            if (dateFinish.HasValue)
+            {
+                dateCurrent = dateFinish.Value;
+            }
+            DateTime dateInitial = new DateTime(dateInProcess.Value.Year, dateInProcess.Value.Month, dateInProcess.Value.Day, 0, 0, 0);
+            DateTime dateFinal = new DateTime(dateCurrent.Year, dateCurrent.Month, dateCurrent.Day, 0, 0, 0).AddHours(24).AddSeconds(-1);
             var datesHolidays = Context.TablaFestivosColombia.Where(f => f.FechaFestivo >= dateInitial && f.FechaFestivo <= dateFinal).ToList();
-            var totalDays = dateCurrent.Subtract(dateInProcess.Value).Days + 1;
-            var businessDays = Enumerable.Range(0, totalDays).Select(i => dateInitial.AddDays(i)).
+            int totalDays = dateCurrent.Subtract(dateInProcess.Value).Days + 1;
+            int businessDays = Enumerable.Range(0, totalDays).Select(i => dateInitial.AddDays(i)).
                 Count(date => !datesHolidays.Any(y => y.FechaFestivo == date) && date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday);
             return (short)businessDays;
         }
@@ -257,6 +266,8 @@ namespace AttentionAxia.Repositories
             else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado && !entity.FechaFinalizacionSolicitud.HasValue)
             {
                 entity.FechaFinalizacionSolicitud = DateTime.Now;
+                entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinalizacionSolicitud);
+                entity.CycleTime = GetCycleTime(entity.FechaComienzoSolicitud, entity.FechaFinalizacionSolicitud);
             }
             return entity;
         }

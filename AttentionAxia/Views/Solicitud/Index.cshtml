@@ -122,12 +122,25 @@
                                             <th>
                                                 Archivo
                                             </th>
+                                            @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                            {
+                                                <th>
+                                                    Fecha Creación
+                                                </th>
+                                                <th>
+                                                    Fecha en proceso
+                                                </th>
+                                                <th>
+                                                    Fecha Finalización
+                                                </th>
+                                            }
                                             <th>
                                                 Cycle Time
                                             </th>
                                             <th>
                                                 Lead Time
                                             </th>
+
                                             <th>
                                                 Progreso %
                                             </th>
@@ -186,6 +199,18 @@
                                                     <span>N/A</span>
                                                 }
                                             </td>
+                                            @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+                                            {
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DateCreated)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DateProcess)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DateFinish)
+                                                </td>
+                                            }
                                             <td>
                                                 @if (item.CycleTime == null)
                                                 {
@@ -200,6 +225,7 @@
                                             <td>
                                                 <span>@item.LeadTime Días</span>
                                             </td>
+
                                             @{
                                                 var progreso = $"{item.Avance}%";
                                             }
