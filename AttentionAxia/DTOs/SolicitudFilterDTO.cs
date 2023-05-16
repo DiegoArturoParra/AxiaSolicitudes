@@ -9,6 +9,7 @@ namespace AttentionAxia.DTOs
         public int? Linea { get; set; }
         public int? Celula { get; set; }
         public int? Responsable { get; set; }
+        public string FiltroFecha { get; set; }
         public DateTime? FechaInicial { get; set; }
         public DateTime? FechaFinal { get; set; }
         public int? Avance { get; set; }

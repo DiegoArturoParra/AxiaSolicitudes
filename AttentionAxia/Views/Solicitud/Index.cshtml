@@ -135,12 +135,11 @@
                                                 </th>
                                             }
                                             <th>
-                                                Cycle Time
-                                            </th>
-                                            <th>
                                                 Lead Time
                                             </th>
-
+                                            <th>
+                                                Cycle Time
+                                            </th>
                                             <th>
                                                 Progreso %
                                             </th>
@@ -212,6 +211,9 @@
                                                 </td>
                                             }
                                             <td>
+                                                <span>@item.LeadTime Días</span>
+                                            </td>
+                                            <td>
                                                 @if (item.CycleTime == null)
                                                 {
                                                     <span>N/A</span>
@@ -220,12 +222,7 @@
                                                 {
                                                     <span>@item.CycleTime Días</span>
                                                 }
-
                                             </td>
-                                            <td>
-                                                <span>@item.LeadTime Días</span>
-                                            </td>
-
                                             @{
                                                 var progreso = $"{item.Avance}%";
                                             }
@@ -320,7 +317,17 @@
         });
         $(function () {
             $('input[name="FiltroFecha"]').daterangepicker({
-                opens: 'left'
+                opens: 'left',
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Aplicar',
+                    daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    monthNames: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ]
+                }
             });
         });
 

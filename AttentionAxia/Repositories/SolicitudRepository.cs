@@ -6,6 +6,7 @@ using log4net;
 using Microsoft.Ajax.Utilities;
 using System;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -40,6 +41,18 @@ namespace AttentionAxia.Repositories
                                  responsable,
                                  celula,
                              });
+                if (!string.IsNullOrWhiteSpace(filtro.FiltroFecha))
+                {
+                    string[] partes = filtro.FiltroFecha.Split('-');
+
+                    string fechaInicioStr = partes[0].Trim();
+                    string fechaFinStr = partes[1].Trim();
+
+                    filtro.FechaInicial = DateTime.ParseExact(fechaInicioStr, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    filtro.FechaFinal = DateTime.ParseExact(fechaFinStr, "dd/MM/yyyy", CultureInfo.InvariantCulture).AddHours(24).AddSeconds(-1);
+                    query = query.Where(x => x.solicitud.FechaCreacionSolicitud >= filtro.FechaInicial && x.solicitud.FechaCreacionSolicitud <= filtro.FechaFinal);
+                }
+
                 if (filtro.Estado.HasValue && filtro.Estado.Value > 0)
                 {
                     query = query.Where(x => x.solicitud.EstadoId == filtro.Estado.Value);
@@ -60,6 +73,7 @@ namespace AttentionAxia.Repositories
                 {
                     query = query.Where(x => x.solicitud.Responsable.LineaPerteneceId == filtro.Linea.Value);
                 }
+
                 if (query.Any())
                 {
                     var listado = await query.OrderBy(x => x.solicitud.Id)

@@ -3,8 +3,10 @@ using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -35,7 +37,6 @@ namespace AttentionAxia.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(SolicitudFilterDTO filtro)
         {
-            //await _festivoRepository.InsertHolidays();
             LoadLists(filtro.Linea, filtro.Responsable);
             var solicitudes = await _solicitudRepository.GetSolicitudes(filtro);
             return View(solicitudes);

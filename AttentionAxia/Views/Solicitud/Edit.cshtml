@@ -146,9 +146,34 @@
                 singleDatePicker: true,
                 showDropdowns: true,
                 locale: {
-                    format: 'DD/MM/YYYY'
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Aplicar',
+                    daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    monthNames: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ]
                 },
                 minDate: moment().add(-2, 'years').toDate()
+            });
+        });
+
+        $(function () {
+            $('input[name="DateEnd"]').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Aplicar',
+                    daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    monthNames: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ]
+                },
+                maxDate: moment().add(1, 'years').toDate(),
             });
         });
 
@@ -164,17 +189,6 @@
         $(".custom-file-input").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        });
-
-        $(function () {
-            $('input[name="DateEnd"]').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                locale: {
-                    format: 'DD/MM/YYYY'
-                },
-                maxDate: moment().add(1, 'years').toDate(),
-            });
         });
 
         $('#avance_solicitud_edit').ionRangeSlider({
