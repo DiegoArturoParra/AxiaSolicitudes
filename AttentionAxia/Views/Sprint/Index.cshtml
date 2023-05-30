@@ -19,7 +19,16 @@
             @Html.DisplayNameFor(model => model.Periodo)
         </th>
         <th class="text-center">
+            @Html.DisplayNameFor(model => model.FechaInicio)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.FechaFin)
+        </th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.FechaGeneracion)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.IsActivo)
         </th>
         <th class="text-center">
             Acciones
@@ -36,10 +45,26 @@
                 @Html.DisplayFor(modelItem => item.Periodo)
             </td>
             <td class="text-center">
+                @Html.DisplayFor(modelItem => item.FechaInicioParse)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.FechaFinParse)
+            </td>
+            <td class="text-center">
                 @{
                     var fechaGeneracion = DateTime.Parse(item.FechaGeneracion.ToString());
                 }
                 <label class="text-black-50">@fechaGeneracion.ToString("yyyy")</label>
+            </td>
+            <td class="text-center">
+                @if (item.IsActivo)
+                {
+                    <span class="badge badge-pill badge-success" id="badgeSpan">Activo</span>
+                }
+                else
+                {
+                    <span class="badge badge-pill badge-danger" id="badgeSpan">Inactivo</span>
+                }
             </td>
             <td class="text-center">
                 <a href="@Url.Action("Edit","Sprint", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
@@ -90,15 +115,18 @@
     <!-- /.modal-dialog -->
 </div>
 @section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
-        var originalBtnContent = $('#btnDeleteMultiple').html();
+
         function DeleteMultiple() {
-            $(".needs-validation").removeClass("was-validated")
+            $(".needs-validation").removeClass("was-validated");
             $("#modalDeleteMultiple").modal("show");
         }
 
+        var originalBtnContent = $('#btnDeleteMultiple').html();
+
         $("#btnDeleteMultiple").on("click", function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
             $('#btnDeleteMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Eliminando...');
             $('#btnDeleteMultiple').prop("disabled", true);
             let url = "@Url.Action("Index", "Sprint")";
@@ -136,13 +164,9 @@
                         beforeSend: function () {
                         }
                     });
-
-                } else {
-                    console.log("no paso validación")
                 }
-
                 form.classList.add('was-validated')
-            })
+            });
 
         })
     </script>

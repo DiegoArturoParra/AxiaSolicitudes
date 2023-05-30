@@ -3,7 +3,6 @@ using AttentionAxia.DTOs;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using log4net;
-using Microsoft.Ajax.Utilities;
 using System;
 using System.Data.Entity;
 using System.Globalization;
@@ -96,15 +95,15 @@ namespace AttentionAxia.Repositories
                           NombreArchivo = m.solicitud.NombreArchivo,
                           RutaArchivo = m.solicitud.RutaArchivo,
                           LeadTime = m.solicitud.LeadTime,
-                          CycleTime = m.solicitud.CycleTime,
+                          CycleTimeReal = m.solicitud.CycleTimeReal,
                           FechaCreacion = m.solicitud.FechaCreacionSolicitud,
-                          FechaComienzo = m.solicitud.FechaComienzoSolicitud,
-                          FechaFinalizacion = m.solicitud.FechaFinalizacionSolicitud
+                          FechaComienzo = m.solicitud.FechaInicioReal,
+                          FechaFinalizacion = m.solicitud.FechaFinReal
                       }).ToListAsync();
                     foreach (var item in listado)
                     {
                         item.LeadTime = !item.LeadTime.HasValue ? GetLeadTime(item.FechaCreacion, null) : item.LeadTime;
-                        item.CycleTime = !item.CycleTime.HasValue ? GetCycleTime(item.FechaComienzo, null) : item.CycleTime;
+                        item.CycleTimeReal = !item.CycleTimeReal.HasValue ? GetCycleTime(item.FechaComienzo, null) : item.CycleTimeReal;
                     }
 
                     int totalDeRegistros = query.Count();
@@ -178,8 +177,8 @@ namespace AttentionAxia.Repositories
                     EstadoId = solicitud.EstadoId,
                     SprintInicioId = solicitud.SprintInicioId,
                     SprintFinId = solicitud.SprintFinId,
-                    FechaInicioSprint = solicitud.FechaInicialParse,
-                    FechaFinSprint = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1),
+                    FechaInicioPlaneada = solicitud.FechaInicialParse,
+                    FechaFinPlaneada = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1),
                     Iniciativa = solicitud.Iniciativa,
                     CelulaId = solicitud.CelulaId,
                     FechaCreacionSolicitud = DateTime.Now,
@@ -230,8 +229,8 @@ namespace AttentionAxia.Repositories
                 entity.EstadoId = solicitud.EstadoId;
                 entity.SprintInicioId = solicitud.SprintInicioId;
                 entity.SprintFinId = solicitud.SprintFinId;
-                entity.FechaInicioSprint = solicitud.FechaInicialParse;
-                entity.FechaFinSprint = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1);
+                entity.FechaInicioPlaneada = solicitud.FechaInicialParse;
+                entity.FechaFinPlaneada = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1);
                 entity.Iniciativa = solicitud.Iniciativa;
                 entity.CelulaId = solicitud.CelulaId;
                 entity.Avance = solicitud.Avance;
@@ -303,15 +302,15 @@ namespace AttentionAxia.Repositories
 
         private Solicitud InsertDateByState(Solicitud entity)
         {
-            if (entity.EstadoId == (int)EstadosSolicitudEnum.EnProgreso && !entity.FechaComienzoSolicitud.HasValue)
+            if (entity.EstadoId == (int)EstadosSolicitudEnum.EnProgreso && !entity.FechaInicioReal.HasValue)
             {
-                entity.FechaComienzoSolicitud = DateTime.Now;
+                entity.FechaInicioReal = DateTime.Now;
             }
-            else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado && !entity.FechaFinalizacionSolicitud.HasValue)
+            else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado && !entity.FechaFinReal.HasValue)
             {
-                entity.FechaFinalizacionSolicitud = DateTime.Now;
-                entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinalizacionSolicitud);
-                entity.CycleTime = GetCycleTime(entity.FechaComienzoSolicitud, entity.FechaFinalizacionSolicitud);
+                entity.FechaFinReal = DateTime.Now;
+                entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinReal);
+                entity.CycleTimeReal = GetCycleTime(entity.FechaInicioReal, entity.FechaFinReal);
             }
             return entity;
         }

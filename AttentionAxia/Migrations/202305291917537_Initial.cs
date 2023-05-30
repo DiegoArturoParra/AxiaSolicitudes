@@ -27,15 +27,17 @@
                         sprint_final_id = c.Int(nullable: false),
                         celula_id = c.Int(nullable: false),
                         iniciativa = c.String(nullable: false, maxLength: 5000, unicode: false),
-                        fecha_inicio_sprint = c.DateTime(nullable: false),
-                        fecha_fin_sprint = c.DateTime(nullable: false),
+                        fecha_inicio_planeada = c.DateTime(nullable: false),
+                        fecha_fin_planeada = c.DateTime(nullable: false),
                         fecha_creacion_solicitud = c.DateTime(nullable: false),
-                        fecha_comienzo_solicitud = c.DateTime(),
-                        fecha_finalizacion_solicitud = c.DateTime(),
+                        fecha_inicio_real = c.DateTime(),
+                        fecha_fin_real = c.DateTime(),
                         avance_porcentual = c.Byte(nullable: false),
+                        porcentaje_cumplimiento = c.Byte(nullable: false),
                         ruta_archivo = c.String(),
                         nombre_archivo = c.String(),
-                        cycle_time = c.Short(),
+                        cycle_time_planeado = c.Short(nullable: false),
+                        cycle_time_real = c.Short(),
                         lead_time = c.Short(),
                     })
                 .PrimaryKey(t => t.id_solicitud)
@@ -89,6 +91,9 @@
                         sigla = c.String(nullable: false, maxLength: 10),
                         periodo = c.String(nullable: false, maxLength: 15),
                         fecha_generacion = c.DateTime(nullable: false),
+                        fecha_inicio = c.DateTime(),
+                        fecha_fin = c.DateTime(),
+                        activo = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.id_sprint);
             

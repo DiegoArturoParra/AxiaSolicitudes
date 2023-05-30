@@ -14,7 +14,7 @@
                 <label class="control-label col-md-3">Responsable</label>
                 @Html.DropDownList("ResponsableId", null, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
                 <div class="invalid-feedback">
-                    El responsable es requerido
+                    El responsable es requerido-
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                         <i class="far fa-calendar-alt"></i>
                     </span>
                 </div>
-                <input type="text" class="form-control float-right" name="DateInitial" value="@Model.FechaInicioSprint" id="DateInitialSprint" required>
+                <input type="text" class="form-control float-right" name="DateInitial" value="@Model.FechaInicioPlaneada" id="DateInitialSprint" required>
                 <div class="invalid-feedback">
                     la fecha de inicio es requerida.
                 </div>
@@ -67,7 +67,7 @@
                         <i class="far fa-calendar-alt"></i>
                     </span>
                 </div>
-                <input type="text" class="form-control float-right" name="DateEnd" value="@Model.FechaFinSprint" id="DateEndSprint" required>
+                <input type="text" class="form-control float-right" name="DateEnd" value="@Model.FechaFinPlaneada" id="DateEndSprint" required>
                 <div class="invalid-feedback">
                     la fecha fin es requerida.
                 </div>

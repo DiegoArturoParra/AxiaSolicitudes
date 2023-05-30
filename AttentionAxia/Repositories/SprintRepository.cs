@@ -72,6 +72,7 @@ namespace AttentionAxia.Repositories
                     Periodo = sprint.Periodo,
                     Sigla = sprint.Sigla,
                     FechaGeneracion = DateTime.Now,
+                    IsActivo = true,
                 });
             }
             if (response.IsSuccess)

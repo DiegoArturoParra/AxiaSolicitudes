@@ -128,23 +128,26 @@
                                                     Fecha Creación
                                                 </th>
                                                 <th>
-                                                    Fecha en proceso
+                                                    Fecha de inicio
                                                 </th>
                                                 <th>
                                                     Fecha Finalización
                                                 </th>
+                                                <th>
+                                                    Lead Time
+                                                </th>
+                                                <th>
+                                                    Cycle Time
+                                                </th>
                                             }
-                                            <th>
-                                                Lead Time
-                                            </th>
-                                            <th>
-                                                Cycle Time
-                                            </th>
                                             <th>
                                                 Progreso %
                                             </th>
                                             @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
                                             {
+                                                <th>
+                                                    Cumplimiento %
+                                                </th>
                                                 <th class="text-center">
                                                     Acciones
                                                 </th>
@@ -209,20 +212,20 @@
                                                 <td>
                                                     @Html.DisplayFor(modelItem => item.DateFinish)
                                                 </td>
+                                                <td>
+                                                    <span>@item.LeadTime Días</span>
+                                                </td>
+                                                <td>
+                                                    @if (item.CycleTimeReal == null)
+                                                    {
+                                                        <span>N/A</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@item.CycleTimeReal Días</span>
+                                                    }
+                                                </td>
                                             }
-                                            <td>
-                                                <span>@item.LeadTime Días</span>
-                                            </td>
-                                            <td>
-                                                @if (item.CycleTime == null)
-                                                {
-                                                    <span>N/A</span>
-                                                }
-                                                else
-                                                {
-                                                    <span>@item.CycleTime Días</span>
-                                                }
-                                            </td>
                                             @{
                                                 var progreso = $"{item.Avance}%";
                                             }
@@ -235,8 +238,25 @@
                                                     @item.Avance% completo
                                                 </small>
                                             </td>
+
                                             @if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
                                             {
+
+                                                <td>
+                                                    @if (!item.PorcentajeDeCumplimiento.HasValue)
+                                                    {
+                                                        <span>N/A</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        var porcentajeCumpliento = $"{item.PorcentajeDeCumplimiento}%";
+                                                        var color = item.PorcentajeDeCumplimiento.Value <= 70 ? "badge-danger"
+                                                            : item.PorcentajeDeCumplimiento.Value > 70 && item.PorcentajeDeCumplimiento <= 99 ? "badge-warning" : "badge-success";
+                                                        <span class="badge badge-pill @color">
+                                                            @Html.Display(porcentajeCumpliento)
+                                                        </span>
+                                                    }
+                                                </td>
                                                 <td class="dropdown">
                                                     <button class="btn btn-dark dropdown-toggle" type="button" id="acciones-@item.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <i class="fas fa-hand-point-right mr-2"></i>Seleccione
@@ -299,7 +319,6 @@
     <!-- /.modal-dialog -->
 </div>
 @section Scripts {
-    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")
     <script>
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';

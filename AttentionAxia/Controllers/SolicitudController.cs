@@ -3,10 +3,8 @@ using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -194,6 +192,8 @@ namespace AttentionAxia.Controllers
             Solicitud solicitud = _solicitudRepository.FindById(id);
             _solicitudRepository.Delete(solicitud);
             await _solicitudRepository.Save();
+            SetAlert(GetConstants.ALERT_SUCCESS);
+            SetMessage("Eliminado satisfactoriamente.");
             return RedirectToAction("Index");
         }
         private void LoadLists(int? linea, int? responsable)

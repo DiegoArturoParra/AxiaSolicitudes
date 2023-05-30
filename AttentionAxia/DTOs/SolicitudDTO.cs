@@ -61,8 +61,10 @@ namespace AttentionAxia.DTOs
         public DateTime? FechaFinalizacion { get; set; }
         public string Celula { get; set; }
         public string Linea { get; set; }
-        public short? CycleTime { get; set; }
+        public short? CycleTimeEsperado { get; set; }
+        public short? CycleTimeReal { get; set; }
         public short? LeadTime { get; set; }
+        public short? PorcentajeDeCumplimiento { get; set; }
         public string Iniciativa { get; set; }
         public string NombreArchivo { get; set; }
         public string RutaArchivo { get; set; }
@@ -70,8 +72,8 @@ namespace AttentionAxia.DTOs
         public string DateCreated => FechaCreacion.ToString("dd/MM/yyyy");
         public string DateProcess => FechaComienzo.HasValue ? FechaComienzo.Value.ToString("dd/MM/yyyy") : "N/A";
         public string DateFinish => FechaFinalizacion.HasValue ? FechaFinalizacion.Value.ToString("dd/MM/yyyy") : "N/A";
-        public string SprintInicioFullText => string.Format("{0} - {1:yyyy}", SprintInicio, SprintInicioFechaGeneracion);
-        public string SprintFinFullText => string.Format("{0} - {1:yyyy}", SprintFin, SprintFinFechaGeneracion);
+        public string SprintInicioFullText => string.Format("{0} - {1:dd/MM/yyyy}", SprintInicio, SprintInicioFechaGeneracion);
+        public string SprintFinFullText => string.Format("{0} - {1:dd/MM/yyyy}", SprintFin, SprintFinFechaGeneracion);
     }
     public class ListarSolicitudDTO : PaginadorDTO
     {

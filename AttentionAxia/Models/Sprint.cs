@@ -29,6 +29,15 @@ namespace AttentionAxia.Models
         [Display(Name = "Fecha Generación")]
         [Required(ErrorMessage = "Campo requerido.")]
         public DateTime FechaGeneracion { get; set; }
+        [Column("fecha_inicio")]
+        [Display(Name = "Fecha Inicio")]
+        public DateTime? FechaInicio { get; set; }
+        [Column("fecha_fin")]
+        [Display(Name = "Fecha Fin")]
+        public DateTime? FechaFin { get; set; }
+        [Column("activo")]
+        [Display(Name = "Es Activo")]
+        public bool IsActivo { get; set; }
         public virtual ICollection<Solicitud> DetalleSolicitudesSprintInicio { get; set; }
         public virtual ICollection<Solicitud> DetalleSolicitudesSprintFin { get; set; }
     }
