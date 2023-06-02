@@ -4,82 +4,125 @@
     ViewBag.Title = "Sprints";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="row">
+    <div class="col-12">
+        @using (Html.BeginForm(null, null, FormMethod.Get, new { id = "FormularioFiltros" }))
+        {
+            <div class="callout callout-info">
+                <h5><i class="fas fa-filter mr-3"></i>Filtros</h5>
+                <div class="row mb-3 mt-3">
+                    <div class="col-lg-6 mb-3">
+                        <label class="control-label col-lg-4">Período</label>
+                        <select class="select form-control" name="Period" id="Period">
+                            <option value="1Q">1Q</option>
+                            <option value="2Q">2Q</option>
+                            <option value="3Q">3Q</option>
+                            <option value="4Q">4Q</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="control-label col-lg-4">Fecha de generación</label>
+                        @Html.DropDownList("Year", ViewBag.DDL_Years as SelectList, new { @class = "form-control", @required = "" })
+                    </div>
+                </div>
+                <div class="row mb-4 text-center">
+                    <div class="col d-flex justify-content-lg-end">
+                        <button type="submit" class="btn btn-success" id="btn_buscar"><i class="fa fa-search mr-2"></i><strong>Buscar</strong></button>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="invoice p-3 mb-3" id="list_sprints">
+            <div class="row">
+                <div class="col-12">
+                    <h4>
+                        <i class="fas fa-running"></i> Sprints
+                        <small class="float-right">@DateTime.Now.ToString("dd/MM/yyyy")</small>
+                    </h4>
+                </div>
+                <!-- /.col -->
+            </div>
+            <div class="row mb-4">
+                <a href="@Url.Action("Create","Sprint")" class="btn btn-primary ml-2 mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar Sprints</strong></a>
+                <a onclick="DeleteMultiple()" class="btn btn-dark ml-5 mb-2 mt-2"><i class="fa fa fa-edit mr-2"></i><strong>Edición multiple por periodo</strong></a>
+            </div>
+            <div class="row">
+                <div class="col-12 table-responsive">
+                    <table class="table table-striped">
+                        <tr>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.Sigla)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.Periodo)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.FechaInicio)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.FechaFin)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.FechaGeneracion)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.IsActivo)
+                            </th>
+                            <th class="text-center">
+                                Acciones
+                            </th>
+                        </tr>
 
-<h2>Sprints</h2>
-<div class="row mb-4">
-    <a href="@Url.Action("Create","Sprint")" class="btn btn-primary ml-5  mb-2 mt-2"><i class="fa fa fa-plus mr-2"></i><strong>Agregar Sprints</strong></a>
-    <a onclick="DeleteMultiple()" class="btn btn-outline-danger ml-5 mb-2 mt-2"><i class="fa fa fa-trash mr-2"></i><strong>Eliminar multiples sprints por periodo</strong></a>
-</div>
-<table class="table">
-    <tr>
-        <th class="text-center">
-            @Html.DisplayNameFor(model => model.Sigla)
-        </th>
-        <th class="text-center">
-            @Html.DisplayNameFor(model => model.Periodo)
-        </th>
-        <th class="text-center">
-            @Html.DisplayNameFor(model => model.FechaInicio)
-        </th>
-        <th class="text-center">
-            @Html.DisplayNameFor(model => model.FechaFin)
-        </th>
-        <th class="text-center">
-            @Html.DisplayNameFor(model => model.FechaGeneracion)
-        </th>
-        <th class="text-center">
-            @Html.DisplayNameFor(model => model.IsActivo)
-        </th>
-        <th class="text-center">
-            Acciones
-        </th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td class="text-center">
-                @Html.DisplayFor(modelItem => item.Sigla)
-            </td>
-            <td class="text-center">
-                @Html.DisplayFor(modelItem => item.Periodo)
-            </td>
-            <td class="text-center">
-                @Html.DisplayFor(modelItem => item.FechaInicioParse)
-            </td>
-            <td class="text-center">
-                @Html.DisplayFor(modelItem => item.FechaFinParse)
-            </td>
-            <td class="text-center">
-                @{
-                    var fechaGeneracion = DateTime.Parse(item.FechaGeneracion.ToString());
-                }
-                <label class="text-black-50">@fechaGeneracion.ToString("yyyy")</label>
-            </td>
-            <td class="text-center">
-                @if (item.IsActivo)
-                {
-                    <span class="badge badge-pill badge-success" id="badgeSpan">Activo</span>
-                }
-                else
-                {
-                    <span class="badge badge-pill badge-danger" id="badgeSpan">Inactivo</span>
-                }
-            </td>
-            <td class="text-center">
-                <a href="@Url.Action("Edit","Sprint", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
-                <a href="@Url.Action("Delete","Sprint", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
-            </td>
-        </tr>
-    }
-</table>
-
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.Sigla)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.Periodo)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.FechaInicioParse)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.FechaFinParse)
+                                </td>
+                                <td class="text-center">
+                                    @{
+                                        var fechaGeneracion = DateTime.Parse(item.FechaGeneracion.ToString());
+                                    }
+                                    <label class="text-black-50">@fechaGeneracion.ToString("yyyy")</label>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsActivo)
+                                    {
+                                        <span class="badge badge-pill badge-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-pill badge-danger">Inactivo</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Edit","Sprint", new { id = item.Id })" class="text-center btn btn-outline-dark mb-2"><i class="fa fa-pencil-alt"></i></a>
+                                    <a href="@Url.Action("Delete","Sprint", new { id = item.Id })" class="text-center btn btn-outline-danger mb-2"><i class="fas fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.invoice -->
+    </div><!-- /.col -->
+</div><!-- /.row -->
 
 <div id="modalDeleteMultiple" class="modal fade" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Large Modal</h4>
+                <h4 class="modal-title">Edición por estado de todos los sprints de un periodo</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -103,11 +146,19 @@
                             @Html.DropDownList("Year", ViewBag.DDL_Years as SelectList, new { @class = "form-control", @required = "" })
                         </div>
                     </div>
+                    <div class="row mt-4 ml-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="customSwitch1" checked>
+                            <label class="form-check-label" for="customSwitch1">
+                                <span class="badge badge-pill badge-success" id="badgeSpan">Activo</span>
+                            </label>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-outline-light text-dark" data-dismiss="modal"><i class="fa fa-arrow-alt-circle-left text-dark mr-3"></i>Cancelar</button>
-                <button id="btnDeleteMultiple" type="button" class="btn btn-danger"><i class="fa fa-trash-alt mr-3"></i>Eliminar</button>
+                <button id="btnEditMultiple" type="button" class="btn btn-primary"><i class="fa fa-save mr-3"></i>Guardar</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -118,17 +169,27 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
 
+        $("#customSwitch1").change(function () {
+            $("#badgeSpan").text("Inactivo").removeClass();
+            if ($(this).is(":checked")) {
+                $("#badgeSpan").text("Activo").addClass("badge badge-pill badge-success");
+            } else {
+                $("#badgeSpan").text("Inactivo").removeClass("badge badge-pill badge-success");
+                $("#badgeSpan").addClass("badge badge-pill badge-danger");
+            }
+        });
+
         function DeleteMultiple() {
             $(".needs-validation").removeClass("was-validated");
             $("#modalDeleteMultiple").modal("show");
         }
 
-        var originalBtnContent = $('#btnDeleteMultiple').html();
+        var originalBtnContent = $('#btnEditMultiple').html();
 
-        $("#btnDeleteMultiple").on("click", function (e) {
+        $("#btnEditMultiple").on("click", function (e) {
             e.preventDefault();
-            $('#btnDeleteMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Eliminando...');
-            $('#btnDeleteMultiple').prop("disabled", true);
+            $('#btnEditMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Eliminando...');
+            $('#btnEditMultiple').prop("disabled", true);
             let url = "@Url.Action("Index", "Sprint")";
             // Fetch all the forms we want to apply custom Bootstrap validation styles to
             var forms = document.querySelectorAll('.needs-validation')
@@ -156,8 +217,8 @@
                                 window.location.href = url;
                                 $("#modalDeleteMultiple").modal("hide");
                             }
-                            $('#btnDeleteMultiple').html(originalBtnContent);
-                            $('#btnDeleteMultiple').removeAttr('disabled');
+                            $('#btnEditMultiple').html(originalBtnContent);
+                            $('#btnEditMultiple').removeAttr('disabled');
                         },
                         error: function (error) {
                         },

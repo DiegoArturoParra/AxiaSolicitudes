@@ -258,11 +258,12 @@
     <Compile Include="Core\AxiaDBInitializer.cs" />
     <Compile Include="Core\Middleware\CustomExceptionFilter.cs" />
     <Compile Include="DTOs\FileDTO.cs" />
+    <Compile Include="DTOs\Filters\SprintFilterDTO.cs" />
     <Compile Include="DTOs\LoginDTO.cs" />
     <Compile Include="DTOs\PaginadorDTO.cs" />
     <Compile Include="DTOs\PublicHolidayDTO.cs" />
     <Compile Include="DTOs\SolicitudDTO.cs" />
-    <Compile Include="DTOs\SolicitudFilterDTO.cs" />
+    <Compile Include="DTOs\Filters\SolicitudFilterDTO.cs" />
     <Compile Include="DTOs\SprintDTO.cs" />
     <Compile Include="DTOs\UsuarioDTO.cs" />
     <Compile Include="ExternalServices\PublicHolidayService.cs" />
@@ -280,6 +281,10 @@
     <Compile Include="Migrations\202305291917537_Initial.cs" />
     <Compile Include="Migrations\202305291917537_Initial.designer.cs">
       <DependentUpon>202305291917537_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202306020033367_otra.cs" />
+    <Compile Include="Migrations\202306020033367_otra.designer.cs">
+      <DependentUpon>202306020033367_otra.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
@@ -715,6 +720,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202305291917537_Initial.resx">
       <DependentUpon>202305291917537_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306020033367_otra.resx">
+      <DependentUpon>202306020033367_otra.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,5 +1,6 @@
 ﻿using AttentionAxia.Core.Data;
 using AttentionAxia.DTOs;
+using AttentionAxia.DTOs.Filters;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using log4net;
@@ -90,15 +91,16 @@ namespace AttentionAxia.Repositories
                           Responsable = m.responsable.Nombres,
                           SprintInicio = m.sprintInicio.Sigla + " " + m.sprintInicio.Periodo,
                           SprintFin = m.sprintFin.Sigla + " " + m.sprintFin.Periodo,
-                          SprintInicioFechaGeneracion = m.sprintInicio.FechaGeneracion,
-                          SprintFinFechaGeneracion = m.sprintFin.FechaGeneracion,
+                          SprintInicioFechaGeneracion = m.sprintInicio.FechaInicio.HasValue ? m.sprintInicio.FechaInicio.Value : default,
+                          SprintFinFechaGeneracion = m.sprintFin.FechaFin.HasValue ? m.sprintFin.FechaFin.Value : default,
                           NombreArchivo = m.solicitud.NombreArchivo,
                           RutaArchivo = m.solicitud.RutaArchivo,
                           LeadTime = m.solicitud.LeadTime,
                           CycleTimeReal = m.solicitud.CycleTimeReal,
                           FechaCreacion = m.solicitud.FechaCreacionSolicitud,
                           FechaComienzo = m.solicitud.FechaInicioReal,
-                          FechaFinalizacion = m.solicitud.FechaFinReal
+                          FechaFinalizacion = m.solicitud.FechaFinReal,
+                          PorcentajeDeCumplimiento = m.solicitud.PorcentajeCumplimiento,
                       }).ToListAsync();
                     foreach (var item in listado)
                     {
@@ -184,6 +186,11 @@ namespace AttentionAxia.Repositories
                     FechaCreacionSolicitud = DateTime.Now,
                     Avance = 0
                 };
+                var cycleTimePlaneado = GetCycleTime(entity.FechaInicioPlaneada, entity.FechaFinPlaneada);
+                if (!cycleTimePlaneado.HasValue)
+                    return Responses.SetErrorResponse("No se pudo calcular el tiempo planeado en días.");
+
+                entity.CycleTimePlaneado = cycleTimePlaneado.Value;
                 response = await ValidationsOfBusiness(entity);
                 if (response.IsSuccess)
                 {
@@ -196,9 +203,8 @@ namespace AttentionAxia.Repositories
                     FileHelper.FolderIsExist(rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES);
                     response = FileHelper.SaveFile(file, rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES, file.FileName);
                     if (!response.IsSuccess)
-                    {
                         return Responses.SetErrorResponse(response.Message);
-                    }
+
                     fileDTO = (FileDTO)response.Data;
                     entity.RutaArchivo = fileDTO.PathArchivo;
                     entity.NombreArchivo = fileDTO.NombreArchivo;
@@ -210,7 +216,10 @@ namespace AttentionAxia.Repositories
             }
             catch (Exception ex)
             {
-                FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                if (fileDTO != null)
+                {
+                    FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                }
                 return Responses.SetInternalServerErrorResponse(ex, ex.Message);
             }
         }
@@ -311,8 +320,15 @@ namespace AttentionAxia.Repositories
                 entity.FechaFinReal = DateTime.Now;
                 entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinReal);
                 entity.CycleTimeReal = GetCycleTime(entity.FechaInicioReal, entity.FechaFinReal);
+                entity.PorcentajeCumplimiento = GetPorcentajeCumplimiento(entity.CycleTimePlaneado, entity.CycleTimeReal);
             }
             return entity;
+        }
+
+        private byte GetPorcentajeCumplimiento(short cycleTimePlaneado, short? cycleTimeReal)
+        {
+            var calculo = (cycleTimePlaneado * 100) / cycleTimeReal.Value;
+            return (byte)calculo;
         }
 
         public async Task<ResponseDTO> ValidationsOfBusiness(Solicitud solicitud)

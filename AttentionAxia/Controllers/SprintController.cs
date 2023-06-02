@@ -1,4 +1,5 @@
 ﻿using AttentionAxia.DTOs;
+using AttentionAxia.DTOs.Filters;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
@@ -19,10 +20,11 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Sprints
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(SprintFilterDTO filtro)
         {
             GetYears();
-            return View(await _sprintRepository.GetAll());
+            var data = await _sprintRepository.GetSprintsByFilter(filtro);
+            return View(data);
         }
 
         private void GetYears()
@@ -78,7 +80,7 @@ namespace AttentionAxia.Controllers
             {
                 Id = sprint.Id,
                 Sigla = sprint.Sigla,
-                Periodo = sprint.Periodo,
+                Period = sprint.Periodo,
                 Activo = sprint.IsActivo,
                 FechaInicial = sprint.FechaInicio.HasValue ? sprint.FechaInicio.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"),
                 FechaFinal = sprint.FechaFin.HasValue ? sprint.FechaFin.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy")
@@ -93,7 +95,7 @@ namespace AttentionAxia.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla && x.Id != sprint.Id))
+                if (await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla && x.Periodo == sprint.Period && x.Id != sprint.Id))
                 {
                     SetAlert(GetConstants.ALERT_WARNING);
                     SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToUpper()}");

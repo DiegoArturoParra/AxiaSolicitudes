@@ -12,7 +12,8 @@ namespace AttentionAxia.DTOs
         [Display(Name = "Sigla")]
         [StringLength(10)]
         public string Sigla { get; set; }
-        public string Periodo { get; set; }
+        [Display(Name = "Periodo")]
+        public string Period { get; set; }
         public bool Activo { get; set; }
         public string FechaInicial { get; set; }
         public string FechaFinal { get; set; }

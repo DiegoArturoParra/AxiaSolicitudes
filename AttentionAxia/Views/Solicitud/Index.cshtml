@@ -252,8 +252,8 @@
                                                         var porcentajeCumpliento = $"{item.PorcentajeDeCumplimiento}%";
                                                         var color = item.PorcentajeDeCumplimiento.Value <= 70 ? "badge-danger"
                                                             : item.PorcentajeDeCumplimiento.Value > 70 && item.PorcentajeDeCumplimiento <= 99 ? "badge-warning" : "badge-success";
-                                                        <span class="badge badge-pill @color">
-                                                            @Html.Display(porcentajeCumpliento)
+                                                        <span class="badge badge-pill @color pt-2 pl-3 pr-3">
+                                                            <label>@porcentajeCumpliento</label>
                                                         </span>
                                                     }
                                                 </td>
@@ -368,7 +368,7 @@
         });
 
         function GetResponsables(lineaid) {
-            let url = "@Url.Action("ConsultaReponsables", "Solicitud")";
+            let url = "@Url.Action("ConsultaResponsables", "Solicitud")";
             $.get(url, { lineaId: lineaid }, function (data) {
                 $('#Responsable').removeAttr('disabled');
                 $("#Responsable").append("<option value> -- Seleccione --</option>")

@@ -53,7 +53,7 @@
                         <i class="far fa-calendar-alt"></i>
                     </span>
                 </div>
-                <input type="text" class="form-control float-right" name="DateInitial" value="@Model.FechaInicioPlaneada" id="DateInitialSprint" required>
+                <input type="text" class="form-control float-right" name="DateInitial" disabled value="@Model.FechaInicioPlaneada" id="DateInitialSprint" required>
                 <div class="invalid-feedback">
                     la fecha de inicio es requerida.
                 </div>
@@ -67,7 +67,7 @@
                         <i class="far fa-calendar-alt"></i>
                     </span>
                 </div>
-                <input type="text" class="form-control float-right" name="DateEnd" value="@Model.FechaFinPlaneada" id="DateEndSprint" required>
+                <input type="text" class="form-control float-right" name="DateEnd" disabled value="@Model.FechaFinPlaneada" id="DateEndSprint" required>
                 <div class="invalid-feedback">
                     la fecha fin es requerida.
                 </div>
@@ -136,7 +136,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>
+<script>
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
         let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
         var originalBtnContent = $('#btn-save').html();
@@ -202,6 +202,45 @@
             disable: false
         });
 
+        $("#SprintInicioId").change(function () {
+            console.log("entro");
+            GetDateBySprintInitial($("#SprintInicioId").val());
+        });
+
+        $("#SprintFinId").change(function () {
+            GetDateBySprintFinal($("#SprintFinId").val());
+        });
+
+        function GetDateBySprintInitial(sprintInitialId) {
+            let url = "@Url.Action("GetDateBySprintInitial", "Solicitud")";
+            $.get(url, { SprintInicioId: sprintInitialId }, function (data) {
+                console.log(data);
+                if (data.hayFecha) {
+                    $('#DateInitialSprint').removeAttr('disabled');
+                    const fecha = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
+                    $('#DateInitialSprint').val(fecha);
+                }
+                else {
+                    toastr.error("No hay registro de fecha inicial para el sprint.");
+                }
+            });
+        }
+
+        function GetDateBySprintFinal(sprintFinalId) {
+            let url = "@Url.Action("GetDateBySprintFinal", "Solicitud")";
+            $.get(url, { SprintFinId: sprintFinalId }, function (data) {
+                console.log(data);
+                if (data.hayFecha) {
+                    $('#DateEndSprint').removeAttr('disabled');
+                    const fecha = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
+                    $('#DateEndSprint').val(fecha);
+                }
+                else {
+                    toastr.error("No hay registro de fecha final para el sprint.");
+                }
+            });
+    }
+
         $('#btn-save').click(function (e) {
             e.preventDefault();
             var forms = document.querySelectorAll('.needs-validation')
@@ -263,5 +302,5 @@
              })
         });
 
-    </script>
+</script>
 }

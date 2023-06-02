@@ -40,7 +40,7 @@ namespace AttentionAxia.Models
         [Column("avance_porcentual")]
         public byte Avance { get; set; }
         [Column("porcentaje_cumplimiento")]
-        public byte PorcentajeCumplimiento { get; set; }
+        public byte? PorcentajeCumplimiento { get; set; }
         [Column("ruta_archivo")]
         public string RutaArchivo { get; set; }
         [Column("nombre_archivo")]

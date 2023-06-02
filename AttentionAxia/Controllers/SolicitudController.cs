@@ -1,4 +1,5 @@
 ﻿using AttentionAxia.DTOs;
+using AttentionAxia.DTOs.Filters;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
@@ -53,7 +54,22 @@ namespace AttentionAxia.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> ConsultaReponsables(int lineaId = 0)
+        public async Task<ActionResult> GetDateBySprintInitial(int SprintInicioId)
+        {
+            var fecha = await _sprintRepository.GetDateBySprint(true, SprintInicioId);
+            return Json(new { hayFecha = fecha.HasValue, fecha = $"{fecha:dd/MM/yyyy}" }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetDateBySprintFinal(int SprintFinId)
+        {
+            var fecha = await _sprintRepository.GetDateBySprint(false, SprintFinId);
+            return Json(new { hayFecha = fecha.HasValue, fecha = $"{fecha:dd/MM/yyyy}" }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> ConsultaResponsables(int lineaId = 0)
         {
             var listaResponsables = await _responsableRepository.GetPersonsByLineId(lineaId);
             return Json(listaResponsables, JsonRequestBehavior.AllowGet);
@@ -206,7 +222,7 @@ namespace AttentionAxia.Controllers
             ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
             ViewBag.DDL_Lineas = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
             ViewBag.DDL_Celulas = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
-            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
+            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table.Where(x => x.IsActivo == true), "Id", "DescripcionSprint");
             List<int> items = new List<int>()
             {
                 25, 50, 100, 250, 500
@@ -229,7 +245,7 @@ namespace AttentionAxia.Controllers
                     ViewBag.EstadoId = new SelectList(await estados.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion", primerEstado.Id);
                 }
                 ViewBag.ResponsableId = new SelectList(await _responsableRepository.Table.OrderBy(y => y.Nombres).ToListAsync(), "Id", "Nombres");
-                ViewBag.DDL_Sprints = new SelectList(await _sprintRepository.Table.ToListAsync(), "Id", "DescripcionSprint");
+                ViewBag.DDL_Sprints = new SelectList(await _sprintRepository.Table.Where(y => y.IsActivo == true).ToListAsync(), "Id", "DescripcionSprint");
                 ViewBag.DDL_Celulas = new SelectList(await _celulaRepository.Table.OrderBy(x => x.Descripcion).ToListAsync(), "Id", "Descripcion");
             }
             else

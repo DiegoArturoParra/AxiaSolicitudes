@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AttentionAxia.DTOs
+namespace AttentionAxia.DTOs.Filters
 {
     public class SolicitudFilterDTO
     {
