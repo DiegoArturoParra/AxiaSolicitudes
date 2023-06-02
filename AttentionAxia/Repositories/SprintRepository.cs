@@ -1,4 +1,5 @@
 ﻿using AttentionAxia.Core.Data;
+using AttentionAxia.DTOs.Filters;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using System;
@@ -19,8 +20,10 @@ namespace AttentionAxia.Repositories
         public async Task<ResponseDTO> CreateMultipeSprints(Sprint sprint, int cantidadSprints)
         {
             List<Sprint> sprints = new List<Sprint>();
-            ResponseDTO response = new ResponseDTO();
-            response.IsSuccess = true;
+            ResponseDTO response = new ResponseDTO
+            {
+                IsSuccess = true
+            };
             var res1 = Table.Where(x => x.Periodo == "1Q").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
             string[] ultimaSiglaPeriodo1 = { "0", "0" };
             if (res1 != null) { ultimaSiglaPeriodo1 = res1.Split('-'); }
@@ -72,6 +75,7 @@ namespace AttentionAxia.Repositories
                     Periodo = sprint.Periodo,
                     Sigla = sprint.Sigla,
                     FechaGeneracion = DateTime.Now,
+                    IsActivo = true,
                 });
             }
             if (response.IsSuccess)
@@ -93,10 +97,8 @@ namespace AttentionAxia.Repositories
                 .ToListAsync();
 
 
-            if (listado.Count == 0)
-            {
+            if (!listado.Any())
                 return Responses.SetErrorResponse($"No hay sprints para el periodo {period}-{year}");
-            }
 
             if (await Context.TablaSolicitudes.AnyAsync())
             {
@@ -106,13 +108,43 @@ namespace AttentionAxia.Repositories
                     .Select(x => x.Id)
                     .AnyAsync();
                 if (haySprintsConTareas)
-                {
                     return Responses.SetErrorResponse($"hay sprints para el periodo {period}-{year} vinculados en una iniciativa.");
-                }
+
             }
             Context.TablaSprints.RemoveRange(listado);
             await Save();
             return Responses.SetOkResponse($"Se eliminaron los sprints del periodo {period}-{year}");
+        }
+
+        public async Task<DateTime?> GetDateBySprint(bool IsDateInitial, int sprintId)
+        {
+            if (IsDateInitial)
+            {
+                return await Table.Where(x => x.Id == sprintId).Select(y => y.FechaInicio).FirstOrDefaultAsync();
+            }
+            else
+            {
+                return await Table.Where(x => x.Id == sprintId).Select(y => y.FechaFin).FirstOrDefaultAsync();
+            }
+        }
+
+        public async Task<IEnumerable<Sprint>> GetSprintsByFilter(SprintFilterDTO filtro)
+        {
+            var data = Table;
+            if (!string.IsNullOrWhiteSpace(filtro.Period))
+            {
+               data =  data.Where(x => x.Periodo == filtro.Period);
+            }
+
+            int numberYear;
+            bool success = int.TryParse(filtro.Year, out numberYear);
+            if (success)
+            {
+                DateTime fechaInicial = new DateTime(numberYear, 01, 01, 0, 0, 0, 0);
+                DateTime fechaFinal = new DateTime(numberYear, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
+                data = data.Where(x => x.FechaGeneracion >= fechaInicial && x.FechaGeneracion <= fechaFinal);
+            }
+            return await data.ToListAsync();
         }
     }
 }

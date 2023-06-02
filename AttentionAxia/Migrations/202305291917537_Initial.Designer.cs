@@ -13,7 +13,7 @@ namespace AttentionAxia.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202305082244062_Initial"; }
+            get { return "202305291917537_Initial"; }
         }
         
         string IMigrationMetadata.Source

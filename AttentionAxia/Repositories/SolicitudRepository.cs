@@ -1,9 +1,9 @@
 ﻿using AttentionAxia.Core.Data;
 using AttentionAxia.DTOs;
+using AttentionAxia.DTOs.Filters;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using log4net;
-using Microsoft.Ajax.Utilities;
 using System;
 using System.Data.Entity;
 using System.Globalization;
@@ -91,20 +91,21 @@ namespace AttentionAxia.Repositories
                           Responsable = m.responsable.Nombres,
                           SprintInicio = m.sprintInicio.Sigla + " " + m.sprintInicio.Periodo,
                           SprintFin = m.sprintFin.Sigla + " " + m.sprintFin.Periodo,
-                          SprintInicioFechaGeneracion = m.sprintInicio.FechaGeneracion,
-                          SprintFinFechaGeneracion = m.sprintFin.FechaGeneracion,
+                          SprintInicioFechaGeneracion = m.sprintInicio.FechaInicio.HasValue ? m.sprintInicio.FechaInicio.Value : default,
+                          SprintFinFechaGeneracion = m.sprintFin.FechaFin.HasValue ? m.sprintFin.FechaFin.Value : default,
                           NombreArchivo = m.solicitud.NombreArchivo,
                           RutaArchivo = m.solicitud.RutaArchivo,
                           LeadTime = m.solicitud.LeadTime,
-                          CycleTime = m.solicitud.CycleTime,
+                          CycleTimeReal = m.solicitud.CycleTimeReal,
                           FechaCreacion = m.solicitud.FechaCreacionSolicitud,
-                          FechaComienzo = m.solicitud.FechaComienzoSolicitud,
-                          FechaFinalizacion = m.solicitud.FechaFinalizacionSolicitud
+                          FechaComienzo = m.solicitud.FechaInicioReal,
+                          FechaFinalizacion = m.solicitud.FechaFinReal,
+                          PorcentajeDeCumplimiento = m.solicitud.PorcentajeCumplimiento,
                       }).ToListAsync();
                     foreach (var item in listado)
                     {
                         item.LeadTime = !item.LeadTime.HasValue ? GetLeadTime(item.FechaCreacion, null) : item.LeadTime;
-                        item.CycleTime = !item.CycleTime.HasValue ? GetCycleTime(item.FechaComienzo, null) : item.CycleTime;
+                        item.CycleTimeReal = !item.CycleTimeReal.HasValue ? GetCycleTime(item.FechaComienzo, null) : item.CycleTimeReal;
                     }
 
                     int totalDeRegistros = query.Count();
@@ -178,13 +179,18 @@ namespace AttentionAxia.Repositories
                     EstadoId = solicitud.EstadoId,
                     SprintInicioId = solicitud.SprintInicioId,
                     SprintFinId = solicitud.SprintFinId,
-                    FechaInicioSprint = solicitud.FechaInicialParse,
-                    FechaFinSprint = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1),
+                    FechaInicioPlaneada = solicitud.FechaInicialParse,
+                    FechaFinPlaneada = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1),
                     Iniciativa = solicitud.Iniciativa,
                     CelulaId = solicitud.CelulaId,
                     FechaCreacionSolicitud = DateTime.Now,
                     Avance = 0
                 };
+                var cycleTimePlaneado = GetCycleTime(entity.FechaInicioPlaneada, entity.FechaFinPlaneada);
+                if (!cycleTimePlaneado.HasValue)
+                    return Responses.SetErrorResponse("No se pudo calcular el tiempo planeado en días.");
+
+                entity.CycleTimePlaneado = cycleTimePlaneado.Value;
                 response = await ValidationsOfBusiness(entity);
                 if (response.IsSuccess)
                 {
@@ -197,9 +203,8 @@ namespace AttentionAxia.Repositories
                     FileHelper.FolderIsExist(rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES);
                     response = FileHelper.SaveFile(file, rutaInicial, GetConstants.CARPETA_ARCHIVOS_SOLICITUDES, file.FileName);
                     if (!response.IsSuccess)
-                    {
                         return Responses.SetErrorResponse(response.Message);
-                    }
+
                     fileDTO = (FileDTO)response.Data;
                     entity.RutaArchivo = fileDTO.PathArchivo;
                     entity.NombreArchivo = fileDTO.NombreArchivo;
@@ -211,7 +216,10 @@ namespace AttentionAxia.Repositories
             }
             catch (Exception ex)
             {
-                FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                if (fileDTO != null)
+                {
+                    FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                }
                 return Responses.SetInternalServerErrorResponse(ex, ex.Message);
             }
         }
@@ -230,8 +238,8 @@ namespace AttentionAxia.Repositories
                 entity.EstadoId = solicitud.EstadoId;
                 entity.SprintInicioId = solicitud.SprintInicioId;
                 entity.SprintFinId = solicitud.SprintFinId;
-                entity.FechaInicioSprint = solicitud.FechaInicialParse;
-                entity.FechaFinSprint = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1);
+                entity.FechaInicioPlaneada = solicitud.FechaInicialParse;
+                entity.FechaFinPlaneada = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1);
                 entity.Iniciativa = solicitud.Iniciativa;
                 entity.CelulaId = solicitud.CelulaId;
                 entity.Avance = solicitud.Avance;
@@ -303,17 +311,24 @@ namespace AttentionAxia.Repositories
 
         private Solicitud InsertDateByState(Solicitud entity)
         {
-            if (entity.EstadoId == (int)EstadosSolicitudEnum.EnProgreso && !entity.FechaComienzoSolicitud.HasValue)
+            if (entity.EstadoId == (int)EstadosSolicitudEnum.EnProgreso && !entity.FechaInicioReal.HasValue)
             {
-                entity.FechaComienzoSolicitud = DateTime.Now;
+                entity.FechaInicioReal = DateTime.Now;
             }
-            else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado && !entity.FechaFinalizacionSolicitud.HasValue)
+            else if (entity.EstadoId == (int)EstadosSolicitudEnum.Finalizado && !entity.FechaFinReal.HasValue)
             {
-                entity.FechaFinalizacionSolicitud = DateTime.Now;
-                entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinalizacionSolicitud);
-                entity.CycleTime = GetCycleTime(entity.FechaComienzoSolicitud, entity.FechaFinalizacionSolicitud);
+                entity.FechaFinReal = DateTime.Now;
+                entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinReal);
+                entity.CycleTimeReal = GetCycleTime(entity.FechaInicioReal, entity.FechaFinReal);
+                entity.PorcentajeCumplimiento = GetPorcentajeCumplimiento(entity.CycleTimePlaneado, entity.CycleTimeReal);
             }
             return entity;
+        }
+
+        private byte GetPorcentajeCumplimiento(short cycleTimePlaneado, short? cycleTimeReal)
+        {
+            var calculo = (cycleTimePlaneado * 100) / cycleTimeReal.Value;
+            return (byte)calculo;
         }
 
         public async Task<ResponseDTO> ValidationsOfBusiness(Solicitud solicitud)

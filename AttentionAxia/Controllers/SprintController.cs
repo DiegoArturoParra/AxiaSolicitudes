@@ -1,4 +1,6 @@
-﻿using AttentionAxia.Helpers;
+﻿using AttentionAxia.DTOs;
+using AttentionAxia.DTOs.Filters;
+using AttentionAxia.Helpers;
 using AttentionAxia.Models;
 using AttentionAxia.Repositories;
 using System;
@@ -18,10 +20,11 @@ namespace AttentionAxia.Controllers
         }
 
         // GET: Sprints
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(SprintFilterDTO filtro)
         {
             GetYears();
-            return View(await _sprintRepository.GetAll());
+            var data = await _sprintRepository.GetSprintsByFilter(filtro);
+            return View(data);
         }
 
         private void GetYears()
@@ -73,24 +76,38 @@ namespace AttentionAxia.Controllers
                 SetMessage("No existe el registro.");
                 return RedirectToAction("Index");
             }
-            return View(sprint);
+            SprintDTO sprintDTO = new SprintDTO()
+            {
+                Id = sprint.Id,
+                Sigla = sprint.Sigla,
+                Period = sprint.Periodo,
+                Activo = sprint.IsActivo,
+                FechaInicial = sprint.FechaInicio.HasValue ? sprint.FechaInicio.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"),
+                FechaFinal = sprint.FechaFin.HasValue ? sprint.FechaFin.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy")
+            };
+            return View(sprintDTO);
         }
 
         // POST: Sprints/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint)
+        public async Task<ActionResult> Edit(SprintDTO sprint)
         {
             if (ModelState.IsValid)
             {
-                if (await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla && x.Id != sprint.Id))
+                if (await _sprintRepository.AnyWithCondition(x => x.Sigla.ToLower() == sprint.Sigla && x.Periodo == sprint.Period && x.Id != sprint.Id))
                 {
                     SetAlert(GetConstants.ALERT_WARNING);
                     SetMessage($"Ya existe un registro con la descripción {sprint.Sigla.ToUpper()}");
                     return View(sprint);
                 }
-                sprint.FechaGeneracion = DateTime.Now;
-                _sprintRepository.Update(sprint);
+
+                Sprint data = _sprintRepository.FindById(sprint.Id);
+                data.Sigla = sprint.Sigla;
+                data.IsActivo = sprint.Activo;
+                data.FechaInicio = sprint.FechaInicialParse;
+                data.FechaFin = sprint.FechaFinalParse;
+                _sprintRepository.Update(data);
                 await _sprintRepository.Save();
                 SetAlert(GetConstants.ALERT_SUCCESS);
                 SetMessage("Actualizado satisfactoriamente.");

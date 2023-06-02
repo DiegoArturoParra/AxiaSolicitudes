@@ -1,4 +1,4 @@
-﻿@model AttentionAxia.Models.Sprint
+﻿@model AttentionAxia.DTOs.SprintDTO
 
 @{
     ViewBag.Title = "Editar";
@@ -23,12 +23,59 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Periodo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-12">
-                @Html.EditorFor(model => model.Periodo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Periodo, "", new { @class = "text-danger" })
+            <label class="control-label col-md-3">Periodo del sprint</label>
+            <select class="select form-control" id="Periodo" name="Period">
+                <option value="1Q" @(Model.Period == "1Q" ? "selected" : "")>1Q</option>
+                <option value="2Q" @(Model.Period == "2Q" ? "selected" : "")>2Q</option>
+                <option value="3Q" @(Model.Period == "3Q" ? "selected" : "")>3Q</option>
+                <option value="4Q" @(Model.Period == "4Q" ? "selected" : "")>4Q</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">Fecha inicial del sprint</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control float-right" name="FechaInicial" value="@Model.FechaInicialParse" id="DateInitialSprint" required>
+                <div class="invalid-feedback">
+                    la fecha de inicio es requerida.
+                </div>
             </div>
         </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">Fecha fin del sprint</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control float-right" name="FechaFinal" value="@Model.FechaFinalParse" id="DateEndSprint" required>
+                <div class="invalid-feedback">
+                    la fecha fin es requerida.
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">Estado del sprint</label>
+            <div class="custom-control custom-switch ml-2 mt-2">
+                @{
+                    var color = Model.Activo ? "badge-success" : "badge-danger";
+                    var texto = Model.Activo ? "Activo" : "Inactivo";
+                }
+
+                @Html.CheckBoxFor(model => model.Activo, new { id = "customSwitch1", @class = "custom-control-input" })
+                <label class="custom-control-label" for="customSwitch1" id="label">
+                    <span class="badge badge-pill @color" id="badgeSpan">@texto</span>
+                </label>
+
+                <input id="activo-input" value="@Model.Activo" style="display: none;" />
+            </div>
+        </div>
+
         <hr />
         <div class="form-group mt-4">
             <div class="d-flex justify-content-end">
@@ -41,4 +88,61 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            let activo = $("#activo-input").val();
+            if (activo) {
+                $("#customSwitch1").prop("checked", true);
+            }
+            else {
+                $("#customSwitch1").prop("checked", false);
+            }
+            $("#customSwitch1").change(function () {
+                $("#badgeSpan").text("Inactivo").removeClass();
+                if ($(this).is(":checked")) {
+                    $("#badgeSpan").text("Activo").addClass("badge badge-pill badge-success");
+                } else {
+                    $("#badgeSpan").text("Inactivo").removeClass("badge badge-pill badge-success");
+                    $("#badgeSpan").addClass("badge badge-pill badge-danger");
+                }
+            });
+        });
+        $(function () {
+            $('#DateInitialSprint').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Aplicar',
+                    daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    monthNames: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ]
+                },
+                minDate: moment().add(-2, 'years').toDate(),
+                maxDate: moment().add(1, 'years').toDate(),
+            });
+        });
+
+        $(function () {
+            $('#DateEndSprint').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Aplicar',
+                    daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    monthNames: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ]
+                },
+                minDate: moment().add(-2, 'years').toDate(),
+                maxDate: moment().add(1, 'years').toDate(),
+            });
+        });
+    </script>
 }
