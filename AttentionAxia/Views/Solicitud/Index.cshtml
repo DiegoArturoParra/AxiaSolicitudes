@@ -134,6 +134,9 @@
                                                     Fecha Finalización
                                                 </th>
                                                 <th>
+                                                    Días planeados
+                                                </th>
+                                                <th>
                                                     Lead Time
                                                 </th>
                                                 <th>
@@ -211,6 +214,9 @@
                                                 </td>
                                                 <td>
                                                     @Html.DisplayFor(modelItem => item.DateFinish)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.CycleTimeEsperado)
                                                 </td>
                                                 <td>
                                                     <span>@item.LeadTime Días</span>

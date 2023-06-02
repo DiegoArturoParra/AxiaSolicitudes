@@ -95,6 +95,7 @@ namespace AttentionAxia.Repositories
                           SprintFinFechaGeneracion = m.sprintFin.FechaFin.HasValue ? m.sprintFin.FechaFin.Value : default,
                           NombreArchivo = m.solicitud.NombreArchivo,
                           RutaArchivo = m.solicitud.RutaArchivo,
+                          CycleTimeEsperado = m.solicitud.CycleTimePlaneado,
                           LeadTime = m.solicitud.LeadTime,
                           CycleTimeReal = m.solicitud.CycleTimeReal,
                           FechaCreacion = m.solicitud.FechaCreacionSolicitud,
