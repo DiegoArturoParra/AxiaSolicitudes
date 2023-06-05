@@ -256,6 +256,7 @@
     <Compile Include="Controllers\SolicitudController.cs" />
     <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
+    <Compile Include="Core\Extensions\DateTimeExtensions.cs" />
     <Compile Include="Core\Middleware\CustomExceptionFilter.cs" />
     <Compile Include="DTOs\FileDTO.cs" />
     <Compile Include="DTOs\Filters\SprintFilterDTO.cs" />

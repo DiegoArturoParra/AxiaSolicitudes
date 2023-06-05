@@ -24,6 +24,7 @@ namespace AttentionAxia.Controllers
         {
             GetYears();
             var data = await _sprintRepository.GetSprintsByFilter(filtro);
+            TempData[GetConstants.PERIODO] = filtro.Period;
             return View(data);
         }
 
@@ -44,11 +45,11 @@ namespace AttentionAxia.Controllers
         // POST: Sprints/CreateMultipleSprints
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CrearMultipleSprints([Bind(Include = "Id,Sigla,Periodo,FechaGeneracion")] Sprint sprint, int CantidadSprints)
+        public async Task<ActionResult> CrearMultipleSprints(CreateSprintDTO sprint)
         {
             if (ModelState.IsValid)
             {
-                var response = await _sprintRepository.CreateMultipeSprints(sprint, CantidadSprints);
+                var response = await _sprintRepository.CreateMultipeSprints(sprint);
                 if (!response.IsSuccess)
                 {
                     SetAlert(GetConstants.ALERT_ERROR);
@@ -116,12 +117,28 @@ namespace AttentionAxia.Controllers
             return View(sprint);
         }
 
+        [HttpPost]
+        public async Task<JsonResult> EditMultiple(string Year, string Period, bool IsActivo)
+        {
+
+            var response = await _sprintRepository.EditStatusMultipleSprints(Year, Period, IsActivo);
+            if (!response.IsSuccess)
+            {
+                SetAlert(GetConstants.ALERT_WARNING);
+                SetMessage(response.Message);
+                return Json(new { response.IsSuccess, response.Message });
+            }
+            SetAlert(GetConstants.ALERT_SUCCESS);
+            SetMessage(response.Message);
+            return Json(new { response.IsSuccess, response.Message });
+        }
+
 
         [HttpPost]
         public async Task<JsonResult> DeleteMultiple(string Year, string Period)
         {
 
-            var response = await _sprintRepository.DeleteMultipeSprints(Year, Period);
+            var response = await _sprintRepository.DeleteMultipleSprints(Year, Period);
             if (!response.IsSuccess)
             {
                 SetAlert(GetConstants.ALERT_WARNING);

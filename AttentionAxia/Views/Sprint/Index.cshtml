@@ -13,11 +13,14 @@
                 <div class="row mb-3 mt-3">
                     <div class="col-lg-6 mb-3">
                         <label class="control-label col-lg-4">Período</label>
+                        @{
+                            var Period = TempData[AttentionAxia.Helpers.GetConstants.PERIODO] == null ? "1Q" : TempData[AttentionAxia.Helpers.GetConstants.PERIODO].ToString();
+                        }
                         <select class="select form-control" name="Period" id="Period">
-                            <option value="1Q">1Q</option>
-                            <option value="2Q">2Q</option>
-                            <option value="3Q">3Q</option>
-                            <option value="4Q">4Q</option>
+                            <option value="1Q" @(Period == "1Q" ? "selected" : "")>1Q</option>
+                            <option value="2Q" @(Period == "2Q" ? "selected" : "")>2Q</option>
+                            <option value="3Q" @(Period == "3Q" ? "selected" : "")>3Q</option>
+                            <option value="4Q" @(Period == "4Q" ? "selected" : "")>4Q</option>
                         </select>
                     </div>
                     <div class="col-lg-6">
@@ -132,7 +135,7 @@
                     <div class="row mt-2">
                         <div class="col-md-12">
                             <label class="control-label col-md-12">Periodo del sprint</label>
-                            <select class="select form-control" name="Period" id="Period">
+                            <select class="select form-control" id="ciclo">
                                 <option value="1Q">1Q</option>
                                 <option value="2Q">2Q</option>
                                 <option value="3Q">3Q</option>
@@ -188,7 +191,7 @@
 
         $("#btnEditMultiple").on("click", function (e) {
             e.preventDefault();
-            $('#btnEditMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Eliminando...');
+            $('#btnEditMultiple').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Editando...');
             $('#btnEditMultiple').prop("disabled", true);
             let url = "@Url.Action("Index", "Sprint")";
             // Fetch all the forms we want to apply custom Bootstrap validation styles to
@@ -198,13 +201,15 @@
             Array.prototype.slice.call(forms).forEach(function (form) {
 
                 if (form.checkValidity()) {
-                    console.log("Listo para eliminar");
+                    let isActivo = $("#customSwitch1").is(":checked");
                     var request_body = {
                         Year: $("#Year").val(),
-                        Period: $("#Period").val()
+                        Period: $("#ciclo").val(),
+                        IsActivo: isActivo
                     };
+                    console.log(request_body);
                     jQuery.ajax({
-                        url: '@Url.Action("DeleteMultiple", "Sprint")',
+                        url: '@Url.Action("EditMultiple", "Sprint")',
                         type: "POST",
                         data: JSON.stringify(request_body),
                         dataType: "json",

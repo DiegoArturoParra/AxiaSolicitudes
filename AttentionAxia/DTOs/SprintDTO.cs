@@ -17,7 +17,19 @@ namespace AttentionAxia.DTOs
         public bool Activo { get; set; }
         public string FechaInicial { get; set; }
         public string FechaFinal { get; set; }
-        public DateTime FechaInicialParse => DateTime.ParseExact(FechaInicial, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-        public DateTime FechaFinalParse => DateTime.ParseExact(FechaFinal, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        public DateTime FechaInicialParse => !string.IsNullOrWhiteSpace(this.FechaInicial) ?
+                    DateTime.ParseExact(FechaInicial, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue;
+        public DateTime FechaFinalParse => !string.IsNullOrWhiteSpace(this.FechaFinal) ?
+            DateTime.ParseExact(FechaFinal, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue;
+    }
+    public class CreateSprintDTO
+    {
+        public int CantidadSprints { get; set; }
+        public string Periodo { get; set; }
+        public string Sigla { get; set; }
+        public int DuracionSprint { get; set; }
+        public string FechaInicio { get; set; }
+        public DateTime FechaInicialParse => !string.IsNullOrWhiteSpace(this.FechaInicio) ?
+                 DateTime.ParseExact(FechaInicio, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue;
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AttentionAxia.Core.Data;
+using AttentionAxia.Core.Extensions;
+using AttentionAxia.DTOs;
 using AttentionAxia.DTOs.Filters;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
@@ -17,7 +19,7 @@ namespace AttentionAxia.Repositories
 
         }
 
-        public async Task<ResponseDTO> CreateMultipeSprints(Sprint sprint, int cantidadSprints)
+        public async Task<ResponseDTO> CreateMultipeSprints(CreateSprintDTO sprint)
         {
             List<Sprint> sprints = new List<Sprint>();
             ResponseDTO response = new ResponseDTO
@@ -56,44 +58,49 @@ namespace AttentionAxia.Repositories
                 valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo4[1]);
             }
             var sig = sprint.Sigla;
-            DateTime fechaInicial = new DateTime(DateTime.Now.Year, 01, 01, 0, 0, 0, 0);
-            DateTime fechaFinal = new DateTime(DateTime.Now.Year, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
-            for (int i = 0; i <= cantidadSprints - 1; i++)
+            DateTime filtroFechaInicial = new DateTime(DateTime.Now.Year, 01, 01, 0, 0, 0, 0);
+            DateTime filtroFechaFinal = new DateTime(DateTime.Now.Year, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
+            for (int i = 0; i <= sprint.CantidadSprints - 1; i++)
             {
                 valorSiglaFinal++;
                 var existe = await AnyWithCondition(x => x.Sigla == sprint.Sigla + "-" + valorSiglaFinal.ToString() && x.Periodo == sprint.Periodo
-                && x.FechaGeneracion >= fechaInicial && x.FechaGeneracion <= fechaFinal);
+                && x.FechaGeneracion >= filtroFechaInicial && x.FechaGeneracion <= filtroFechaFinal);
                 if (existe)
                 {
-                    response.Message = $"Ya existe sprints de el periodo {sprint.Periodo}-{DateTime.Now.Year}";
+                    response.Message = $"Ya existe sprints de el periodo {sprint.Periodo} - {DateTime.Now.Year}";
                     response.IsSuccess = false;
                     break;
                 }
                 sprint.Sigla = sig.ToUpper() + "-" + valorSiglaFinal.ToString();
-                sprints.Add(new Sprint()
+
+                DateTime fechaInicio = sprint.FechaInicialParse.AddWeeks(i * sprint.DuracionSprint);
+                var nuevoSprint = new Sprint()
                 {
                     Periodo = sprint.Periodo,
                     Sigla = sprint.Sigla,
+                    FechaInicio = i == 0 ? sprint.FechaInicialParse : fechaInicio,
                     FechaGeneracion = DateTime.Now,
                     IsActivo = true,
-                });
+                };
+                nuevoSprint.FechaFin = nuevoSprint.FechaInicio.Value.AddDays(4);
+                sprints.Add(nuevoSprint);
             }
             if (response.IsSuccess)
             {
                 Context.TablaSprints.AddRange(sprints);
                 await Save();
-                response = Responses.SetCreateResponse($"Se crearon satisfactoriamente los: {cantidadSprints} Sprints.");
+                response = Responses.SetCreateResponse($"Se crearon satisfactoriamente los: {sprint.CantidadSprints} Sprints.");
             }
             return response;
         }
 
-        public async Task<ResponseDTO> DeleteMultipeSprints(string year, string period)
+        public async Task<ResponseDTO> DeleteMultipleSprints(string year, string period)
         {
             int number;
             bool success = int.TryParse(year, out number);
-            DateTime fechaInicial = new DateTime(number, 01, 01, 0, 0, 0, 0);
-            DateTime fechaFinal = new DateTime(number, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
-            var listado = await Table.Where(x => x.Periodo.Equals(period) && x.FechaGeneracion >= fechaInicial && x.FechaGeneracion <= fechaFinal)
+            DateTime rangoFechaInicial = new DateTime(number, 01, 01, 0, 0, 0, 0);
+            DateTime rangoFechaFinal = new DateTime(number, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
+            var listado = await Table.Where(x => x.Periodo.Equals(period) && x.FechaGeneracion >= rangoFechaInicial && x.FechaGeneracion <= rangoFechaFinal)
                 .ToListAsync();
 
 
@@ -133,7 +140,7 @@ namespace AttentionAxia.Repositories
             var data = Table;
             if (!string.IsNullOrWhiteSpace(filtro.Period))
             {
-               data =  data.Where(x => x.Periodo == filtro.Period);
+                data = data.Where(x => x.Periodo == filtro.Period);
             }
 
             int numberYear;
@@ -145,6 +152,31 @@ namespace AttentionAxia.Repositories
                 data = data.Where(x => x.FechaGeneracion >= fechaInicial && x.FechaGeneracion <= fechaFinal);
             }
             return await data.ToListAsync();
+        }
+
+        public async Task<ResponseDTO> EditStatusMultipleSprints(string year, string period, bool isActivo)
+        {
+            int number;
+            bool success = int.TryParse(year, out number);
+            DateTime fechaInicial = new DateTime(number, 01, 01, 0, 0, 0, 0);
+            DateTime fechaFinal = new DateTime(number, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
+
+            var (activo, mensajeError, mensajeOk) = !isActivo ? (true, "Activos", "inactivaron") : (false, "Inactivos", "activaron");
+            var listado = await Table.Where(x => x.Periodo.Equals(period) && x.FechaGeneracion >= fechaInicial && x.FechaGeneracion <= fechaFinal
+                                             && x.IsActivo == activo).ToListAsync();
+
+
+            if (!listado.Any())
+                return Responses.SetErrorResponse($"No hay sprints {mensajeError} para el periodo {period}-{year}");
+
+            foreach (var sprint in listado)
+            {
+                sprint.IsActivo = isActivo;
+                SetEntryModified(sprint);
+            }
+
+            await Save();
+            return Responses.SetOkResponse($"Se {mensajeOk} {listado.Count} sprints del periodo {period}-{year}");
         }
     }
 }

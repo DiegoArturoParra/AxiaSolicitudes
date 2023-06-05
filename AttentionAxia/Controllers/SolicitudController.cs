@@ -38,21 +38,9 @@ namespace AttentionAxia.Controllers
         {
             LoadLists(filtro.Linea, filtro.Responsable);
             var solicitudes = await _solicitudRepository.GetSolicitudes(filtro);
+            TempData[GetConstants.FILTRO_RANGO_FECHA] = filtro.FiltroFecha;
             return View(solicitudes);
         }
-        [HttpGet]
-        public async Task<ActionResult> Refresh()
-        {
-            LoadLists(null, null);
-            SolicitudFilterDTO filterDTO = new SolicitudFilterDTO
-            {
-                Page = 1,
-                PageSize = 10
-            };
-            var solicitudes = await _solicitudRepository.GetSolicitudes(filterDTO);
-            return View(solicitudes);
-        }
-
         [HttpGet]
         public async Task<ActionResult> GetDateBySprintInitial(int SprintInicioId)
         {
@@ -222,7 +210,7 @@ namespace AttentionAxia.Controllers
             ViewBag.DDL_Estados = new SelectList(_estadoRepository.Table, "Id", "Descripcion");
             ViewBag.DDL_Lineas = new SelectList(_lineaRepository.Table, "Id", "Descripcion");
             ViewBag.DDL_Celulas = new SelectList(_celulaRepository.Table, "Id", "Descripcion");
-            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table.Where(x => x.IsActivo == true), "Id", "DescripcionSprint");
+            ViewBag.DDL_Sprints = new SelectList(_sprintRepository.Table, "Id", "DescripcionSprint");
             List<int> items = new List<int>()
             {
                 25, 50, 100, 250, 500

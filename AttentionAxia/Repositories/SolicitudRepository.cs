@@ -50,7 +50,7 @@ namespace AttentionAxia.Repositories
 
                     filtro.FechaInicial = DateTime.ParseExact(fechaInicioStr, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     filtro.FechaFinal = DateTime.ParseExact(fechaFinStr, "dd/MM/yyyy", CultureInfo.InvariantCulture).AddHours(24).AddSeconds(-1);
-                    query = query.Where(x => x.solicitud.FechaCreacionSolicitud >= filtro.FechaInicial && x.solicitud.FechaCreacionSolicitud <= filtro.FechaFinal);
+                    query = query.Where(x => x.solicitud.FechaInicioPlaneada >= filtro.FechaInicial && x.solicitud.FechaInicioPlaneada <= filtro.FechaFinal);
                 }
 
                 if (filtro.Estado.HasValue && filtro.Estado.Value > 0)
@@ -244,7 +244,11 @@ namespace AttentionAxia.Repositories
                 entity.Iniciativa = solicitud.Iniciativa;
                 entity.CelulaId = solicitud.CelulaId;
                 entity.Avance = solicitud.Avance;
+                var cycleTimePlaneado = GetCycleTime(entity.FechaInicioPlaneada, entity.FechaFinPlaneada);
+                if (!cycleTimePlaneado.HasValue)
+                    return Responses.SetErrorResponse("No se pudo calcular el tiempo planeado en días.");
 
+                entity.CycleTimePlaneado = cycleTimePlaneado.Value;
                 response = await ValidationsOfBusiness(entity);
                 if (response.IsSuccess)
                 {

@@ -195,7 +195,6 @@
         });
 
         $("#SprintInicioId").change(function () {
-            console.log("entro");
             GetDateBySprintInitial($("#SprintInicioId").val());
         });
 
@@ -214,6 +213,8 @@
                 }
                 else {
                     toastr.error("No hay registro de fecha inicial para el sprint.");
+                    $('#SprintInicioId').val(null);
+                    $('#DateInitialSprint').val(null);
                 }
             });
         }
@@ -229,6 +230,8 @@
                 }
                 else {
                     toastr.error("No hay registro de fecha final para el sprint.");
+                    $('#SprintFinId').val(null);
+                    $('#DateEndSprint').val(null);
                 }
             });
         }
