@@ -82,7 +82,15 @@ namespace AttentionAxia.Repositories
                     FechaGeneracion = DateTime.Now,
                     IsActivo = true,
                 };
-                nuevoSprint.FechaFin = nuevoSprint.FechaInicio.Value.AddDays(4);
+                if (sprint.DuracionSprint > 1)
+                {
+                    nuevoSprint.FechaFin = nuevoSprint.FechaInicio.Value.AddWeeks(sprint.DuracionSprint).AddDays(-3);
+                }
+                else
+                {
+                    nuevoSprint.FechaFin = nuevoSprint.FechaInicio.Value.AddDays(4);
+                }
+
                 sprints.Add(nuevoSprint);
             }
             if (response.IsSuccess)

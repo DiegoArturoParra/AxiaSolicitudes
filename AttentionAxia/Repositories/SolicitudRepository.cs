@@ -174,6 +174,9 @@ namespace AttentionAxia.Repositories
             try
             {
                 ResponseDTO response = new ResponseDTO();
+                if (solicitud.FechaFinalParse <= solicitud.FechaInicialParse)
+                    return Responses.SetErrorResponse("La fecha fin del sprint no debe ser menor a la inicial.");
+
                 Solicitud entity = new Solicitud()
                 {
                     ResponsableId = solicitud.ResponsableId,
@@ -280,7 +283,10 @@ namespace AttentionAxia.Repositories
             }
             catch (Exception ex)
             {
-                FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                if (fileDTO != null)
+                {
+                    FileHelper.DeleteFile(rutaInicial, fileDTO.PathArchivo);
+                }
                 return Responses.SetInternalServerErrorResponse(ex, ex.Message);
             }
         }

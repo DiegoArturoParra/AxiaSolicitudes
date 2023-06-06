@@ -699,11 +699,11 @@
     <Content Include="Views\Responsables\Delete.cshtml" />
     <Content Include="Views\Responsables\Edit.cshtml" />
     <Content Include="Views\Responsables\Index.cshtml" />
-    <Content Include="Views\Solicitud\Create.cshtml" />
     <Content Include="Views\Solicitud\Delete.cshtml" />
     <Content Include="Views\Solicitud\Edit.cshtml" />
     <Content Include="Views\Solicitud\Index.cshtml" />
     <Content Include="Views\Shared\_PartialPaginador.cshtml" />
+    <Content Include="Views\Solicitud\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -155,7 +155,8 @@
                         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
                     ]
                 },
-                minDate: moment().add(-2, 'years').toDate()
+                minDate: moment().add(-1, 'years').toDate(),
+                maxDate: moment().add(1, 'years').toDate(),
             });
         });
 
@@ -173,6 +174,7 @@
                         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
                     ]
                 },
+                minDate: moment().add(-1, 'years').toDate(),
                 maxDate: moment().add(1, 'years').toDate(),
             });
         });
@@ -203,7 +205,6 @@
         });
 
         $("#SprintInicioId").change(function () {
-            console.log("entro");
             GetDateBySprintInitial($("#SprintInicioId").val());
         });
 
@@ -229,7 +230,6 @@
         function GetDateBySprintFinal(sprintFinalId) {
             let url = "@Url.Action("GetDateBySprintFinal", "Solicitud")";
             $.get(url, { SprintFinId: sprintFinalId }, function (data) {
-                console.log(data);
                 if (data.hayFecha) {
                     $('#DateEndSprint').removeAttr('disabled');
                     const fecha = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
