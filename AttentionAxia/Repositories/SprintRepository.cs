@@ -22,74 +22,62 @@ namespace AttentionAxia.Repositories
         public async Task<ResponseDTO> CreateMultipeSprints(CreateSprintDTO sprint)
         {
             List<Sprint> sprints = new List<Sprint>();
-            ResponseDTO response = new ResponseDTO
+            ResponseDTO response = new ResponseDTO { IsSuccess = true };
+
+            var periodos = new Dictionary<string, string>
             {
-                IsSuccess = true
+                { "1Q", "0" },
+                { "2Q", "0" },
+                { "3Q", "0" },
+                { "4Q", "0" }
             };
-            var res1 = Table.Where(x => x.Periodo == "1Q").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
-            string[] ultimaSiglaPeriodo1 = { "0", "0" };
-            if (res1 != null) { ultimaSiglaPeriodo1 = res1.Split('-'); }
-            var res2 = Table.Where(x => x.Periodo == "2Q").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
-            string[] ultimaSiglaPeriodo2 = { "0", "0" };
-            if (res2 != null) { ultimaSiglaPeriodo2 = res2.Split('-'); }
-            var res3 = Table.Where(x => x.Periodo == "3Q").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
-            string[] ultimaSiglaPeriodo3 = { "0", "0" };
-            if (res3 != null) { ultimaSiglaPeriodo3 = res3.Split('-'); }
-            var res4 = Table.Where(x => x.Periodo == "4Q").OrderByDescending(x => x.Id).Take(1).Select(x => x.Sigla).ToList().FirstOrDefault();
-            string[] ultimaSiglaPeriodo4 = { "0", "0" };
-            if (res4 != null) { ultimaSiglaPeriodo4 = res4.Split('-'); }
 
-            int valorSiglaFinal = 0;
+            foreach (var periodo in periodos.Keys.ToList())
+            {
+                var ultimaSiglaPeriodo = Table
+                    .Where(x => x.Periodo == periodo)
+                    .OrderByDescending(x => x.Id)
+                    .Take(1)
+                    .Select(x => x.Sigla)
+                    .FirstOrDefault();
 
-            if (sprint.Periodo == "1Q")
-            {
-                valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo1[1]);
+                if (ultimaSiglaPeriodo != null)
+                {
+                    periodos[periodo] = ultimaSiglaPeriodo.Split('-')[1];
+                }
             }
-            else if (sprint.Periodo == "2Q")
-            {
-                valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo2[1]);
-            }
-            else if (sprint.Periodo == "3Q")
-            {
-                valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo3[1]);
-            }
-            else
-            {
-                valorSiglaFinal = Convert.ToInt32(ultimaSiglaPeriodo4[1]);
-            }
-            var sig = sprint.Sigla;
-            DateTime filtroFechaInicial = new DateTime(DateTime.Now.Year, 01, 01, 0, 0, 0, 0);
-            DateTime filtroFechaFinal = new DateTime(DateTime.Now.Year, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
-            for (int i = 0; i <= sprint.CantidadSprints - 1; i++)
+
+            int valorSiglaFinal = Convert.ToInt32(periodos[sprint.Periodo]);
+
+            var filtroFechaInicial = new DateTime(DateTime.Now.Year, 1, 1);
+            var filtroFechaFinal = new DateTime(DateTime.Now.Year, 12, 31).AddDays(1).AddSeconds(-1);
+
+            for (int i = 0; i < sprint.CantidadSprints; i++)
             {
                 valorSiglaFinal++;
-                var existe = await AnyWithCondition(x => x.Sigla == sprint.Sigla + "-" + valorSiglaFinal.ToString() && x.Periodo == sprint.Periodo
-                && x.FechaGeneracion >= filtroFechaInicial && x.FechaGeneracion <= filtroFechaFinal);
+
+                var sigla = sprint.Sigla.ToUpper() + "-" + valorSiglaFinal.ToString();
+                var existe = await AnyWithCondition(x => x.Sigla == sigla && x.Periodo == sprint.Periodo && x.FechaGeneracion >= filtroFechaInicial && x.FechaGeneracion <= filtroFechaFinal);
+
                 if (existe)
                 {
-                    response.Message = $"Ya existe sprints de el periodo {sprint.Periodo} - {DateTime.Now.Year}";
+                    response.Message = $"Ya existe sprints del periodo {sprint.Periodo} - {DateTime.Now.Year}";
                     response.IsSuccess = false;
                     break;
                 }
-                sprint.Sigla = sig.ToUpper() + "-" + valorSiglaFinal.ToString();
 
-                DateTime fechaInicio = sprint.FechaInicialParse.AddWeeks(i * sprint.DuracionSprint);
-                var nuevoSprint = new Sprint()
+                var fechaInicio = sprint.FechaInicialParse.AddWeeks(i * sprint.DuracionSprint);
+                var nuevoSprint = new Sprint
                 {
                     Periodo = sprint.Periodo,
-                    Sigla = sprint.Sigla,
+                    Sigla = sigla,
                     FechaInicio = i == 0 ? sprint.FechaInicialParse : fechaInicio,
                     FechaGeneracion = DateTime.Now,
-                    IsActivo = true,
+                    IsActivo = true
                 };
-                if (sprint.DuracionSprint > 1)
-                {
-                    nuevoSprint.FechaFin = nuevoSprint.FechaInicio.Value.AddWeeks(sprint.DuracionSprint).AddDays(-3);
-                }
-                else
-                {
-                    nuevoSprint.FechaFin = nuevoSprint.FechaInicio.Value.AddDays(4);
-                }
+
+                nuevoSprint.FechaFin = sprint.DuracionSprint > 1 ? nuevoSprint.FechaInicio.Value.AddWeeks(sprint.DuracionSprint)
+                    .AddDays(-3) : nuevoSprint.FechaInicio.Value.AddDays(4);
 
                 sprints.Add(nuevoSprint);
             }
@@ -98,15 +86,15 @@ namespace AttentionAxia.Repositories
             {
                 Context.TablaSprints.AddRange(sprints);
                 await Save();
-                response = Responses.SetCreateResponse($"Se crearon satisfactoriamente los: {sprint.CantidadSprints} Sprints.");
+                response = Responses.SetCreateResponse($"Se crearon satisfactoriamente los {sprint.CantidadSprints} Sprints.");
             }
+
             return response;
         }
 
         public async Task<ResponseDTO> DeleteMultipleSprints(string year, string period)
         {
-            int number;
-            bool success = int.TryParse(year, out number);
+            bool success = int.TryParse(year, out int number);
             DateTime rangoFechaInicial = new DateTime(number, 01, 01, 0, 0, 0, 0);
             DateTime rangoFechaFinal = new DateTime(number, 12, 31, 0, 0, 0, 0).AddHours(24).AddSeconds(-1);
             var listado = await Table.Where(x => x.Periodo.Equals(period) && x.FechaGeneracion >= rangoFechaInicial && x.FechaGeneracion <= rangoFechaFinal)
