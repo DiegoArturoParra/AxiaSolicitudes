@@ -304,7 +304,7 @@ namespace AttentionAxia.Repositories
                 }
                 entity.EstadoId = editSolicitud.EstadoId;
                 entity.Avance = editSolicitud.Avance;
-                response = await ValidationsOfBusiness(entity);
+                response = await ValidationsOfBusiness(entity, true);
                 if (response.IsSuccess)
                 {
                     entity = InsertDateByState(entity);
@@ -342,7 +342,7 @@ namespace AttentionAxia.Repositories
             return (byte)calculo;
         }
 
-        public async Task<ResponseDTO> ValidationsOfBusiness(Solicitud solicitud)
+        public async Task<ResponseDTO> ValidationsOfBusiness(Solicitud solicitud, bool IsEditStatus = false)
         {
             try
             {
@@ -351,25 +351,31 @@ namespace AttentionAxia.Repositories
                     IsSuccess = true,
                     Message = "Validaciones correctas."
                 };
-                var existeResponsable = await Context.TablaResponsables.AnyAsync(x => x.Id == solicitud.ResponsableId);
-                if (!existeResponsable)
-                    response = Responses.SetErrorResponse("No existe el responsable.");
+                if (solicitud.EstadoId == (int)EstadosSolicitudEnum.Finalizado && solicitud.Avance < 100)
+                    return Responses.SetErrorResponse($"El avance en estado {EnumConfig.GetDescription(EstadosSolicitudEnum.Finalizado)} debe ser del 100%");
+
+                if (!IsEditStatus)
+                {
+                    var existeResponsable = await Context.TablaResponsables.AnyAsync(x => x.Id == solicitud.ResponsableId);
+                    if (!existeResponsable)
+                        return Responses.SetErrorResponse("No existe el responsable.");
+
+                    var existeSprint = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintInicioId);
+                    if (!existeSprint)
+                        return Responses.SetErrorResponse("No existe el sprint inicio.");
+
+                    var existeSprintfin = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintFinId);
+                    if (!existeSprintfin)
+                        return Responses.SetErrorResponse("No existe el sprint fin.");
+
+                    var existeCelula = await Context.TablaCelulas.AnyAsync(x => x.Id == solicitud.CelulaId);
+                    if (!existeCelula)
+                        return Responses.SetErrorResponse("No existe la célula.");
+                }
 
                 var existeEstado = await Context.TablaEstados.AnyAsync(x => x.Id == solicitud.EstadoId);
                 if (!existeEstado)
-                    response = Responses.SetErrorResponse("No existe el estado.");
-
-                var existeSprint = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintInicioId);
-                if (!existeSprint)
-                    response = Responses.SetErrorResponse("No existe el sprint inicio.");
-
-                var existeSprintfin = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintFinId);
-                if (!existeSprintfin)
-                    response = Responses.SetErrorResponse("No existe el sprint fin.");
-
-                var existeCelula = await Context.TablaCelulas.AnyAsync(x => x.Id == solicitud.CelulaId);
-                if (!existeCelula)
-                    response = Responses.SetErrorResponse("No existe la célula.");
+                    return Responses.SetErrorResponse("No existe el estado.");
 
                 return response;
             }
