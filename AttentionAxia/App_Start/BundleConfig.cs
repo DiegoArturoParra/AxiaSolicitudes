@@ -21,7 +21,7 @@ namespace AttentionAxia
                     "~/adminlte/plugins/daterangepicker/daterangepicker.css"));
 
             bundles.Add(new ScriptBundle("~/adminlte/js").Include(
-                     "~/adminlte/js/adminlte.js",
+                     "~/adminlte/js/adminlte.min.js",
                      "~/adminlte/plugins/moment/moment.min.js",
                      "~/adminlte/plugins/toastr/toastr.min.js",
                      "~/adminlte/plugins/ion-rangeslider/js/ion.rangeSlider.min.js",

@@ -57,7 +57,8 @@ namespace AttentionAxia.Repositories
                 valorSiglaFinal++;
 
                 var sigla = sprint.Sigla.ToUpper() + "-" + valorSiglaFinal.ToString();
-                var existe = await AnyWithCondition(x => x.Sigla == sigla && x.Periodo == sprint.Periodo && x.FechaGeneracion >= filtroFechaInicial && x.FechaGeneracion <= filtroFechaFinal);
+                var existe = await AnyWithCondition(x => x.Sigla == sigla && x.Periodo == sprint.Periodo 
+                                                    && x.FechaGeneracion >= filtroFechaInicial && x.FechaGeneracion <= filtroFechaFinal);
 
                 if (existe)
                 {
