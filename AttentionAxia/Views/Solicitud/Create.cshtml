@@ -222,7 +222,7 @@
         let url = "@Url.Action("GetDateBySprintFinal", "Solicitud")";
         $.get(url, { SprintFinId: sprintFinalId }, function (data) {
             if (data.hayFecha) {
-
+                $('#DateEndSprint').removeAttr('disabled');
                 const startDate = moment($('#DateInitialSprint').val(), "DD/MM/YYYY");
                 const endDate = moment(data.fecha, "DD/MM/YYYY");
 
@@ -232,7 +232,6 @@
                 }
                 else {
                     const fechaFinal = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
-                    $('#DateEndSprint').removeAttr('disabled');
                     $('#DateEndSprint').val(fechaFinal);
                 }
             }
