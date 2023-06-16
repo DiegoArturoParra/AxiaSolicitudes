@@ -26,21 +26,18 @@ namespace AttentionAxia.Repositories
             try
             {
                 var modelo = new ListarSolicitudDTO();
-                var query = (from solicitud in Context.TablaSolicitudes
-                             join celula in Context.TablaCelulas on solicitud.CelulaId equals celula.Id
-                             join estado in Context.TablaEstados on solicitud.EstadoId equals estado.Id
-                             join sprintInicio in Context.TablaSprints on solicitud.SprintInicioId equals sprintInicio.Id
-                             join sprintFin in Context.TablaSprints on solicitud.SprintFinId equals sprintFin.Id
-                             join responsable in Context.TablaResponsables on solicitud.ResponsableId equals responsable.Id
-                             select new
-                             {
-                                 solicitud,
-                                 estado,
-                                 sprintInicio,
-                                 sprintFin,
-                                 responsable,
-                                 celula,
-                             });
+                var query = from solicitud in Context.TablaSolicitudes.Include(y => y.SprintInicio).Include(x => x.SprintFin)
+                            join celula in Context.TablaCelulas on solicitud.CelulaId equals celula.Id
+                            join estado in Context.TablaEstados on solicitud.EstadoId equals estado.Id
+                            join responsable in Context.TablaResponsables on solicitud.ResponsableId equals responsable.Id
+                            select new
+                            {
+                                solicitud,
+                                estado,
+                                responsable,
+                                celula,
+                            };
+
                 if (!string.IsNullOrWhiteSpace(filtro.FiltroFecha))
                 {
                     string[] partes = filtro.FiltroFecha.Split('-');
@@ -74,7 +71,7 @@ namespace AttentionAxia.Repositories
                     query = query.Where(x => x.solicitud.Responsable.LineaPerteneceId == filtro.Linea.Value);
                 }
 
-                if (query.Any())
+                if (await query.CountAsync() > 0)
                 {
                     var listado = await query.OrderBy(x => x.solicitud.Id)
                       .Skip((filtro.Page - 1) * filtro.Page)
@@ -89,10 +86,10 @@ namespace AttentionAxia.Repositories
                           Linea = Context.TablaLineas.Where(y => y.Id == m.responsable.LineaPerteneceId).Select(s => s.Descripcion).FirstOrDefault(),
                           Iniciativa = m.solicitud.Iniciativa,
                           Responsable = m.responsable.Nombres,
-                          SprintInicio = m.sprintInicio.Sigla + " " + m.sprintInicio.Periodo,
-                          SprintFin = m.sprintFin.Sigla + " " + m.sprintFin.Periodo,
-                          SprintInicioFechaGeneracion = m.sprintInicio.FechaInicio.HasValue ? m.sprintInicio.FechaInicio.Value : default,
-                          SprintFinFechaGeneracion = m.sprintFin.FechaFin.HasValue ? m.sprintFin.FechaFin.Value : default,
+                          SprintInicio = m.solicitud.SprintInicio == null ? "N/A" : m.solicitud.SprintInicio.Sigla + " " + m.solicitud.SprintInicio.Periodo,
+                          SprintFin = m.solicitud.SprintFin == null ? "N/A" : m.solicitud.SprintFin.Sigla + " " + m.solicitud.SprintFin.Periodo,
+                          SprintInicioFechaGeneracion = m.solicitud.SprintInicio != null ? m.solicitud.SprintInicio.FechaInicio ?? default(DateTime?) : default(DateTime?),
+                          SprintFinFechaGeneracion = m.solicitud.SprintFin != null ? m.solicitud.SprintFin.FechaFin ?? default(DateTime?) : default(DateTime?),
                           NombreArchivo = m.solicitud.NombreArchivo,
                           RutaArchivo = m.solicitud.RutaArchivo,
                           CycleTimeEsperado = m.solicitud.CycleTimePlaneado,
@@ -174,9 +171,11 @@ namespace AttentionAxia.Repositories
             try
             {
                 ResponseDTO response = new ResponseDTO();
-                if (solicitud.FechaFinalParse <= solicitud.FechaInicialParse)
-                    return Responses.SetErrorResponse("La fecha fin del sprint no debe ser menor a la inicial.");
-
+                if (solicitud.FechaInicialParse.HasValue && solicitud.FechaInicialParse.HasValue)
+                {
+                    if (solicitud.FechaFinalParse <= solicitud.FechaInicialParse)
+                        return Responses.SetErrorResponse("La fecha fin del sprint no debe ser menor a la inicial.");
+                }
                 Solicitud entity = new Solicitud()
                 {
                     ResponsableId = solicitud.ResponsableId,
@@ -184,18 +183,21 @@ namespace AttentionAxia.Repositories
                     SprintInicioId = solicitud.SprintInicioId,
                     SprintFinId = solicitud.SprintFinId,
                     FechaInicioPlaneada = solicitud.FechaInicialParse,
-                    FechaFinPlaneada = solicitud.FechaFinalParse.AddHours(24).AddSeconds(-1),
+                    FechaFinPlaneada = solicitud.FechaFinalParse.HasValue ? solicitud.FechaFinalParse.Value.AddHours(24).AddSeconds(-1) : default(DateTime?),
                     Iniciativa = solicitud.Iniciativa,
                     CelulaId = solicitud.CelulaId,
                     FechaCreacionSolicitud = DateTime.Now,
                     Avance = 0
                 };
-                var cycleTimePlaneado = GetCycleTime(entity.FechaInicioPlaneada, entity.FechaFinPlaneada);
-                if (!cycleTimePlaneado.HasValue)
-                    return Responses.SetErrorResponse("No se pudo calcular el tiempo planeado en días.");
 
-                entity.CycleTimePlaneado = cycleTimePlaneado.Value;
-                response = await ValidationsOfBusiness(entity);
+                if (entity.SprintInicioId.HasValue && entity.SprintFinId.HasValue)
+                {
+                    var cycleTimePlaneado = GetCycleTime(entity.FechaInicioPlaneada, entity.FechaFinPlaneada);
+                    if (!cycleTimePlaneado.HasValue)
+                        return Responses.SetErrorResponse("No se pudo calcular el tiempo planeado en días.");
+                    entity.CycleTimePlaneado = cycleTimePlaneado.Value;
+                }
+                response = await ValidationsOfBusiness(entity, true);
                 if (response.IsSuccess)
                 {
                     if (file == null)
@@ -237,6 +239,11 @@ namespace AttentionAxia.Repositories
                 if (entity == null)
                 {
                     return Responses.SetErrorResponse("No existe la solicitud.");
+                }
+
+                if (solicitud.FechaFinalParse <= solicitud.FechaInicialParse)
+                {
+                    return Responses.SetErrorResponse("La fecha fin del sprint no debe ser menor a la inicial.");
                 }
                 entity.ResponsableId = solicitud.ResponsableId;
                 entity.EstadoId = solicitud.EstadoId;
@@ -304,7 +311,7 @@ namespace AttentionAxia.Repositories
                 }
                 entity.EstadoId = editSolicitud.EstadoId;
                 entity.Avance = editSolicitud.Avance;
-                response = await ValidationsOfBusiness(entity, true);
+                response = await ValidationsOfBusiness(entity, false, true);
                 if (response.IsSuccess)
                 {
                     entity = InsertDateByState(entity);
@@ -331,7 +338,7 @@ namespace AttentionAxia.Repositories
                 entity.FechaFinReal = DateTime.Now;
                 entity.LeadTime = GetLeadTime(entity.FechaCreacionSolicitud, entity.FechaFinReal);
                 entity.CycleTimeReal = GetCycleTime(entity.FechaInicioReal, entity.FechaFinReal);
-                entity.PorcentajeCumplimiento = GetPorcentajeCumplimiento(entity.CycleTimePlaneado, entity.CycleTimeReal);
+                entity.PorcentajeCumplimiento = GetPorcentajeCumplimiento(entity.CycleTimePlaneado.Value, entity.CycleTimeReal);
             }
             return entity;
         }
@@ -342,7 +349,7 @@ namespace AttentionAxia.Repositories
             return (byte)calculo;
         }
 
-        public async Task<ResponseDTO> ValidationsOfBusiness(Solicitud solicitud, bool IsEditStatus = false)
+        public async Task<ResponseDTO> ValidationsOfBusiness(Solicitud solicitud, bool IsCreated = false, bool IsEditStatus = false)
         {
             try
             {
@@ -360,17 +367,30 @@ namespace AttentionAxia.Repositories
                     if (!existeResponsable)
                         return Responses.SetErrorResponse("No existe el responsable.");
 
-                    var existeSprint = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintInicioId);
-                    if (!existeSprint)
-                        return Responses.SetErrorResponse("No existe el sprint inicio.");
+                    if (!IsCreated)
+                    {
+                        var existeSprint = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintInicioId);
+                        if (!existeSprint)
+                            return Responses.SetErrorResponse("No existe el sprint inicio.");
 
-                    var existeSprintfin = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintFinId);
-                    if (!existeSprintfin)
-                        return Responses.SetErrorResponse("No existe el sprint fin.");
+                        var existeSprintfin = await Context.TablaSprints.AnyAsync(x => x.Id == solicitud.SprintFinId);
+                        if (!existeSprintfin)
+                            return Responses.SetErrorResponse("No existe el sprint fin.");
+
+                    }
 
                     var existeCelula = await Context.TablaCelulas.AnyAsync(x => x.Id == solicitud.CelulaId);
                     if (!existeCelula)
                         return Responses.SetErrorResponse("No existe la célula.");
+                }
+
+                if (IsEditStatus && solicitud.EstadoId == (int)EstadosSolicitudEnum.Finalizado)
+                {
+                    bool hasSprintInicio = solicitud.SprintInicioId.HasValue;
+                    bool hasSprintFin = solicitud.SprintFinId.HasValue;
+                    bool tieneSprints = hasSprintInicio && hasSprintFin;
+                    if (!tieneSprints)
+                        return Responses.SetErrorResponse("Debe asignar sprint de inicio y sprint final en la sección de editar, para calcular el porcentaje de cumplimiento.");
                 }
 
                 var existeEstado = await Context.TablaEstados.AnyAsync(x => x.Id == solicitud.EstadoId);

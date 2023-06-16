@@ -1,4 +1,6 @@
-﻿using AttentionAxia.Repositories;
+﻿using AttentionAxia.Helpers;
+using AttentionAxia.Repositories;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace AttentionAxia.Controllers
@@ -10,10 +12,25 @@ namespace AttentionAxia.Controllers
         {
             _festivoRepository = new FestivosRepository(_db);
         }
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            // await _festivoRepository.InsertHolidays();
-            return View();
+            var data = await _festivoRepository.GetAll();
+            return View(data);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Administrador-Axia")]
+        public async Task<ActionResult> GenerarFestivos()
+        {
+            var response = await _festivoRepository.InsertHolidays();
+            if (!response.IsSuccess)
+            {
+                SetAlert(GetConstants.ALERT_ERROR);
+                SetMessage(response.Message);
+                return RedirectToAction("Index");
+            }
+            SetAlert(GetConstants.ALERT_SUCCESS);
+            SetMessage(response.Message);
+            return RedirectToAction("Index");
         }
     }
 }

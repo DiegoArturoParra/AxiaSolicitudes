@@ -1,6 +1,9 @@
-﻿using AttentionAxia.Core.Data;
+﻿using AttentionAxia.Core;
+using AttentionAxia.Core.Data;
+using AttentionAxia.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
@@ -15,14 +18,18 @@ namespace AttentionAxia.Repositories
         private IDbSet<T> _entities;
         private string _errorMessage = string.Empty;
         private bool _isDisposed;
-
+        private readonly bool _isTesting;
+        private readonly bool _isProduction;
         public GenericRepository(AxiaContext context)
         {
+            _isTesting = Convert.ToBoolean(ConfigurationManager.AppSettings[EnvironmentConfig.ENVIRONMENT_TESTING]);
+            _isProduction = Convert.ToBoolean(ConfigurationManager.AppSettings[EnvironmentConfig.ENVIRONMENT_PRODUCTION]);
             _isDisposed = false;
             Context = context;
         }
 
         protected AxiaContext Context { get; set; }
+
         public virtual IQueryable<T> Table
         {
             get
@@ -42,6 +49,25 @@ namespace AttentionAxia.Repositories
                 return _entities;
             }
         }
+
+        private AxiaContext GetContext()
+        {
+            string connectionString;
+            if (_isProduction)
+            {
+                connectionString = ConfigurationManager.ConnectionStrings[EnvironmentConfig.NAME_CONNECTION_PRODUCTION].ConnectionString;
+                var desencryptConnection = HashHelper.GenerateDecrypt(connectionString);
+                return new AxiaContext(desencryptConnection);
+            }
+            else if (_isTesting)
+            {
+                connectionString = ConfigurationManager.ConnectionStrings[EnvironmentConfig.NAME_CONNECTION_TESTING].ConnectionString;
+                var desencryptConnection = HashHelper.GenerateDecrypt(connectionString);
+                return new AxiaContext(desencryptConnection);
+            }
+            return new AxiaContext();
+        }
+
         #region get list all
         public async Task<IEnumerable<T>> GetAll()
         {
@@ -77,7 +103,7 @@ namespace AttentionAxia.Repositories
             if (entity == null)
                 throw new ArgumentNullException("entity");
             if (Context == null || _isDisposed)
-                Context = new AxiaContext();
+                Context = GetContext();
             Entities.Add(entity);
         }
         #endregion
@@ -89,7 +115,7 @@ namespace AttentionAxia.Repositories
             if (entity == null)
                 throw new ArgumentNullException("entity");
             if (Context == null || _isDisposed)
-                Context = new AxiaContext();
+                Context = GetContext();
             SetEntryModified(entity);
         }
         #endregion
@@ -101,7 +127,7 @@ namespace AttentionAxia.Repositories
             if (entity == null)
                 throw new ArgumentNullException("entity");
             if (Context == null || _isDisposed)
-                Context = new AxiaContext();
+                Context = GetContext();
             Entities.Remove(entity);
         }
         public virtual void SetEntryModified(T entity)
@@ -121,7 +147,7 @@ namespace AttentionAxia.Repositories
             {
                 foreach (var validationErrors in dbEx.EntityValidationErrors)
                     foreach (var validationError in validationErrors.ValidationErrors)
-                        _errorMessage += Environment.NewLine + string.Format("Property: {0} Error: {1}",
+                        _errorMessage += Environment.NewLine + string.Format("Propiedad: {0} Error: {1}",
                             validationError.PropertyName, validationError.ErrorMessage);
                 throw new Exception(_errorMessage, dbEx);
             }

@@ -11,5 +11,15 @@
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
+
+        public static string GenerateEncrypt(string plainText)
+        {
+            return Encryption.EncryptDecrypt.Encrypt(plainText);
+        }
+
+        public static string GenerateDecrypt(string plainText)
+        {
+            return Encryption.EncryptDecrypt.Decrypt(plainText);
+        }
     }
 }

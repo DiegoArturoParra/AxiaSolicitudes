@@ -15,21 +15,19 @@ namespace AttentionAxia.Models
         [Column("estado_solicitud_id")]
         public int EstadoId { get; set; }
         [Column("sprint_inicial_id")]
-        public int SprintInicioId { get; set; }
+        public int? SprintInicioId { get; set; }
         [Column("sprint_final_id")]
-        public int SprintFinId { get; set; }
+        public int? SprintFinId { get; set; }
         [Column("celula_id")]
         public int CelulaId { get; set; }
         [Column("iniciativa")]
         [Required(ErrorMessage = "Campo requerido.")]
         [StringLength(5000)]
         public string Iniciativa { get; set; }
-        [Required(ErrorMessage = "Campo requerido.")]
         [Column("fecha_inicio_planeada")]
-        public DateTime FechaInicioPlaneada { get; set; }
-        [Required(ErrorMessage = "Campo requerido.")]
+        public DateTime? FechaInicioPlaneada { get; set; }
         [Column("fecha_fin_planeada")]
-        public DateTime FechaFinPlaneada { get; set; }
+        public DateTime? FechaFinPlaneada { get; set; }
         [Required(ErrorMessage = "Fecha Creación requerida.")]
         [Column("fecha_creacion_solicitud")]
         public DateTime FechaCreacionSolicitud { get; set; }
@@ -40,13 +38,13 @@ namespace AttentionAxia.Models
         [Column("avance_porcentual")]
         public byte Avance { get; set; }
         [Column("porcentaje_cumplimiento")]
-        public byte? PorcentajeCumplimiento { get; set; }
+        public short? PorcentajeCumplimiento { get; set; }
         [Column("ruta_archivo")]
         public string RutaArchivo { get; set; }
         [Column("nombre_archivo")]
         public string NombreArchivo { get; set; }
         [Column("cycle_time_planeado")]
-        public short CycleTimePlaneado { get; set; }
+        public short? CycleTimePlaneado { get; set; }
         [Column("cycle_time_real")]
         public short? CycleTimeReal { get; set; }
         [Column("lead_time")]

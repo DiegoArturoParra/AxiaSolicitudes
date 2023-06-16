@@ -1,9 +1,11 @@
-﻿using AttentionAxia.Core.Data;
+﻿using AttentionAxia.Core;
+using AttentionAxia.Core.Data;
 using AttentionAxia.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Security.Claims;
 using System.Web;
@@ -14,9 +16,31 @@ namespace AttentionAxia.Controllers
     public class BaseController : Controller
     {
         protected AxiaContext _db;
+        private readonly bool _isTesting;
+        private readonly bool _isProduction;
         public BaseController()
         {
-            _db = new AxiaContext();
+            _isTesting = Convert.ToBoolean(ConfigurationManager.AppSettings[EnvironmentConfig.ENVIRONMENT_TESTING]);
+            _isProduction = Convert.ToBoolean(ConfigurationManager.AppSettings[EnvironmentConfig.ENVIRONMENT_PRODUCTION]);
+            _db = GetContext();
+        }
+
+        private AxiaContext GetContext()
+        {
+            string connectionString;
+            if (_isProduction)
+            {
+                 connectionString = ConfigurationManager.ConnectionStrings[EnvironmentConfig.NAME_CONNECTION_PRODUCTION].ConnectionString;
+                var desencryptConnection = HashHelper.GenerateDecrypt(connectionString);
+                return new AxiaContext(desencryptConnection);
+            }
+            else if (_isTesting)
+            {
+                connectionString = ConfigurationManager.ConnectionStrings[EnvironmentConfig.NAME_CONNECTION_TESTING].ConnectionString;
+                var desencryptConnection = HashHelper.GenerateDecrypt(connectionString);
+                return new AxiaContext(desencryptConnection);
+            }
+            return new AxiaContext();
         }
 
         private string GetRutaInicial()

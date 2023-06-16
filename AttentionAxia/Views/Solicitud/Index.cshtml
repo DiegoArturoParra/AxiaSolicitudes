@@ -220,19 +220,51 @@
                                                     @Html.DisplayFor(modelItem => item.DateFinish)
                                                 </td>
                                                 <td>
-                                                    <span>@item.CycleTimeEsperado Días</span>
-                                                </td>
-                                                <td>
-                                                    <span>@item.LeadTime Días</span>
-                                                </td>
-                                                <td>
-                                                    @if (item.CycleTimeReal == null)
+                                                    @if (item.CycleTimeEsperado.HasValue)
                                                     {
-                                                        <span>N/A</span>
+                                                        if (item.CycleTimeEsperado.Value == 1)
+                                                        {
+                                                            <span>@item.CycleTimeEsperado.Value Día</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@item.CycleTimeEsperado.Value Días</span>
+                                                        }
+
                                                     }
                                                     else
                                                     {
-                                                        <span>@item.CycleTimeReal Días</span>
+
+                                                        <span>N/A</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.LeadTime.Value == 1)
+                                                    {
+                                                        <span>@item.LeadTime.Value Día</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@item.LeadTime.Value Días</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.CycleTimeReal.HasValue)
+                                                    {
+                                                        if (item.CycleTimeReal.Value == 1)
+                                                        {
+                                                            <span>@item.CycleTimeReal.Value Día</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@item.CycleTimeReal.Value Días</span>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <span>N/A</span>
                                                     }
                                                 </td>
                                             }

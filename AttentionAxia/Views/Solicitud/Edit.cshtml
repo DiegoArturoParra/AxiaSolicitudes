@@ -39,7 +39,7 @@
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Sprint Fin</label>
-                @Html.DropDownList("SprintFinId", ViewBag.DDL_SprintsFin as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                @Html.DropDownList("SprintFinId", ViewBag.DDL_SprintsFin as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required", disabled = "disabled" })
                 <div class="invalid-feedback">
                     El sprint fin es requerido
                 </div>
@@ -136,7 +136,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script>
+    <script>
         let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
         let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
         var originalBtnContent = $('#btn-save').html();
@@ -215,14 +215,17 @@
         function GetDateBySprintInitial(sprintInitialId) {
             let url = "@Url.Action("GetDateBySprintInitial", "Solicitud")";
             $.get(url, { SprintInicioId: sprintInitialId }, function (data) {
-                console.log(data);
                 if (data.hayFecha) {
+                    $('#SprintFinId').removeAttr('disabled');
+                    $('#SprintFinId').val(null);
                     $('#DateInitialSprint').removeAttr('disabled');
-                    const fecha = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
-                    $('#DateInitialSprint').val(fecha);
+                    let fechaInicial = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
+                    $('#DateInitialSprint').val(fechaInicial);
                 }
                 else {
                     toastr.error("No hay registro de fecha inicial para el sprint.");
+                    $('#SprintInicioId').val(null);
+                    $('#DateInitialSprint').val(null);
                 }
             });
         }
@@ -230,14 +233,26 @@
         function GetDateBySprintFinal(sprintFinalId) {
             let url = "@Url.Action("GetDateBySprintFinal", "Solicitud")";
             $.get(url, { SprintFinId: sprintFinalId }, function (data) {
-                if (data.hayFecha) {
-                    $('#DateEndSprint').removeAttr('disabled');
-                    const fecha = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
-                    $('#DateEndSprint').val(fecha);
+               if (data.hayFecha) {
+                $('#DateEndSprint').removeAttr('disabled');
+                const startDate = moment($('#DateInitialSprint').val(), "DD/MM/YYYY");
+                const endDate = moment(data.fecha, "DD/MM/YYYY");
+
+                if (!endDate.isSameOrAfter(startDate)) {
+                    toastr.error("La fecha final del sprint no debe ser menor a la inicial.");
+                    $('#DateEndSprint').val(null);
                 }
                 else {
-                    toastr.error("No hay registro de fecha final para el sprint.");
+                    const fechaFinal = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
+
+                    $('#DateEndSprint').val(fechaFinal);
                 }
+            }
+            else {
+                toastr.error("No hay registro de fecha final para el sprint.");
+                $('#SprintFinId').val(null);
+                $('#DateEndSprint').val(null);
+            }
             });
     }
 
@@ -302,5 +317,5 @@
              })
         });
 
-</script>
+    </script>
 }

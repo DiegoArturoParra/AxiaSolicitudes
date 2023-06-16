@@ -1,8 +1,6 @@
 ﻿using AttentionAxia.Core.Data;
-using AttentionAxia.Core.Extensions;
 using AttentionAxia.Helpers;
 using AttentionAxia.Models;
-using System;
 using System.Collections.Generic;
 
 namespace AttentionAxia.Core

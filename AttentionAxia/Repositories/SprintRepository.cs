@@ -109,7 +109,7 @@ namespace AttentionAxia.Repositories
             {
                 var listaIds = listado.Select(y => y.Id).ToList();
                 var haySprintsConTareas = await Context.TablaSolicitudes
-                    .Where(x => listaIds.Contains(x.SprintInicioId) || listaIds.Contains(x.SprintFinId))
+                    .Where(x => listaIds.Contains(x.SprintInicioId.Value) || listaIds.Contains(x.SprintFinId.Value))
                     .Select(x => x.Id)
                     .AnyAsync();
                 if (haySprintsConTareas)

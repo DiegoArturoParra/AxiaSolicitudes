@@ -1,6 +1,33 @@
-﻿@{
+﻿
+@model IEnumerable<AttentionAxia.Models.Festivo>
+@{
     ViewBag.Title = "Axia Solicitudes";
 }
-<main>
-   
-</main>
+<title>@ViewBag.Title</title>
+<h2>Listado de festivos COLOMBIA</h2>
+@if (User.IsInRole(AttentionAxia.Helpers.EnumConfig.GetDescription(AttentionAxia.Helpers.RolesEnum.AdministradorAxia)))
+{
+    using (Html.BeginForm("GenerarFestivos", "Home", FormMethod.Post, null))
+    {
+        @Html.AntiForgeryToken()
+        <button class="btn btn-primary btn-sm mb-2 mt-2">
+            <i class="fa fa fa-plus mr-2"></i><strong>Agregar Festivos del año @DateTime.Now.ToString("dd/MM/yyyy"), @DateTime.Now.AddYears(1).ToString("dd/MM/yyyy") y @DateTime.Now.AddYears(2).ToString("dd/MM/yyyy")</strong>
+        </button>
+    }
+}
+<table class="table table-striped table-bordered table-responsive-lg">
+    <tr>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.FechaFestivo)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.FechaFestivoFormat)
+            </td>
+        </tr>
+    }
+</table>

@@ -28,7 +28,7 @@
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Sprint Inicio</label>
-                @Html.DropDownList("SprintInicioId", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required" })
+                @Html.DropDownList("SprintInicioId", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control" })
                 <div class="invalid-feedback">
                     El sprint inicio es requerido
                 </div>
@@ -37,7 +37,7 @@
         <div class="form-group">
             <div class="col-md-12">
                 <label class="control-label col-md-3">Sprint Fin</label>
-                @Html.DropDownList("SprintFinId", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", required = "required", disabled = "disabled" })
+                @Html.DropDownList("SprintFinId", ViewBag.DDL_Sprints as SelectList, "--Seleccione--", htmlAttributes: new { @class = "form-control", disabled = "disabled", required = " required" })
                 <div class="invalid-feedback">
                     El sprint fin es requerido
                 </div>
@@ -52,9 +52,6 @@
                     </span>
                 </div>
                 <input type="text" class="form-control float-right" name="DateInitial" disabled id="DateInitialSprint" required>
-                <div class="invalid-feedback">
-                    la fecha de inicio es requerida.
-                </div>
             </div>
         </div>
         <div class="form-group">
@@ -125,7 +122,7 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-<script>
+    <script>
     let error = '<span class="fa fa-times-circle text-danger"> Error</span>';
     let warning = '<span class="fa fa-exclamation-circle text-warning"> Advertencia</span>';
     var originalBtnContent = $('#btn-save').html();
@@ -145,6 +142,7 @@
             },
             minDate: moment().add(-1, 'years').toDate(),
             maxDate: moment().add(1, 'years').toDate(),
+            // Establecer el valor inicial vacio
         });
     });
 
@@ -163,7 +161,7 @@
                 ]
             },
             minDate: moment().add(-1, 'years').toDate(),
-            maxDate: moment().add(1, 'years').toDate(),
+            maxDate: moment().add(1, 'years').toDate()
         });
     });
 
@@ -207,6 +205,7 @@
         $.get(url, { SprintInicioId: sprintInitialId }, function (data) {
             if (data.hayFecha) {
                 $('#SprintFinId').removeAttr('disabled');
+                $('#SprintFinId').val(null);
                 $('#DateInitialSprint').removeAttr('disabled');
                 let fechaInicial = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
                 $('#DateInitialSprint').val(fechaInicial);
@@ -223,21 +222,19 @@
         let url = "@Url.Action("GetDateBySprintFinal", "Solicitud")";
         $.get(url, { SprintFinId: sprintFinalId }, function (data) {
             if (data.hayFecha) {
-              
+
                 const startDate = moment($('#DateInitialSprint').val(), "DD/MM/YYYY");
                 const endDate = moment(data.fecha, "DD/MM/YYYY");
 
-                console.log(startDate.format("MM/DD/YYYY"));
-                console.log(endDate.format("MM/DD/YYYY"));
-
                 if (!endDate.isSameOrAfter(startDate)) {
                     toastr.error("La fecha final del sprint no debe ser menor a la inicial.");
-                    $('#DateEndSprint').prop('disabled', true);
-                    return;
+                    $('#DateEndSprint').val(null);
                 }
-                const fechaFinal = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
-                $('#DateEndSprint').removeAttr('disabled');
-                $('#DateEndSprint').val(fechaFinal);
+                else {
+                    const fechaFinal = moment(data.fecha, "DD/MM/YYYY").format("DD/MM/YYYY");
+                    $('#DateEndSprint').removeAttr('disabled');
+                    $('#DateEndSprint').val(fechaFinal);
+                }
             }
             else {
                 toastr.error("No hay registro de fecha final para el sprint.");
@@ -304,5 +301,5 @@
              form.classList.add('was-validated')
          })
     });
-</script>
+    </script>
 }

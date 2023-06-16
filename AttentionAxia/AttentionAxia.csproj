@@ -51,6 +51,10 @@
     <Reference Include="BCrypt.Net-Next, Version=4.0.3.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
       <HintPath>..\packages\BCrypt.Net-Next.4.0.3\lib\net35\BCrypt.Net-Next.dll</HintPath>
     </Reference>
+    <Reference Include="Encryption, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Helpers\Encryption.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -256,6 +260,7 @@
     <Compile Include="Controllers\SolicitudController.cs" />
     <Compile Include="Controllers\SprintController.cs" />
     <Compile Include="Core\AxiaDBInitializer.cs" />
+    <Compile Include="Core\EnvironmentConfig.cs" />
     <Compile Include="Core\Extensions\DateTimeExtensions.cs" />
     <Compile Include="Core\Middleware\CustomExceptionFilter.cs" />
     <Compile Include="DTOs\FileDTO.cs" />
@@ -279,13 +284,9 @@
     <Compile Include="Core\Data\AxiaContext.cs" />
     <Compile Include="Helpers\Response.cs" />
     <Compile Include="Helpers\RolesEnum.cs" />
-    <Compile Include="Migrations\202305291917537_Initial.cs" />
-    <Compile Include="Migrations\202305291917537_Initial.designer.cs">
-      <DependentUpon>202305291917537_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202306020033367_otra.cs" />
-    <Compile Include="Migrations\202306020033367_otra.designer.cs">
-      <DependentUpon>202306020033367_otra.cs</DependentUpon>
+    <Compile Include="Migrations\202306152316565_Initial.cs" />
+    <Compile Include="Migrations\202306152316565_Initial.designer.cs">
+      <DependentUpon>202306152316565_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Celula.cs" />
@@ -516,6 +517,7 @@
     <Content Include="Content\alertifyjs\themes\semantic.rtl.css" />
     <Content Include="Content\alertifyjs\themes\semantic.rtl.min.css" />
     <Content Include="Global.asax" />
+    <Content Include="Helpers\Encryption.dll" />
     <Content Include="Scripts\alertify.js" />
     <Content Include="Scripts\alertify.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -719,11 +721,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202305291917537_Initial.resx">
-      <DependentUpon>202305291917537_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202306020033367_otra.resx">
-      <DependentUpon>202306020033367_otra.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202306152316565_Initial.resx">
+      <DependentUpon>202306152316565_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

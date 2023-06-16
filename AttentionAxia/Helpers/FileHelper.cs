@@ -118,7 +118,7 @@ namespace AttentionAxia.Helpers
             catch (Exception ex)
             {
                 _logger.Error("Error al eliminar el archivo. Por favor contacte al administrador del sistema.", ex);
-                Responses.SetInternalServerErrorResponse(ex, "Error al eliminar el archivo. Por favor contacte al administrador del sistema.");
+                respuesta = Responses.SetInternalServerErrorResponse(ex, "Error al eliminar el archivo. Por favor contacte al administrador del sistema.");
             }
             return respuesta;
         }
